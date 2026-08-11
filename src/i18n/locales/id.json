@@ -1,0 +1,125 @@
+{
+  "common": {
+    "add": "Tambah",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "clear": "Bersihkan",
+    "all": "Semua"
+  },
+  "nav": {
+    "tasks": "Tugas",
+    "calendar": "Kalender",
+    "dashboard": "Dashboard"
+  },
+  "sidebar": {
+    "menu": "Menu Utama",
+    "categories": "Kategori",
+    "addCategory": "Tambah Kategori",
+    "categoryName": "Nama Kategori",
+    "cancel": "Batal",
+    "add": "Tambah"
+  },
+  "app": {
+    "greeting": "Selamat pagi, Rey! 👋",
+    "subtitle": "Berikut ringkasan tugas Anda untuk hari ini.",
+    "yourTasks": "Tugas Anda"
+  },
+  "taskForm": {
+    "placeholder": "Apa yang perlu Anda selesaikan?",
+    "addDetails": "Tambah Detail",
+    "description": "Deskripsi (opsional)",
+    "category": "Kategori",
+    "priority": "Prioritas",
+    "dueDate": "Tenggat Waktu",
+    "addTask": "Tambah Tugas"
+  },
+  "taskList": {
+    "noTasks": "Belum ada tugas",
+    "noTasksCategory": "Tidak ada tugas di kategori \"{{category}}\".",
+    "noTasksFilter": "Coba sesuaikan filter Anda, atau tambahkan tugas baru!",
+    "cleanSlate": "Daftar masih kosong! Tambahkan tugas baru di atas untuk mulai."
+  },
+  "taskCard": {
+    "subTasks": "Sub-tugas",
+    "addSubTask": "Tambah sub-tugas",
+    "newSubTask": "Tambah sub-tugas baru...",
+    "progress": "Progres",
+    "overdue": "Terlambat {{days}} hari",
+    "dueToday": "Hari ini",
+    "dueDays": "{{days}} hari lagi",
+    "dueDate": "Tenggat",
+    "priority": "Prioritas"
+  },
+  "priority": {
+    "high": "Tinggi",
+    "medium": "Sedang",
+    "low": "Rendah"
+  },
+  "filter": {
+    "filterAndSort": "Filter & Sort",
+    "clearFilters": "Hapus filter",
+    "status": "Status",
+    "active": "Aktif",
+    "completed": "Selesai",
+    "dueDate": "Tenggat Waktu",
+    "today": "Hari Ini",
+    "thisWeek": "Minggu Ini",
+    "overdue": "Terlambat",
+    "sortBy": "Urutkan",
+    "createdAt": "Dibuat pada",
+    "name": "Nama"
+  },
+  "calendar": {
+    "schedule": "Jadwal Tugas",
+    "noTasks": "Tidak ada tugas pada hari ini.",
+    "noTasksHint": "Pilih tanggal lain atau tambahkan tugas baru.",
+    "days": {
+      "sun": "Min",
+      "mon": "Sen",
+      "tue": "Sel",
+      "wed": "Rab",
+      "thu": "Kam",
+      "fri": "Jum",
+      "sat": "Sab"
+    },
+    "months": {
+      "0": "Januari",
+      "1": "Februari",
+      "2": "Maret",
+      "3": "April",
+      "4": "Mei",
+      "5": "Juni",
+      "6": "Juli",
+      "7": "Agustus",
+      "8": "September",
+      "9": "Oktober",
+      "10": "November",
+      "11": "Desember"
+    }
+  },
+  "dashboard": {
+    "productivitySummary": "Ringkasan Produktivitas",
+    "activeTasks": "Tugas Aktif",
+    "completed7Days": "Selesai (7 Hari)",
+    "completionRate": "Tingkat Penyelesaian",
+    "last7Days": "Aktivitas 7 Hari Terakhir",
+    "totalXp": "Total XP",
+    "dayStreak": "{{days}} Hari Streak",
+    "level": "Level {{level}}",
+    "xpToNext": "{{xp}} XP ke level selanjutnya",
+    "maxLevel": "Level Maksimal!",
+    "yourBadges": "Lencana Anda",
+    "noBadges": "Anda belum membuka lencana apapun.",
+    "noBadgesHint": "Selesaikan tugas dan pertahankan streak Anda untuk mendapatkannya!",
+    "unlocked": "Terbuka {{date}}"
+  },
+  "levels": {
+    "1": "Pemula / Rookie",
+    "2": "Pelajar / Learner",
+    "3": "Produktif / Productive",
+    "4": "Ahli / Expert",
+    "5": "Master"
+  }
+}

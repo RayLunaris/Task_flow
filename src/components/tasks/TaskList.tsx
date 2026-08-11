@@ -3,9 +3,11 @@ import { AnimatePresence } from 'framer-motion';
 import { ClipboardList } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { TaskCard } from './TaskCard';
+import { useTranslation } from 'react-i18next';
 
 export const TaskList: React.FC = () => {
   const { tasks, selectedCategory, filterStatus, filterPriority, filterDueDate, sortBy, sortOrder } = useTasks();
+  const { t } = useTranslation();
 
   const filteredAndSortedTasks = useMemo(() => {
     let result = tasks;
@@ -73,12 +75,16 @@ export const TaskList: React.FC = () => {
   if (filteredAndSortedTasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="bg-purple-50 p-6 rounded-full mb-4">
-          <ClipboardList size={48} className="text-purple-400" />
+        <div className="bg-purple-50 dark:bg-purple-900/30 p-6 rounded-full mb-4">
+          <ClipboardList size={48} className="text-purple-400 dark:text-purple-500" />
         </div>
-        <h3 className="text-xl font-bold text-slate-700 mb-2">No tasks found</h3>
-        <p className="text-slate-500 max-w-sm">
-          Try adjusting your filters, or add a new task!
+        <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">{t('taskList.noTasks')}</h3>
+        <p className="text-slate-500 dark:text-slate-400 max-w-sm">
+          {selectedCategory 
+            ? t('taskList.noTasksCategory', { category: selectedCategory })
+            : tasks.length > 0 
+              ? t('taskList.noTasksFilter')
+              : t('taskList.cleanSlate')}
         </p>
       </div>
     );

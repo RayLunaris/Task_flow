@@ -16,13 +16,13 @@ export const Button: React.FC<ButtonProps> = ({
   className,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-900';
   
   const variants = {
-    primary: 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500 shadow-md shadow-purple-200',
-    secondary: 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 focus:ring-slate-200 shadow-sm',
-    danger: 'bg-pink-500 text-white hover:bg-pink-600 focus:ring-pink-400 shadow-md shadow-pink-200',
-    ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-slate-200',
+    primary: 'bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500 shadow-md shadow-purple-200 dark:shadow-none',
+    secondary: 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 focus:ring-slate-200 shadow-sm',
+    danger: 'bg-pink-500 text-white hover:bg-pink-600 focus:ring-pink-400 shadow-md shadow-pink-200 dark:shadow-none',
+    ghost: 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 focus:ring-slate-200',
   };
 
   const sizes = {

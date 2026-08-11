@@ -1,4 +1,4 @@
-export function getDueDateStatus(dueDateStr: string | undefined): { label: string; color: 'red' | 'yellow' | 'normal', formattedDate: string } | null {
+export function getDueDateStatus(dueDateStr: string | undefined): { key: string; days?: number; color: 'red' | 'yellow' | 'normal', date: Date } | null {
   if (!dueDateStr) return null;
 
   const dueDate = new Date(dueDateStr);
@@ -16,32 +16,32 @@ export function getDueDateStatus(dueDateStr: string | undefined): { label: strin
   const diffTime = dueDay.getTime() - today.getTime();
   const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
-  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
-  const formattedDate = dueDay.toLocaleDateString('id-ID', options);
-
   if (diffDays < 0) {
     return {
-      label: `Terlambat ${Math.abs(diffDays)} hari`,
+      key: 'taskCard.overdue',
+      days: Math.abs(diffDays),
       color: 'red',
-      formattedDate
+      date: dueDay
     };
   } else if (diffDays === 0) {
     return {
-      label: 'Hari ini',
+      key: 'taskCard.dueToday',
       color: 'yellow',
-      formattedDate
+      date: dueDay
     };
   } else if (diffDays <= 3) {
     return {
-      label: `${diffDays} hari lagi`,
+      key: 'taskCard.dueDays',
+      days: diffDays,
       color: 'yellow',
-      formattedDate
+      date: dueDay
     };
   } else {
     return {
-      label: `${diffDays} hari lagi`,
+      key: 'taskCard.dueDays',
+      days: diffDays,
       color: 'normal',
-      formattedDate
+      date: dueDay
     };
   }
 }

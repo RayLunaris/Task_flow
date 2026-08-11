@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary: #7C3AED;
   --color-accent-pink: #EC4899;
@@ -11,7 +13,11 @@
 
 @layer base {
   body {
-    @apply font-body bg-gradient-to-br from-white to-purple-50 text-slate-800 min-h-screen;
+    @apply font-body bg-slate-50 text-slate-800 min-h-screen transition-colors duration-300;
+  }
+  
+  .dark body {
+    @apply bg-slate-950 text-slate-100;
   }
   
   h1, h2, h3, h4, h5, h6 {
