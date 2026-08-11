@@ -31,3 +31,26 @@ export interface AppSettings {
   defaultCategory: string;
   defaultPriority: 'high' | 'medium' | 'low';
 }
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  unlockedAt: string;
+}
+
+export interface DailyRecord {
+  date: string;
+  completed: number;
+  created: number;
+}
+
+export interface UserProgress {
+  totalPoints: number;
+  level: number;
+  badges: Badge[];
+  streakDays: number;
+  lastActiveDate: string;
+  completedTasksHistory: DailyRecord[];
+}

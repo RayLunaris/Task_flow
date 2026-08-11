@@ -4,11 +4,11 @@ import { useTasks } from '../../hooks/useTasks';
 import { Button } from '../ui/Button';
 
 export const TaskForm: React.FC = () => {
-  const { addTask } = useTasks();
+  const { addTask, categories, selectedCategory } = useTasks();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
-  const [category, setCategory] = useState('Pribadi');
+  const [category, setCategory] = useState(selectedCategory || (categories.length > 0 ? categories[0].name : 'Pribadi'));
   const [dueDate, setDueDate] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -26,7 +26,7 @@ export const TaskForm: React.FC = () => {
     setTitle('');
     setDescription('');
     setPriority('medium');
-    setCategory('Pribadi');
+    setCategory(selectedCategory || (categories.length > 0 ? categories[0].name : 'Pribadi'));
     setDueDate('');
   };
 
@@ -75,11 +75,11 @@ export const TaskForm: React.FC = () => {
                 onChange={(e) => setCategory(e.target.value)}
                 className="text-sm border border-slate-200 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 bg-white text-slate-700 font-medium"
               >
-                <option value="Pribadi">Pribadi</option>
-                <option value="Kerja">Kerja</option>
-                <option value="Sekolah">Sekolah</option>
-                <option value="Belanja">Belanja</option>
-                <option value="Kesehatan">Kesehatan</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
 
               <input
