@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckSquare, Calendar, BarChart2, Plus, X, Folder, Users, UserCheck, Flag, Columns, Settings, Shield, PieChart, FileText } from 'lucide-react';
+import { Calendar, BarChart2, Plus, X, Folder, Users, UserCheck, Flag, Columns, Settings, Shield, PieChart, FileText } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuth } from '../../context/AuthContext';
 import { useTasks } from '../../hooks/useTasks';
@@ -25,7 +25,6 @@ export const Sidebar: React.FC = () => {
     { id: 'kanban', path: '/kanban', label: t('nav.kanban'), icon: Columns },
     { id: 'milestones', path: '/milestones', label: t('nav.milestones'), icon: Flag },
     { id: 'team', path: '/team', label: t('nav.team'), icon: Users },
-    { id: 'tasks', path: '/tasks', label: t('nav.tasks'), icon: CheckSquare },
     { id: 'calendar', path: '/calendar', label: t('nav.calendar'), icon: Calendar },
     { id: 'analytics', path: '/analytics', label: t('nav.analytics'), icon: PieChart },
     { id: 'report', path: '/report', label: t('nav.report'), icon: FileText },
@@ -104,11 +103,11 @@ export const Sidebar: React.FC = () => {
         <button
           onClick={() => {
             setSelectedCategory(null);
-            navigate('/tasks');
+            navigate('/my-tasks');
           }}
           className={clsx(
             'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 text-sm font-medium',
-            selectedCategory === null && currentView === 'tasks'
+            selectedCategory === null && currentView === 'my-tasks'
               ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
           )}
@@ -122,11 +121,11 @@ export const Sidebar: React.FC = () => {
             key={cat.id}
             onClick={() => {
               setSelectedCategory(cat.name);
-              navigate('/tasks');
+              navigate('/my-tasks');
             }}
             className={clsx(
               'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 text-sm font-medium',
-              selectedCategory === cat.name && currentView === 'tasks'
+              selectedCategory === cat.name && currentView === 'my-tasks'
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
                 : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
             )}

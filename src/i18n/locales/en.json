@@ -31,7 +31,7 @@
     "add": "Add"
   },
   "app": {
-    "greeting": "Good morning, Rey! 👋",
+    "greeting": "Good morning, {{name}}! 👋",
     "subtitle": "Here's a breakdown of your tasks for today.",
     "yourTasks": "Your Tasks"
   },

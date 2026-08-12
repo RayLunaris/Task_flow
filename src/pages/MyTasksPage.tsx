@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useTasks } from '../hooks/useTasks';
 import { useProjects } from '../context/ProjectContext';
 import { TaskCard } from '../components/tasks/TaskCard';
+import { TaskForm } from '../components/tasks/TaskForm';
 import { CheckSquare, Calendar, AlertCircle, ListTodo } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
@@ -11,8 +13,9 @@ type SortType = 'dueDate' | 'priority' | 'project';
 
 export const MyTasksPage: React.FC = () => {
   const { user } = useAuth();
-  const { tasks } = useTasks();
+  const { tasks, selectedCategory } = useTasks();
   const { projects } = useProjects();
+  const { t } = useTranslation();
   
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortBy, setSortBy] = useState<SortType>('dueDate');
@@ -22,6 +25,11 @@ export const MyTasksPage: React.FC = () => {
     
     // 1. Get user's tasks
     let filtered = tasks.filter(t => t.assigneeIds?.includes(user.id));
+
+    // 1.5. Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter(task => task.category === selectedCategory);
+    }
 
     // 2. Apply filter
     const today = new Date();
@@ -67,19 +75,18 @@ export const MyTasksPage: React.FC = () => {
     });
 
     return filtered;
-  }, [tasks, user, filter, sortBy, projects]);
+  }, [tasks, user, filter, sortBy, projects, selectedCategory]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <CheckSquare className="text-purple-500" />
-            My Tasks
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Tasks assigned specifically to you</p>
-        </div>
+      <div className="mb-8 text-center sm:text-left">
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+          {t('app.greeting', { name: user?.name?.split(' ')[0] || 'User' })}
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400">{t('app.subtitle')}</p>
       </div>
+
+      <TaskForm />
 
       {/* Filters & Sorting */}
       <div className="flex flex-col md:flex-row justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">

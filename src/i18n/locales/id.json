@@ -31,7 +31,7 @@
     "add": "Tambah"
   },
   "app": {
-    "greeting": "Selamat pagi, Rey! 👋",
+    "greeting": "Selamat pagi, {{name}}! 👋",
     "subtitle": "Berikut ringkasan tugas Anda untuk hari ini.",
     "yourTasks": "Tugas Anda"
   },

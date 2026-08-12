@@ -9,7 +9,6 @@ import { ActivityProvider } from './context/ActivityContext';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
-import { TasksPage } from './pages/TasksPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { TeamPage } from './pages/TeamPage';
@@ -38,14 +37,14 @@ function App() {
             <Route path="/" element={<AppShell />}>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="tasks" element={<TasksPage />} />
+              <Route path="tasks" element={<Navigate to="/my-tasks" replace />} />
               <Route path="my-tasks" element={<MyTasksPage />} />
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="kanban" element={<KanbanPage />} />
               <Route path="milestones" element={<MilestonePage />} />
               <Route path="team" element={<TeamPage />} />
               <Route path="calendar" element={<CalendarPage />} />
-              <Route path="tasks" element={<TasksPage />} />
+
               <Route path="notifications" element={<NotificationPage />} />
               <Route path="audit" element={<AuditLogPage />} />
               <Route path="settings" element={<SettingsPage />} />
