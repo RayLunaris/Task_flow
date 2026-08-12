@@ -4,9 +4,6 @@ export function getDueDateStatus(dueDateStr: string | undefined): { key: string;
   const dueDate = new Date(dueDateStr);
   dueDate.setHours(23, 59, 59, 999); // Set to end of the day
 
-  const now = new Date();
-  
-  // Strip time from now for accurate day difference if we want strict day diff
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   

@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Trash2, Edit2, Check, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { Trash2, Edit2, Check, ChevronDown, Plus, GripVertical } from 'lucide-react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import type { Task } from '../../types';
@@ -8,27 +10,46 @@ import { Badge } from '../ui/Badge';
 import { getDueDateStatus } from '../../utils/dateUtils';
 import { ProgressBar } from '../ui/ProgressBar';
 import { SubTaskItem } from './SubTaskItem';
+import { EditTaskModal } from './EditTaskModal';
 import { useTranslation } from 'react-i18next';
 import confetti from 'canvas-confetti';
 
 interface TaskCardProps {
   task: Task;
+  isDragEnabled?: boolean;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false }) => {
   const { toggleTaskCompletion, deleteTask, addSubTask, toggleSubTask, deleteSubTask, categories } = useTasks();
   const { t, i18n } = useTranslation();
   
   const dueDateStatus = getDueDateStatus(task.dueDate);
   const [isSubTasksOpen, setIsSubTasksOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newSubTaskTitle, setNewSubTaskTitle] = useState('');
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id, disabled: !isDragEnabled });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const completedSubTasks = task.subTasks.filter(st => st.completed).length;
   const totalSubTasks = task.subTasks.length;
   const progress = totalSubTasks === 0 ? 0 : Math.round((completedSubTasks / totalSubTasks) * 100);
 
-  const handleToggleCompletion = (e: React.MouseEvent) => {
+  const handleToggleCompletion = () => {
     if (!task.completed && buttonRef.current) {
       // Fire mini confetti
       const rect = buttonRef.current.getBoundingClientRect();
@@ -59,19 +80,31 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   return (
     <motion.div
+      ref={setNodeRef}
+      style={style}
       layout
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ opacity: isDragging ? 0.5 : 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9 }}
       whileHover={{ scale: 1.01 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       className={clsx(
-        'group flex items-start gap-4 p-4 rounded-2xl border transition-colors duration-300',
+        'group flex items-start gap-3 p-4 rounded-2xl border transition-colors duration-300',
         task.completed
           ? 'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800'
           : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-purple-200 dark:hover:border-purple-800'
       )}
     >
+      {isDragEnabled && (
+        <div 
+          {...attributes} 
+          {...listeners}
+          className="mt-1 p-1 text-slate-300 hover:text-slate-500 dark:text-slate-600 dark:hover:text-slate-400 cursor-grab active:cursor-grabbing flex-shrink-0 touch-none"
+        >
+          <GripVertical size={16} />
+        </div>
+      )}
+
       <motion.button
         ref={buttonRef}
         whileTap={{ scale: 0.8 }}
@@ -113,9 +146,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         )}
         
         <div className="mt-3 flex flex-wrap gap-2">
-          {task.priority === 'high' && <Badge variant="priority-high">🔴 {t('priority.high')}</Badge>}
+          {task.priority === 'urgent' && <Badge variant="priority-high">🔴 Urgent</Badge>}
+          {task.priority === 'high' && <Badge variant="priority-high">🟠 {t('priority.high')}</Badge>}
           {task.priority === 'medium' && <Badge variant="priority-medium">🟡 {t('priority.medium')}</Badge>}
-          {task.priority === 'low' && <Badge variant="priority-low">🟢 {t('priority.low')}</Badge>}
+          {task.priority === 'low' && <Badge variant="priority-low">🔵 {t('priority.low')}</Badge>}
           <Badge variant="category" color={categoryColor}>{task.category}</Badge>
           {dueDateStatus && (
             <Badge variant={`due-${dueDateStatus.color}` as any}>
@@ -192,6 +226,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
+          onClick={() => setIsEditModalOpen(true)}
           className="p-2 text-slate-400 dark:text-slate-500 hover:text-blue-500 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
           title={t('common.edit')}
         >
@@ -205,6 +240,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
           <Trash2 size={16} />
         </button>
       </div>
+      
+      <EditTaskModal 
+        task={task} 
+        isOpen={isEditModalOpen} 
+        onClose={() => setIsEditModalOpen(false)} 
+      />
     </motion.div>
   );
 };

@@ -4,10 +4,35 @@ import { ClipboardList } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { TaskCard } from './TaskCard';
 import { useTranslation } from 'react-i18next';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 export const TaskList: React.FC = () => {
-  const { tasks, selectedCategory, filterStatus, filterPriority, filterDueDate, sortBy, sortOrder } = useTasks();
+  const { tasks, selectedCategory, filterStatus, filterPriority, filterDueDate, sortBy, sortOrder, reorderTasks } = useTasks();
   const { t } = useTranslation();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const filteredAndSortedTasks = useMemo(() => {
     let result = tasks;
@@ -53,15 +78,20 @@ export const TaskList: React.FC = () => {
     // 5. Sort
     result = [...result].sort((a, b) => {
       let comparison = 0;
+      // If we are not filtering or sorting by anything else, we use the user-defined order
       if (sortBy === 'createdAt') {
+        // Fallback to order property if available and sorting is default
+        if (a.order !== undefined && b.order !== undefined && sortOrder === 'asc') {
+           return a.order - b.order;
+        }
         comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       } else if (sortBy === 'dueDate') {
         const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
         const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
         comparison = dateA - dateB;
       } else if (sortBy === 'priority') {
-        const priorityWeight = { high: 3, medium: 2, low: 1 };
-        comparison = priorityWeight[a.priority] - priorityWeight[b.priority];
+        const priorityWeight = { urgent: 4, high: 3, medium: 2, low: 1 };
+        comparison = priorityWeight[a.priority as keyof typeof priorityWeight] - priorityWeight[b.priority as keyof typeof priorityWeight];
       } else if (sortBy === 'name') {
         comparison = a.title.localeCompare(b.title);
       }
@@ -71,6 +101,17 @@ export const TaskList: React.FC = () => {
 
     return result;
   }, [tasks, selectedCategory, filterStatus, filterPriority, filterDueDate, sortBy, sortOrder]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      const oldIndex = tasks.findIndex(t => t.id === active.id);
+      const newIndex = tasks.findIndex(t => t.id === over.id);
+      
+      reorderTasks(oldIndex, newIndex);
+    }
+  };
 
   if (filteredAndSortedTasks.length === 0) {
     return (
@@ -90,14 +131,27 @@ export const TaskList: React.FC = () => {
     );
   }
 
+  // Only allow drag and drop if we are not heavily filtered or sorted
+  const isDragEnabled = sortBy === 'createdAt' && filterStatus === 'all' && filterPriority === 'all' && filterDueDate === 'all' && !selectedCategory;
+
   return (
-    <div className="flex flex-col gap-3">
-      <AnimatePresence initial={false}>
-        {filteredAndSortedTasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
-        ))}
-      </AnimatePresence>
-    </div>
+    <DndContext 
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex flex-col gap-3">
+        <SortableContext 
+          items={filteredAndSortedTasks.map(t => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <AnimatePresence initial={false}>
+            {filteredAndSortedTasks.map((task) => (
+              <TaskCard key={task.id} task={task} isDragEnabled={isDragEnabled} />
+            ))}
+          </AnimatePresence>
+        </SortableContext>
+      </div>
+    </DndContext>
   );
 };
-

@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
-import { CheckSquare, Calendar, BarChart2, Plus, X } from 'lucide-react';
+import { CheckSquare, Calendar, BarChart2, Plus, X, Folder, Users, UserCheck, Flag, Columns } from 'lucide-react';
 import clsx from 'clsx';
 import { useTasks } from '../../hooks/useTasks';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-interface SidebarProps {
-  currentView: 'tasks' | 'calendar' | 'dashboard';
-  onChangeView: (view: 'tasks' | 'calendar' | 'dashboard') => void;
-}
-
-export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView }) => {
+export const Sidebar: React.FC = () => {
   const { categories, selectedCategory, setSelectedCategory, addCategory } = useTasks();
   const { t } = useTranslation();
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryColor, setNewCategoryColor] = useState('#7C3AED'); // Default purple
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentView = location.pathname.split('/')[1] || 'dashboard';
+
   const navItems = [
-    { id: 'tasks', label: t('nav.tasks'), icon: CheckSquare },
-    { id: 'calendar', label: t('nav.calendar'), icon: Calendar },
-    { id: 'dashboard', label: t('nav.dashboard'), icon: BarChart2 },
+    { id: 'dashboard', path: '/dashboard', label: t('nav.dashboard'), icon: BarChart2 },
+    { id: 'my-tasks', path: '/my-tasks', label: 'My Tasks', icon: UserCheck },
+    { id: 'projects', path: '/projects', label: 'Projects', icon: Folder },
+    { id: 'kanban', path: '/kanban', label: 'Kanban', icon: Columns },
+    { id: 'milestones', path: '/milestones', label: 'Milestones', icon: Flag },
+    { id: 'team', path: '/team', label: 'Team', icon: Users },
+    { id: 'tasks', path: '/tasks', label: t('nav.tasks'), icon: CheckSquare },
+    { id: 'calendar', path: '/calendar', label: t('nav.calendar'), icon: Calendar },
   ] as const;
 
   const handleAddCategory = (e: React.FormEvent) => {
@@ -41,7 +46,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView }) =
           return (
             <button
               key={item.id}
-              onClick={() => onChangeView(item.id)}
+              onClick={() => navigate(item.path)}
               className={clsx(
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 font-medium text-sm',
                 isActive
@@ -71,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView }) =
         <button
           onClick={() => {
             setSelectedCategory(null);
-            onChangeView('tasks');
+            navigate('/tasks');
           }}
           className={clsx(
             'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 text-sm font-medium',
@@ -89,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView }) =
             key={cat.id}
             onClick={() => {
               setSelectedCategory(cat.name);
-              onChangeView('tasks');
+              navigate('/tasks');
             }}
             className={clsx(
               'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 text-sm font-medium',

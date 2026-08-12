@@ -1,67 +1,55 @@
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import { TaskProvider } from './context/TaskContext';
 import { GamificationProvider } from './context/GamificationContext';
-import { Navbar } from './components/layout/Navbar';
-import { Sidebar } from './components/layout/Sidebar';
-import { BottomNav } from './components/layout/BottomNav';
-import { TaskForm } from './components/tasks/TaskForm';
-import { TaskList } from './components/tasks/TaskList';
-import { TaskFilterBar } from './components/tasks/TaskFilterBar';
-import { GamificationPanel } from './components/dashboard/GamificationPanel';
-import { ProductivityChart } from './components/dashboard/ProductivityChart';
-import { CalendarView } from './components/calendar/CalendarView';
-import { useTranslation } from 'react-i18next';
+import { ProjectProvider } from './context/ProjectContext';
+import { MilestoneProvider } from './context/MilestoneContext';
+import { NotificationProvider } from './context/NotificationContext';
+import { AppShell } from './components/layout/AppShell';
+import { LoginPage } from './pages/LoginPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { TasksPage } from './pages/TasksPage';
+import { CalendarPage } from './pages/CalendarPage';
+import { ProjectsPage } from './pages/ProjectsPage';
+import { TeamPage } from './pages/TeamPage';
+import { MyTasksPage } from './pages/MyTasksPage';
+import { MilestonePage } from './pages/MilestonePage';
+import { KanbanPage } from './pages/KanbanPage';
+import { NotificationPage } from './pages/NotificationPage';
+import './i18n';
 
 function App() {
-  const [currentView, setCurrentView] = useState<'tasks' | 'calendar' | 'dashboard'>('tasks');
-  const { t } = useTranslation();
-
   return (
-    <GamificationProvider>
-      <TaskProvider>
-        <div className="min-h-screen flex flex-col font-sans bg-slate-50/50 dark:bg-slate-950 pb-16 md:pb-0 transition-colors duration-300">
-          <Navbar />
-          
-          <div className="flex flex-1 max-w-7xl mx-auto w-full">
-            <Sidebar currentView={currentView} onChangeView={setCurrentView} />
-            
-            <main className="flex-1 px-4 py-8 max-w-4xl mx-auto w-full min-h-[calc(100vh-4rem)]">
-              {currentView === 'tasks' && (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="mb-8 text-center sm:text-left">
-                    <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t('app.greeting')}</h1>
-                    <p className="text-slate-500 dark:text-slate-400">{t('app.subtitle')}</p>
-                  </div>
-                  
-                  <TaskForm />
-                  
-                  <div className="mt-8">
-                    <h2 className="text-xl font-bold text-slate-700 dark:text-slate-200 mb-4">{t('app.yourTasks')}</h2>
-                    <TaskFilterBar />
-                    <TaskList />
-                  </div>
-                </div>
-              )}
-
-              {currentView === 'calendar' && (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <CalendarView />
-                </div>
-              )}
-
-              {currentView === 'dashboard' && (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
-                  <GamificationPanel />
-                  <ProductivityChart />
-                </div>
-              )}
-            </main>
-          </div>
-
-          <BottomNav currentView={currentView} onChangeView={setCurrentView} />
-        </div>
-      </TaskProvider>
-    </GamificationProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <GamificationProvider>
+        <ProjectProvider>
+        <MilestoneProvider>
+        <NotificationProvider>
+        <TaskProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={<AppShell />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="my-tasks" element={<MyTasksPage />} />
+              <Route path="projects" element={<ProjectsPage />} />
+              <Route path="kanban" element={<KanbanPage />} />
+              <Route path="milestones" element={<MilestonePage />} />
+              <Route path="team" element={<TeamPage />} />
+              <Route path="calendar" element={<CalendarPage />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="notifications" element={<NotificationPage />} />
+            </Route>
+          </Routes>
+        </TaskProvider>
+        </NotificationProvider>
+        </MilestoneProvider>
+        </ProjectProvider>
+        </GamificationProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

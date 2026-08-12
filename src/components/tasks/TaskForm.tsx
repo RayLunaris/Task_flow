@@ -3,14 +3,20 @@ import { PlusCircle } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { Button } from '../ui/Button';
 import { useTranslation } from 'react-i18next';
+import { useProjects } from '../../context/ProjectContext';
+import { useMilestones } from '../../context/MilestoneContext';
 
 export const TaskForm: React.FC = () => {
   const { addTask, categories, selectedCategory } = useTasks();
+  const { projects } = useProjects();
+  const { milestones } = useMilestones();
   const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium');
+  const [priority, setPriority] = useState<'high' | 'medium' | 'low' | 'urgent'>('medium');
   const [category, setCategory] = useState(selectedCategory || (categories.length > 0 ? categories[0].name : 'Pribadi'));
+  const [projectId, setProjectId] = useState<string>('');
+  const [milestoneId, setMilestoneId] = useState<string>('');
   const [dueDate, setDueDate] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -22,6 +28,8 @@ export const TaskForm: React.FC = () => {
       description: description.trim(),
       priority,
       category,
+      projectId: projectId || undefined,
+      milestoneId: milestoneId || undefined,
       dueDate: dueDate || undefined,
     });
 
@@ -29,6 +37,8 @@ export const TaskForm: React.FC = () => {
     setDescription('');
     setPriority('medium');
     setCategory(selectedCategory || (categories.length > 0 ? categories[0].name : 'Pribadi'));
+    setProjectId('');
+    setMilestoneId('');
     setDueDate('');
   };
 
@@ -64,12 +74,13 @@ export const TaskForm: React.FC = () => {
             <div className="flex flex-wrap gap-3">
               <select
                 value={priority}
-                onChange={(e) => setPriority(e.target.value as 'high' | 'medium' | 'low')}
+                onChange={(e) => setPriority(e.target.value as 'high' | 'medium' | 'low' | 'urgent')}
                 className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               >
-                <option value="high">🔴 {t('priority.high')}</option>
+                <option value="urgent">🔴 Urgent</option>
+                <option value="high">🟠 {t('priority.high')}</option>
                 <option value="medium">🟡 {t('priority.medium')}</option>
-                <option value="low">🟢 {t('priority.low')}</option>
+                <option value="low">🔵 {t('priority.low')}</option>
               </select>
 
               <select
@@ -83,6 +94,39 @@ export const TaskForm: React.FC = () => {
                   </option>
                 ))}
               </select>
+
+              <div className="flex flex-col gap-2">
+                <select
+                  value={projectId}
+                  onChange={(e) => {
+                    setProjectId(e.target.value);
+                    setMilestoneId('');
+                  }}
+                  className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
+                >
+                  <option value="">No Project</option>
+                  {projects.map((proj) => (
+                    <option key={proj.id} value={proj.id}>
+                      {proj.name}
+                    </option>
+                  ))}
+                </select>
+
+                {projectId && (
+                  <select
+                    value={milestoneId}
+                    onChange={(e) => setMilestoneId(e.target.value)}
+                    className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
+                  >
+                    <option value="">No Milestone</option>
+                    {milestones.filter(m => m.projectId === projectId).map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
 
               <input
                 type="date"

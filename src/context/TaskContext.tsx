@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { Task, Category } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useGamification } from '../hooks/useGamification';
+import { useAuth } from './AuthContext';
 
 export type FilterStatus = 'all' | 'active' | 'completed';
 export type FilterPriority = 'all' | 'high' | 'medium' | 'low';
@@ -20,9 +21,10 @@ interface TaskContextType {
   filterDueDate: FilterDueDate;
   sortBy: SortBy;
   sortOrder: SortOrder;
-  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'completed' | 'subTasks'>) => void;
+  addTask: (task: Partial<Task>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
+  reorderTasks: (startIndex: number, endIndex: number) => void;
   toggleTaskCompletion: (id: string) => void;
   clearCompletedTasks: () => void;
   addSubTask: (taskId: string, title: string) => void;
@@ -59,17 +61,30 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc'); // Default to newest first
 
   const { awardPointsForTask, checkAndAwardBadges } = useGamification();
+  const { user } = useAuth();
 
-  const addTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'completed' | 'subTasks'>) => {
+  const addTask = (taskData: Partial<Task>) => {
     const newTask: Task = {
-      ...taskData,
       id: uuidv4(),
+      title: taskData.title || 'New Task',
+      description: taskData.description || '',
       completed: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      subTasks: [],
+      subTasks: taskData.subTasks || [],
       priority: taskData.priority || 'medium',
       category: taskData.category || 'Pribadi',
+      assigneeIds: taskData.assigneeIds || (user ? [user.id] : []),
+      reporterId: user?.id || 'unknown',
+      status: taskData.status || 'todo',
+      checklists: taskData.checklists || [],
+      attachments: taskData.attachments || [],
+      comments: taskData.comments || [],
+      timeEntries: taskData.timeEntries || [],
+      isRecurring: taskData.isRecurring || false,
+      needsApproval: taskData.needsApproval || false,
+      order: tasks.length,
+      dueDate: taskData.dueDate,
     };
     setTasks((prev) => [newTask, ...prev]);
   };
@@ -86,6 +101,16 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const deleteTask = (id: string) => {
     setTasks((prev) => prev.filter((task) => task.id !== id));
+  };
+
+  const reorderTasks = (startIndex: number, endIndex: number) => {
+    setTasks((prev) => {
+      const result = Array.from(prev);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      // Update order field
+      return result.map((task, index) => ({ ...task, order: index }));
+    });
   };
 
   const toggleTaskCompletion = (id: string) => {
@@ -200,6 +225,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         addTask,
         updateTask,
         deleteTask,
+        reorderTasks,
         toggleTaskCompletion,
         clearCompletedTasks,
         addSubTask,

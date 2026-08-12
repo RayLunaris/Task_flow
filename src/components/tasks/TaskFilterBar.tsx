@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Filter, ArrowUpDown, X } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
-import type { FilterStatus, FilterPriority, FilterDueDate, SortBy, SortOrder } from '../../context/TaskContext';
+import type { FilterStatus, FilterPriority, FilterDueDate, SortBy } from '../../context/TaskContext';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Trophy, Star, Target, Zap, Activity } from 'lucide-react';
+import { Trophy, Star } from 'lucide-react';
 import { useGamification } from '../../hooks/useGamification';
 import { ProgressBar } from '../ui/ProgressBar';
-import clsx from 'clsx';
+
 import { useTranslation } from 'react-i18next';
 
 export const GamificationPanel: React.FC = () => {

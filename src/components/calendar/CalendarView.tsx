@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 export const CalendarView: React.FC = () => {
   const { tasks } = useTasks();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
