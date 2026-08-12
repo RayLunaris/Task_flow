@@ -5,6 +5,7 @@ import { GamificationProvider } from './context/GamificationContext';
 import { ProjectProvider } from './context/ProjectContext';
 import { MilestoneProvider } from './context/MilestoneContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { ActivityProvider } from './context/ActivityContext';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -16,6 +17,10 @@ import { MyTasksPage } from './pages/MyTasksPage';
 import { MilestonePage } from './pages/MilestonePage';
 import { KanbanPage } from './pages/KanbanPage';
 import { NotificationPage } from './pages/NotificationPage';
+import { AuditLogPage } from './pages/AuditLogPage';
+import { SettingsPage } from './pages/SettingsPage';
+import { AnalyticsPage } from './pages/AnalyticsPage';
+import { ReportPage } from './pages/ReportPage';
 import './i18n';
 
 function App() {
@@ -26,6 +31,7 @@ function App() {
         <ProjectProvider>
         <MilestoneProvider>
         <NotificationProvider>
+        <ActivityProvider>
         <TaskProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
@@ -41,9 +47,14 @@ function App() {
               <Route path="calendar" element={<CalendarPage />} />
               <Route path="tasks" element={<TasksPage />} />
               <Route path="notifications" element={<NotificationPage />} />
+              <Route path="audit" element={<AuditLogPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="report" element={<ReportPage />} />
             </Route>
           </Routes>
         </TaskProvider>
+        </ActivityProvider>
         </NotificationProvider>
         </MilestoneProvider>
         </ProjectProvider>

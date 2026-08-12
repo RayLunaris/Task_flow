@@ -11,7 +11,16 @@
   "nav": {
     "tasks": "Tugas",
     "calendar": "Kalender",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "projects": "Proyek",
+    "kanban": "Kanban",
+    "milestones": "Milestone",
+    "team": "Tim",
+    "analytics": "Analitik",
+    "report": "Laporan",
+    "settings": "Pengaturan",
+    "audit": "Log Audit",
+    "myTasks": "Tugas Saya"
   },
   "sidebar": {
     "menu": "Menu Utama",
@@ -121,5 +130,70 @@
     "3": "Produktif / Productive",
     "4": "Ahli / Expert",
     "5": "Master"
+  },
+  "settings": {
+    "title": "Pengaturan & Profil",
+    "subtitle": "Kelola pengaturan akun dan preferensi aplikasi Anda.",
+    "userProfile": "Profil Pengguna",
+    "fullName": "Nama Lengkap",
+    "department": "Departemen",
+    "email": "Alamat Email",
+    "saveProfile": "Simpan Profil",
+    "preferences": "Preferensi",
+    "appearance": "Tampilan",
+    "appearanceDesc": "Beralih antara mode gelap atau terang",
+    "language": "Bahasa",
+    "languageDesc": "Pilih bahasa antarmuka Anda",
+    "notifications": "Notifikasi",
+    "notificationsDesc": "Aktifkan notifikasi dalam aplikasi"
+  },
+  "analytics": {
+    "title": "Analitik & Wawasan",
+    "subtitle": "Visualisasikan kesehatan proyek dan produktivitas tim.",
+    "allProjects": "Semua Proyek",
+    "taskByStatus": "Tugas Berdasarkan Status",
+    "taskByPriority": "Tugas Berdasarkan Prioritas",
+    "completionTrend": "Tren Penyelesaian 7 Hari",
+    "teamWorkload": "Beban Kerja Tim (Tugas Aktif)"
+  },
+  "report": {
+    "title": "Hasilkan Laporan",
+    "subtitle": "Ekspor atau cetak laporan detail untuk organisasi Anda.",
+    "print": "Cetak",
+    "exportJson": "Ekspor JSON",
+    "typeProject": "Status Tugas Proyek",
+    "typeMember": "Produktivitas Anggota",
+    "typeOverdue": "Terlambat & Hambatan",
+    "totalTasks": "Total Tugas",
+    "taskName": "Nama Tugas",
+    "assignees": "Penerima Tugas",
+    "unassigned": "Belum Ditugaskan"
+  },
+  "taskModal": {
+    "tabDetails": "Detail",
+    "tabComments": "Komentar",
+    "tabChecklist": "Daftar Periksa",
+    "tabActivity": "Aktivitas",
+    "startTimer": "Mulai Timer",
+    "stopTimer": "Hentikan Timer",
+    "timeTracked": "Waktu terlacak",
+    "reminder": "Pengingat",
+    "loadTemplate": "Muat Template",
+    "saveTemplate": "Simpan sbg Template",
+    "noActivity": "Belum ada aktivitas yang direkam.",
+    "taskActivity": "Aktivitas Tugas",
+    "saveTemplateTitle": "Simpan Daftar Periksa sebagai Template",
+    "templateName": "Nama Template"
+  },
+  "audit": {
+    "title": "Log Audit Sistem",
+    "subtitle": "Pelacakan keamanan global dan aktivitas sistem.",
+    "timestamp": "Stempel Waktu",
+    "user": "Pengguna",
+    "action": "Tindakan",
+    "ip": "Alamat IP",
+    "noLogs": "Tidak ditemukan log audit sistem.",
+    "accessDenied": "Akses Ditolak",
+    "accessDeniedDesc": "Anda harus menjadi administrator untuk melihat log audit sistem."
   }
 }

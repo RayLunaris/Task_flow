@@ -18,6 +18,9 @@ export const TaskForm: React.FC = () => {
   const [projectId, setProjectId] = useState<string>('');
   const [milestoneId, setMilestoneId] = useState<string>('');
   const [dueDate, setDueDate] = useState('');
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurringFrequency, setRecurringFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [recurringInterval, setRecurringInterval] = useState(1);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +34,11 @@ export const TaskForm: React.FC = () => {
       projectId: projectId || undefined,
       milestoneId: milestoneId || undefined,
       dueDate: dueDate || undefined,
+      isRecurring,
+      recurringConfig: isRecurring ? {
+        frequency: recurringFrequency,
+        interval: recurringInterval,
+      } : undefined,
     });
 
     setTitle('');
@@ -40,6 +48,9 @@ export const TaskForm: React.FC = () => {
     setProjectId('');
     setMilestoneId('');
     setDueDate('');
+    setIsRecurring(false);
+    setRecurringFrequency('daily');
+    setRecurringInterval(1);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -134,6 +145,39 @@ export const TaskForm: React.FC = () => {
                 onChange={(e) => setDueDate(e.target.value)}
                 className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               />
+              <div className="flex items-center gap-4 w-full mt-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isRecurring}
+                    onChange={(e) => setIsRecurring(e.target.checked)}
+                    className="rounded border-slate-300 text-purple-600 focus:ring-purple-500 w-4 h-4 cursor-pointer"
+                  />
+                  <span>🔁 Recurring Task</span>
+                </label>
+
+                {isRecurring && (
+                  <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-2">
+                    <span className="text-sm text-slate-500">Repeat every</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={recurringInterval}
+                      onChange={(e) => setRecurringInterval(Number(e.target.value) || 1)}
+                      className="w-16 text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-center"
+                    />
+                    <select
+                      value={recurringFrequency}
+                      onChange={(e) => setRecurringFrequency(e.target.value as any)}
+                      className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800"
+                    >
+                      <option value="daily">Day(s)</option>
+                      <option value="weekly">Week(s)</option>
+                      <option value="monthly">Month(s)</option>
+                    </select>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

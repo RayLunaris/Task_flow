@@ -156,6 +156,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
               {dueDateStatus.color === 'red' ? '🔴' : dueDateStatus.color === 'yellow' ? '🟡' : '⚪'} {dueDateStatus.date.toLocaleDateString(i18n.language === 'id' ? 'id-ID' : 'en-US', { day: 'numeric', month: 'short' })} ({t(dueDateStatus.key, { days: dueDateStatus.days })})
             </Badge>
           )}
+          {task.isRecurring && (
+            <Badge variant="category" color="#3B82F6">🔁 {t('common.recurring') || 'Berulang'}</Badge>
+          )}
         </div>
 
         {totalSubTasks > 0 && (

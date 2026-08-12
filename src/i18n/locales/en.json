@@ -11,7 +11,16 @@
   "nav": {
     "tasks": "Tasks",
     "calendar": "Calendar",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "kanban": "Kanban",
+    "milestones": "Milestones",
+    "team": "Team",
+    "analytics": "Analytics",
+    "report": "Reports",
+    "settings": "Settings",
+    "audit": "Audit Log",
+    "myTasks": "My Tasks"
   },
   "sidebar": {
     "menu": "Main Menu",
@@ -121,5 +130,70 @@
     "3": "Produktif / Productive",
     "4": "Ahli / Expert",
     "5": "Master"
+  },
+  "settings": {
+    "title": "Settings & Profile",
+    "subtitle": "Manage your account settings and application preferences.",
+    "userProfile": "User Profile",
+    "fullName": "Full Name",
+    "department": "Department",
+    "email": "Email Address",
+    "saveProfile": "Save Profile",
+    "preferences": "Preferences",
+    "appearance": "Appearance",
+    "appearanceDesc": "Toggle dark or light mode",
+    "language": "Language",
+    "languageDesc": "Choose your interface language",
+    "notifications": "Notifications",
+    "notificationsDesc": "Enable in-app notifications"
+  },
+  "analytics": {
+    "title": "Analytics & Insights",
+    "subtitle": "Visualize project health and team productivity.",
+    "allProjects": "All Projects",
+    "taskByStatus": "Task by Status",
+    "taskByPriority": "Task by Priority",
+    "completionTrend": "7-Day Completion Trend",
+    "teamWorkload": "Team Workload (Active Tasks)"
+  },
+  "report": {
+    "title": "Generate Reports",
+    "subtitle": "Export or print detailed reports for your organization.",
+    "print": "Print",
+    "exportJson": "Export JSON",
+    "typeProject": "Project Task Status",
+    "typeMember": "Member Productivity",
+    "typeOverdue": "Overdue & Bottlenecks",
+    "totalTasks": "Total Tasks",
+    "taskName": "Task Name",
+    "assignees": "Assignees",
+    "unassigned": "Unassigned"
+  },
+  "taskModal": {
+    "tabDetails": "Details",
+    "tabComments": "Comments",
+    "tabChecklist": "Checklist",
+    "tabActivity": "Activity",
+    "startTimer": "Start Timer",
+    "stopTimer": "Stop Timer",
+    "timeTracked": "Time tracked",
+    "reminder": "Reminder",
+    "loadTemplate": "Load Template",
+    "saveTemplate": "Save as Template",
+    "noActivity": "No activity recorded yet.",
+    "taskActivity": "Task Activity",
+    "saveTemplateTitle": "Save Checklist as Template",
+    "templateName": "Template Name"
+  },
+  "audit": {
+    "title": "System Audit Log",
+    "subtitle": "Global security and system activity tracking.",
+    "timestamp": "Timestamp",
+    "user": "User",
+    "action": "Action",
+    "ip": "IP Address",
+    "noLogs": "No system audit logs found.",
+    "accessDenied": "Access Denied",
+    "accessDeniedDesc": "You must be an administrator to view system audit logs."
   }
 }

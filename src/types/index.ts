@@ -39,6 +39,12 @@ export interface ChecklistItem {
   order: number;
 }
 
+export interface ChecklistTemplate {
+  id: string;
+  name: string;
+  items: Omit<ChecklistItem, 'completed'>[];
+}
+
 export interface Attachment {
   id: string;
   name: string;
