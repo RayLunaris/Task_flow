@@ -32,11 +32,18 @@ export const ProductivityChart: React.FC = () => {
       return dueDay.getTime() < today.getTime();
     }).length;
 
+    const getLocalYYYYMMDD = (d: Date) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const data = last7Days.map(date => {
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = getLocalYYYYMMDD(date);
       const count = tasks.filter(t => {
         if (!t.completed || !t.completedAt) return false;
-        const compDate = new Date(t.completedAt).toISOString().split('T')[0];
+        const compDate = getLocalYYYYMMDD(new Date(t.completedAt));
         return compDate === dateStr;
       }).length;
 

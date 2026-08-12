@@ -9,6 +9,14 @@ export interface User {
   createdAt: string;
 }
 
+export interface ProjectUpdate {
+  id: string;
+  userId: string;
+  percentage: number;
+  description: string;
+  createdAt: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -20,6 +28,7 @@ export interface Project {
   memberIds: string[];
   managerId: string;
   progress: number;
+  updates?: ProjectUpdate[]; // The commit history
   startDate?: string;
   dueDate?: string;
   createdAt: string;

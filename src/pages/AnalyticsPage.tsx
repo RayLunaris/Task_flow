@@ -63,13 +63,20 @@ export const AnalyticsPage: React.FC = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    const getLocalYYYYMMDD = (d: Date) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     for (let i = 6; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = getLocalYYYYMMDD(d);
       
-      const created = filteredTasks.filter(t => t.createdAt.startsWith(dateStr)).length;
-      const completed = filteredTasks.filter(t => t.completedAt?.startsWith(dateStr)).length;
+      const created = filteredTasks.filter(t => getLocalYYYYMMDD(new Date(t.createdAt)) === dateStr).length;
+      const completed = filteredTasks.filter(t => t.completedAt && getLocalYYYYMMDD(new Date(t.completedAt)) === dateStr).length;
       
       data.push({
         date: d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
