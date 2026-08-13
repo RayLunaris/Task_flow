@@ -1,19 +1,29 @@
 import React from 'react';
-import { Trophy, Star } from 'lucide-react';
+import { Trophy, Star, ChevronRight, Zap } from 'lucide-react';
 import { useGamification } from '../../hooks/useGamification';
-import { ProgressBar } from '../ui/ProgressBar';
-
+import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+
+const containerVariants: any = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants: any = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+};
 
 export const GamificationPanel: React.FC = () => {
   const { progress, getLevelInfo } = useGamification();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const currentLevelInfo = getLevelInfo(progress.totalPoints);
   
-  // better calc for XP
   let prevLevelPoints = 0;
   if (currentLevelInfo.level > 1) {
-    // We can just define the array here or fetch from context
     const LEVELS = [0, 100, 300, 600, 1000];
     prevLevelPoints = LEVELS[currentLevelInfo.level - 1] || 0;
   }
@@ -23,66 +33,89 @@ export const GamificationPanel: React.FC = () => {
   const progressPercent = currentLevelInfo.nextLevelPoints ? (xpInCurrentLevel / xpNeededForNext) * 100 : 100;
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 text-center sm:text-left flex flex-col sm:flex-row items-center gap-6 transition-colors duration-300">
-        <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-purple-200 dark:shadow-none">
-          <span className="text-3xl font-black">{currentLevelInfo.level}</span>
-        </div>
-        <div className="flex-1 w-full">
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-1">{t(`levels.${currentLevelInfo.level}`)}</h2>
-          <p className="text-slate-500 dark:text-slate-400 mb-4 flex items-center justify-center sm:justify-start gap-2">
-            <Star size={16} className="text-yellow-400 fill-yellow-400" />
-            {progress.totalPoints} {t('dashboard.totalXp')}
-            {progress.streakDays > 0 && (
-              <span className="ml-2 flex items-center gap-1 text-orange-500 bg-orange-50 dark:bg-orange-500/20 px-2 py-0.5 rounded-full text-xs font-bold">
-                🔥 {t('dashboard.dayStreak', { days: progress.streakDays })}
-              </span>
-            )}
-          </p>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold text-slate-400 dark:text-slate-500">
-              <span>{t('dashboard.level', { level: currentLevelInfo.level })}</span>
-              {currentLevelInfo.nextLevelPoints && (
-                <span>{t('dashboard.level', { level: currentLevelInfo.level + 1 })} ({currentLevelInfo.nextLevelPoints} XP)</span>
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-8"
+    >
+      <motion.div variants={itemVariants} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden relative group">
+        <div className="absolute top-0 left-0 w-full h-1 bg-blue-600"></div>
+        <div className="p-6 flex flex-col items-center sm:items-start gap-5">
+          <div className="flex items-center gap-4 w-full justify-between">
+             <div className="w-14 h-14 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center relative overflow-hidden group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">
+                <span className="text-2xl font-bold text-slate-800 dark:text-slate-100 group-hover:scale-110 transition-transform duration-300">{currentLevelInfo.level}</span>
+             </div>
+             {progress.streakDays > 0 && (
+                <div className="flex items-center gap-1.5 bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 px-3 py-1.5 rounded-full text-xs font-semibold">
+                  <Zap size={14} className="fill-orange-500" /> {progress.streakDays} Day Streak
+                </div>
               )}
+          </div>
+          
+          <div className="w-full">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">{t(`levels.${currentLevelInfo.level}`)}</h2>
+            <div className="flex items-center gap-2 mt-1 mb-6">
+               <Star size={14} className="text-slate-400" />
+               <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{progress.totalPoints} XP Total</span>
             </div>
-            <ProgressBar progress={progressPercent} color="bg-gradient-to-r from-purple-500 to-pink-500" className="h-3" />
-            <div className="text-right text-xs text-slate-400 dark:text-slate-500 font-medium">
-              {currentLevelInfo.nextLevelPoints ? t('dashboard.xpToNext', { xp: currentLevelInfo.nextLevelPoints - progress.totalPoints }) : t('dashboard.maxLevel')}
+            
+            <div className="space-y-2.5 w-full">
+              <div className="flex justify-between text-xs font-medium text-slate-500 dark:text-slate-400">
+                <span>Level {currentLevelInfo.level}</span>
+                {currentLevelInfo.nextLevelPoints && (
+                  <span>Level {currentLevelInfo.level + 1}</span>
+                )}
+              </div>
+              <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                 <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+                    className="h-full bg-blue-600 rounded-full"
+                 />
+              </div>
+              <div className="text-right text-xs text-slate-500 dark:text-slate-400">
+                {currentLevelInfo.nextLevelPoints ? `${currentLevelInfo.nextLevelPoints - progress.totalPoints} XP to next level` : 'Max Level'}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div>
-        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2 transition-colors duration-300">
-          <Trophy className="text-yellow-500" /> {t('dashboard.yourBadges')}
-        </h3>
+      <motion.div variants={itemVariants}>
+        <div className="flex items-center justify-between mb-4">
+           <h3 className="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-50 flex items-center gap-2">
+             <Trophy size={16} className="text-slate-400" /> Your Badges
+           </h3>
+           <button className="text-xs font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors flex items-center">
+             View all <ChevronRight size={14} />
+           </button>
+        </div>
         
         {progress.badges.length === 0 ? (
-          <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-8 text-center border border-slate-100 dark:border-slate-800 border-dashed transition-colors duration-300">
-            <Trophy size={48} className="text-slate-300 dark:text-slate-700 mx-auto mb-3" />
-            <p className="text-slate-500 dark:text-slate-400 font-medium">{t('dashboard.noBadges')}</p>
-            <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">{t('dashboard.noBadgesHint')}</p>
+          <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-8 text-center border border-slate-200 dark:border-slate-800 border-dashed">
+            <Trophy size={28} className="text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">No badges earned yet</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {progress.badges.map(badge => (
-              <div key={badge.id} className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm text-center hover:shadow-md transition-all duration-300">
-                <div className="w-16 h-16 bg-orange-50 dark:bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">
+          <div className="grid grid-cols-2 gap-3">
+            {progress.badges.map((badge) => (
+              <motion.div 
+                key={badge.id}
+                whileHover={{ y: -2, boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)' }}
+                className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 text-left transition-all"
+              >
+                <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-lg flex items-center justify-center mb-3 text-xl border border-slate-100 dark:border-slate-700">
                   {badge.icon}
                 </div>
-                <h4 className="font-bold text-slate-700 dark:text-slate-200 text-sm">{badge.name}</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{badge.description}</p>
-                <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-2 font-medium bg-slate-50 dark:bg-slate-800 py-1 rounded">
-                  {t('dashboard.unlocked', { date: new Date(badge.unlockedAt).toLocaleDateString(i18n.language === 'id' ? 'id-ID' : 'en-US') })}
-                </div>
-              </div>
+                <h4 className="font-semibold text-slate-900 dark:text-slate-50 text-sm tracking-tight">{badge.name}</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">{badge.description}</p>
+              </motion.div>
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

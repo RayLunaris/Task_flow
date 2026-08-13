@@ -110,7 +110,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (task.id === id) {
           const updatedTask = { ...task, ...updates, updatedAt: new Date().toISOString() };
           
-          // Check if it was just marked as done by status update (e.g., drag and drop to Done column)
+
           if (updates.status === 'done' && task.status !== 'done') {
             updatedTask.completed = true;
             updatedTask.completedAt = new Date().toISOString();

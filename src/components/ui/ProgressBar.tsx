@@ -5,10 +5,10 @@ import { twMerge } from 'tailwind-merge';
 interface ProgressBarProps {
   progress: number; // 0 to 100
   className?: string;
-  color?: string; // Tailwind color class, e.g., 'bg-purple-500'
+  color?: string; // Tailwind color class, e.g., 'bg-blue-600'
 }
 
-export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, className, color = 'bg-purple-500' }) => {
+export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, className, color = 'bg-blue-600' }) => {
   const clampedProgress = Math.max(0, Math.min(100, progress));
 
   return (

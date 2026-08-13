@@ -12,7 +12,7 @@ export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
-  const [newCategoryColor, setNewCategoryColor] = useState('#7C3AED'); // Default purple
+  const [newCategoryColor, setNewCategoryColor] = useState('#2563EB'); // Default blue
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,10 +56,10 @@ export const Sidebar: React.FC = () => {
               key={item.id}
               onClick={() => navigate(item.path)}
               className={clsx(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 font-medium text-sm',
+                'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 font-medium text-sm',
                 isActive
-                  ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                  ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
               )}
             >
               <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
@@ -75,10 +75,10 @@ export const Sidebar: React.FC = () => {
               key={item.id}
               onClick={() => navigate(item.path)}
               className={clsx(
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 font-medium text-sm',
+                'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 font-medium text-sm',
                 isActive
-                  ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                  ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
               )}
             >
               <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
@@ -93,7 +93,7 @@ export const Sidebar: React.FC = () => {
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('sidebar.categories')}</h3>
           <button 
             onClick={() => setIsAddingCategory(!isAddingCategory)}
-            className="text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            className="text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             title={t('sidebar.addCategory')}
           >
             {isAddingCategory ? <X size={14} /> : <Plus size={14} />}
@@ -108,7 +108,7 @@ export const Sidebar: React.FC = () => {
           className={clsx(
             'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 text-sm font-medium',
             selectedCategory === null && currentView === 'my-tasks'
-              ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
+              ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
           )}
         >
@@ -126,7 +126,7 @@ export const Sidebar: React.FC = () => {
             className={clsx(
               'w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 text-sm font-medium',
               selectedCategory === cat.name && currentView === 'my-tasks'
-                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400'
+                ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
                 : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
             )}
           >
@@ -157,7 +157,7 @@ export const Sidebar: React.FC = () => {
             <button
               type="submit"
               disabled={!newCategoryName.trim()}
-              className="mt-2 w-full text-xs font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-400 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-200 dark:hover:bg-purple-900/60 transition-colors"
+              className="mt-2 w-full text-xs font-medium bg-blue-50 border border-blue-100 dark:bg-blue-500/10 dark:border-blue-500/20 text-blue-600 dark:text-blue-400 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors"
             >
               {t('common.save')}
             </button>
