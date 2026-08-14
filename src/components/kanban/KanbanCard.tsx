@@ -43,7 +43,7 @@ export const KanbanCard: React.FC<KanbanCardProps> = ({ task }) => {
       style={style}
       className={clsx(
         "relative bg-white dark:bg-slate-800 rounded-xl p-3 shadow-sm border border-slate-200 dark:border-slate-700 mb-3 group",
-        isDragging ? "opacity-50 z-50 ring-2 ring-purple-500" : "hover:shadow-md transition-shadow"
+        isDragging ? "opacity-50 z-50 ring-2 ring-primary" : "hover:shadow-md transition-shadow"
       )}
     >
       <div 
@@ -114,7 +114,7 @@ export const KanbanCard: React.FC<KanbanCardProps> = ({ task }) => {
                 <div 
                   key={id} 
                   title={u.name}
-                  className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 flex items-center justify-center text-[10px] font-bold border border-white dark:border-slate-800"
+                  className="w-6 h-6 rounded-full bg-[#E3F2FD] dark:bg-blue-900/50 text-[#0D47A1] dark:text-blue-300 flex items-center justify-center text-[10px] font-bold border border-white dark:border-slate-800"
                 >
                   {u.name.charAt(0).toUpperCase()}
                 </div>

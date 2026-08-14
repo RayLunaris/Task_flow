@@ -19,8 +19,13 @@ export const SettingsPage: React.FC = () => {
     return 'light';
   });
   
-  const [language, setLanguage] = useState(i18n.language || 'en');
+  const [language, setLanguage] = useState(i18n.language || 'id');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  // Sync language state if changed elsewhere (e.g. Navbar)
+  useEffect(() => {
+    setLanguage(i18n.language);
+  }, [i18n.language]);
 
   // Apply theme changes
   useEffect(() => {
@@ -33,10 +38,10 @@ export const SettingsPage: React.FC = () => {
   }, [theme]);
 
   // Apply language changes
-  useEffect(() => {
-    i18n.changeLanguage(language);
-    localStorage.setItem('taskflow_language', language);
-  }, [language, i18n]);
+  const handleLanguageChange = (newLang: string) => {
+    setLanguage(newLang);
+    i18n.changeLanguage(newLang);
+  };
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +55,7 @@ export const SettingsPage: React.FC = () => {
     <div className="p-8 max-w-4xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-          <Settings className="text-purple-600" />
+          <Settings className="text-primary" />
           {t('settings.title')}
         </h1>
         <p className="text-slate-500 mt-1">{t('settings.subtitle')}</p>
@@ -60,7 +65,7 @@ export const SettingsPage: React.FC = () => {
         {/* Profile Settings */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
           <div className="p-6 border-b border-slate-100 dark:border-slate-700/50 flex items-center gap-2">
-            <User className="text-purple-600" size={20} />
+            <User className="text-primary" size={20} />
             <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t('settings.userProfile')}</h2>
           </div>
           <div className="p-6">
@@ -73,7 +78,7 @@ export const SettingsPage: React.FC = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full text-sm bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-800 dark:text-slate-200"
+                  className="w-full text-sm bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
                 />
               </div>
               
@@ -86,7 +91,7 @@ export const SettingsPage: React.FC = () => {
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
                   placeholder="e.g. Engineering"
-                  className="w-full text-sm bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-800 dark:text-slate-200"
+                  className="w-full text-sm bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
                 />
               </div>
 
@@ -114,7 +119,7 @@ export const SettingsPage: React.FC = () => {
         {/* Application Settings */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden h-fit">
           <div className="p-6 border-b border-slate-100 dark:border-slate-700/50 flex items-center gap-2">
-            <Settings className="text-purple-600" size={20} />
+            <Settings className="text-primary" size={20} />
             <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t('settings.preferences')}</h2>
           </div>
           <div className="p-6 space-y-6">
@@ -122,7 +127,7 @@ export const SettingsPage: React.FC = () => {
             {/* Theme Toggle */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400' : 'bg-orange-100 text-orange-600'}`}>
+                <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-[#E3F2FD] text-[#0D47A1] dark:bg-blue-900/50 dark:text-blue-400' : 'bg-orange-100 text-orange-600'}`}>
                   {theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />}
                 </div>
                 <div>
@@ -132,7 +137,7 @@ export const SettingsPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-                className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 bg-purple-600"
+                className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 bg-primary"
               >
                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${theme === 'dark' ? 'translate-x-6' : 'translate-x-1'}`} />
               </button>
@@ -151,8 +156,8 @@ export const SettingsPage: React.FC = () => {
               </div>
               <select
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="text-sm bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-800 dark:text-slate-200"
+                onChange={(e) => handleLanguageChange(e.target.value)}
+                className="text-sm bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
               >
                 <option value="en">English</option>
                 <option value="id">Bahasa Indonesia</option>
@@ -172,7 +177,7 @@ export const SettingsPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${notificationsEnabled ? 'bg-purple-600' : 'bg-slate-300 dark:bg-slate-600'}`}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${notificationsEnabled ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-600'}`}
               >
                 <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${notificationsEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
               </button>

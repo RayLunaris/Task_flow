@@ -74,13 +74,13 @@ export const CalendarView: React.FC = () => {
 
     if (dayTasks.length === 0) return null;
 
-    // Show up to 3 dots with colors based on category/priority? Let's just do generic teal/purple dots
+    // Show up to 3 dots with colors based on category/priority
     const dots = dayTasks.slice(0, 3).map((t, i) => (
       <div 
         key={i} 
         className={clsx(
           "w-1.5 h-1.5 rounded-full",
-          t.completed ? "bg-slate-300 dark:bg-slate-600" : "bg-purple-500 dark:bg-purple-400"
+          t.completed ? "bg-slate-300 dark:bg-slate-600" : "bg-primary"
         )} 
       />
     ));
@@ -113,19 +113,19 @@ export const CalendarView: React.FC = () => {
       <div className="flex-1 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <CalendarIcon className="text-purple-500 dark:text-purple-400" /> 
+            <CalendarIcon className="text-primary" /> 
             {t(`calendar.months.${currentDate.getMonth()}`)} {currentDate.getFullYear()}
           </h2>
           <div className="flex gap-2">
             <button 
               onClick={prevMonth}
-              className="p-2 bg-slate-50 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-900/40 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 rounded-xl transition-colors"
+              className="p-2 bg-slate-50 dark:bg-slate-800 hover:bg-[#E3F2FD] dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary rounded-xl transition-colors"
             >
               <ChevronLeft size={20} />
             </button>
             <button 
               onClick={nextMonth}
-              className="p-2 bg-slate-50 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-900/40 text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 rounded-xl transition-colors"
+              className="p-2 bg-slate-50 dark:bg-slate-800 hover:bg-[#E3F2FD] dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary rounded-xl transition-colors"
             >
               <ChevronRight size={20} />
             </button>
@@ -152,13 +152,13 @@ export const CalendarView: React.FC = () => {
                 className={clsx(
                   "min-h-[4rem] p-2 rounded-2xl flex flex-col items-center justify-start transition-all border",
                   !dayObj.isCurrentMonth && "text-slate-300 dark:text-slate-600 bg-slate-50/50 dark:bg-slate-800/30 border-transparent",
-                  dayObj.isCurrentMonth && !isSelected && "text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-purple-200 dark:hover:border-purple-800 hover:bg-purple-50/50 dark:hover:bg-purple-900/20",
-                  isSelected && "bg-purple-500 dark:bg-purple-600 text-white border-purple-500 dark:border-purple-600 shadow-md shadow-purple-200 dark:shadow-none"
+                  dayObj.isCurrentMonth && !isSelected && "text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-[#90CAF9] dark:hover:border-blue-700 hover:bg-[#E3F2FD]/50 dark:hover:bg-slate-800/50",
+                  isSelected && "bg-primary text-white border-primary shadow-sm"
                 )}
               >
                 <span className={clsx(
                   "text-sm font-bold w-7 h-7 flex items-center justify-center rounded-full",
-                  isToday && !isSelected && "bg-slate-100 dark:bg-slate-800 text-purple-600 dark:text-purple-400",
+                  isToday && !isSelected && "bg-[#E3F2FD] dark:bg-slate-800 text-[#0D47A1] dark:text-blue-400",
                   isToday && isSelected && "bg-white/20"
                 )}>
                   {dayObj.date.getDate()}
@@ -174,11 +174,11 @@ export const CalendarView: React.FC = () => {
 
       {/* Selected Date Tasks */}
       <div className="w-full lg:w-[350px] flex flex-col">
-        <div className="bg-purple-50 dark:bg-purple-900/30 p-6 rounded-t-3xl border border-b-0 border-purple-100 dark:border-purple-900/50 transition-colors duration-300">
-          <h3 className="text-sm font-bold text-purple-400 dark:text-purple-500 uppercase tracking-wider mb-1">
+        <div className="bg-[#E3F2FD] dark:bg-slate-800/80 p-6 rounded-t-3xl border border-b-0 border-[#90CAF9]/40 dark:border-slate-800 transition-colors duration-300">
+          <h3 className="text-sm font-bold text-primary dark:text-blue-400 uppercase tracking-wider mb-1">
             {t('calendar.schedule')}
           </h3>
-          <p className="text-2xl font-black text-purple-900 dark:text-purple-300">
+          <p className="text-2xl font-black text-[#0D47A1] dark:text-blue-200">
             {selectedDate.getDate()} {t(`calendar.months.${selectedDate.getMonth()}`)}
           </p>
         </div>

@@ -18,20 +18,22 @@ import type { Task } from '../../types';
 import { KanbanColumn } from './KanbanColumn';
 import { KanbanCard } from './KanbanCard';
 import { useTasks } from '../../hooks/useTasks';
+import { useTranslation } from 'react-i18next';
 
 interface KanbanBoardProps {
   projectId: string;
 }
 
-const COLUMNS = [
-  { id: 'todo', title: 'To Do', color: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100' },
-  { id: 'in_progress', title: 'In Progress', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-100' },
-  { id: 'review', title: 'Review', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-100' },
-  { id: 'done', title: 'Done', color: 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-100' },
-];
-
 export const KanbanBoard: React.FC<KanbanBoardProps> = ({ projectId }) => {
   const { tasks, updateTask, toggleTaskCompletion } = useTasks();
+  const { t } = useTranslation();
+
+  const COLUMNS = [
+    { id: 'todo', title: t('kanban.columns.todo'), color: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100' },
+    { id: 'in_progress', title: t('kanban.columns.in_progress'), color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-100' },
+    { id: 'review', title: t('kanban.columns.review'), color: 'bg-[#E3F2FD] text-[#0D47A1] dark:bg-blue-900/30 dark:text-blue-300' },
+    { id: 'done', title: t('kanban.columns.done'), color: 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-100' },
+  ];
   
   // Get tasks for this project (or all if projectId is empty)
   const boardTasks = tasks.filter(t => projectId ? t.projectId === projectId : true);

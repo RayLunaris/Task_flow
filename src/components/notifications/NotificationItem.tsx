@@ -4,12 +4,13 @@ import {
   CheckCircle, 
   Clock, 
   MessageSquare, 
-  Flag,
+  Flag, 
   Trash2,
   CheckSquare
 } from 'lucide-react';
 import clsx from 'clsx';
 import type { Notification } from '../../types';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -17,25 +18,26 @@ interface NotificationItemProps {
   onDelete: (id: string) => void;
 }
 
-const formatRelativeTime = (dateString: string) => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
-  if (diffInSeconds < 60) return 'Just now';
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-  return date.toLocaleDateString();
-};
-
 export const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onRead, onDelete }) => {
+  const { t } = useTranslation();
+
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) return t('notifications.justNow');
+    if (diffInSeconds < 3600) return t('notifications.minutesAgo', { count: Math.floor(diffInSeconds / 60) });
+    if (diffInSeconds < 86400) return t('notifications.hoursAgo', { count: Math.floor(diffInSeconds / 3600) });
+    if (diffInSeconds < 2592000) return t('notifications.daysAgo', { count: Math.floor(diffInSeconds / 86400) });
+    return date.toLocaleDateString();
+  };
   
   const getIcon = (type: Notification['type']) => {
     switch(type) {
       case 'task_assigned': return <CheckSquare size={16} className="text-blue-500" />;
       case 'deadline_near': return <Clock size={16} className="text-orange-500" />;
-      case 'comment': return <MessageSquare size={16} className="text-purple-500" />;
+      case 'comment': return <MessageSquare size={16} className="text-primary" />;
       case 'approval': return <CheckCircle size={16} className="text-teal-500" />;
       case 'milestone': return <Flag size={16} className="text-pink-500" />;
       default: return <Bell size={16} className="text-slate-500" />;
@@ -46,7 +48,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
     switch(type) {
       case 'task_assigned': return 'bg-blue-100 dark:bg-blue-900/30';
       case 'deadline_near': return 'bg-orange-100 dark:bg-orange-900/30';
-      case 'comment': return 'bg-purple-100 dark:bg-purple-900/30';
+      case 'comment': return 'bg-[#E3F2FD] dark:bg-blue-900/30';
       case 'approval': return 'bg-teal-100 dark:bg-teal-900/30';
       case 'milestone': return 'bg-pink-100 dark:bg-pink-900/30';
       default: return 'bg-slate-100 dark:bg-slate-800';
@@ -57,7 +59,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
     <div 
       className={clsx(
         "group p-4 flex gap-3 border-b border-slate-100 dark:border-slate-800 transition-colors",
-        !notification.isRead ? "bg-purple-50/50 dark:bg-purple-900/10" : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+        !notification.isRead ? "bg-[#E3F2FD]/40 dark:bg-blue-950/20" : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
       )}
       onMouseEnter={() => {
         if (!notification.isRead) onRead(notification.id);
@@ -84,11 +86,12 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
 
       <div className="shrink-0 flex items-start">
         {!notification.isRead && (
-          <div className="w-2 h-2 rounded-full bg-purple-500 mt-2 mr-2 group-hover:opacity-0 transition-opacity" />
+          <div className="w-2 h-2 rounded-full bg-primary mt-2 mr-2 group-hover:opacity-0 transition-opacity" />
         )}
         <button 
           onClick={() => onDelete(notification.id)}
           className="p-1.5 text-slate-400 hover:text-pink-600 rounded-lg hover:bg-pink-50 dark:hover:bg-pink-900/30 opacity-0 group-hover:opacity-100 transition-all"
+          title={t('notifications.delete')}
         >
           <Trash2 size={16} />
         </button>

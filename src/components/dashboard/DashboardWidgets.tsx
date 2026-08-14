@@ -1,22 +1,22 @@
 
 import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { ProgressBar } from '../ui/ProgressBar';
-import { Avatar } from '../ui/Avatar';
-import { CheckSquare, RefreshCw, Users, Bell, Calendar as CalendarIcon, Check, X, Clock } from 'lucide-react';
+import { CheckSquare, RefreshCw, Users, Bell, Check, X } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../context/AuthContext';
 import { useProjects } from '../../context/ProjectContext';
 import { useNotifications } from '../../context/NotificationContext';
+import { useTranslation } from 'react-i18next';
 import { isToday } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
 export const QuickActions = () => {
+  const { t } = useTranslation();
   const actions = [
-    { icon: CheckSquare, label: 'Kelola Tugas', color: 'text-primary bg-primary/10' },
-    { icon: RefreshCw, label: 'Sinkron', color: 'text-info bg-info/10' },
-    { icon: Users, label: 'Kolaborasi', color: 'text-success bg-success/10' },
+    { icon: CheckSquare, label: t('dashboard.quickActions.manageTasks'), color: 'text-primary bg-primary/10' },
+    { icon: RefreshCw, label: t('dashboard.quickActions.sync'), color: 'text-info bg-info/10' },
+    { icon: Users, label: t('dashboard.quickActions.collaborate'), color: 'text-success bg-success/10' },
   ];
 
   return (
@@ -37,6 +37,7 @@ export const QuickActions = () => {
 
 export const RecentNotifications = () => {
   const { notifications, markAsRead, deleteNotification } = useNotifications();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const recent = notifications.slice(0, 5);
 
@@ -44,13 +45,15 @@ export const RecentNotifications = () => {
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-sm flex items-center gap-2">
-          <Bell size={16} className="text-muted" /> Notifikasi
+          <Bell size={16} className="text-muted" /> {t('dashboard.recentNotifications')}
         </h3>
-        <button onClick={() => navigate('/notifications')} className="text-[11px] text-primary hover:underline font-medium">Lihat Semua</button>
+        <button onClick={() => navigate('/notifications')} className="text-[11px] text-primary hover:underline font-medium">
+          {t('common.viewAll')}
+        </button>
       </div>
       <div className="space-y-3">
         {recent.length === 0 ? (
-          <div className="text-center text-xs text-muted py-4">Tidak ada notifikasi</div>
+          <div className="text-center text-xs text-muted py-4">{t('dashboard.noNotifications')}</div>
         ) : (
           recent.map(n => (
             <div key={n.id} className="flex items-start gap-3 p-2 hover:bg-subtle dark:hover:bg-slate-800 rounded-lg transition-colors group">
@@ -61,11 +64,11 @@ export const RecentNotifications = () => {
               </div>
               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 {!n.isRead && (
-                  <button onClick={() => markAsRead(n.id)} className="p-1 hover:bg-white rounded text-primary" title="Tandai dibaca">
+                  <button onClick={() => markAsRead(n.id)} className="p-1 hover:bg-white rounded text-primary" title={t('notifications.markRead')}>
                     <Check size={12} />
                   </button>
                 )}
-                <button onClick={() => deleteNotification(n.id)} className="p-1 hover:bg-white rounded text-danger" title="Hapus">
+                <button onClick={() => deleteNotification(n.id)} className="p-1 hover:bg-white rounded text-danger" title={t('notifications.delete')}>
                   <X size={12} />
                 </button>
               </div>
@@ -80,6 +83,7 @@ export const RecentNotifications = () => {
 export const TodayTasksWidget = () => {
   const { tasks } = useTasks();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   const todayTasks = tasks.filter(t => {
@@ -96,18 +100,20 @@ export const TodayTasksWidget = () => {
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-sm">Tugas Hari Ini</h3>
+        <h3 className="font-semibold text-sm">{t('dashboard.todayTasks')}</h3>
         <div className="flex items-center gap-3">
-          <Badge variant="category">{completed}/{total} Selesai</Badge>
+          <Badge variant="category">{t('dashboard.completedTasks', { completed, total })}</Badge>
           {todayTasks.length > 0 && (
-            <button onClick={() => navigate('/my-tasks')} className="text-[11px] text-primary hover:underline font-medium">Lihat Semua</button>
+            <button onClick={() => navigate('/my-tasks')} className="text-[11px] text-primary hover:underline font-medium">
+              {t('common.viewAll')}
+            </button>
           )}
         </div>
       </div>
       
       <div className="mb-4">
         <div className="flex justify-between text-xs mb-1">
-          <span className="text-muted">Progress</span>
+          <span className="text-muted">{t('common.progress')}</span>
           <span className="font-bold text-primary">{progress}%</span>
         </div>
         <ProgressBar progress={progress} />
@@ -115,7 +121,7 @@ export const TodayTasksWidget = () => {
 
       <div className="space-y-2">
         {displayTasks.length === 0 ? (
-          <div className="text-center text-xs text-muted py-6">Keren! Tidak ada tugas hari ini.</div>
+          <div className="text-center text-xs text-muted py-6">{t('dashboard.noTasksToday')}</div>
         ) : (
           displayTasks.map(t => (
             <div key={t.id} className="flex items-center gap-3 p-2 border border-border-color rounded-lg">
@@ -136,6 +142,7 @@ export const TodayTasksWidget = () => {
 
 export const ProjectStatsWidget = () => {
   const { projects } = useProjects();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const activeProjects = projects.filter(p => p.status === 'active');
   const total = projects.length;
@@ -144,16 +151,18 @@ export const ProjectStatsWidget = () => {
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-sm">Project Stats</h3>
-        <button onClick={() => navigate('/projects')} className="text-[11px] text-primary hover:underline font-medium">Lihat Semua</button>
+        <h3 className="font-semibold text-sm">{t('dashboard.projectStats')}</h3>
+        <button onClick={() => navigate('/projects')} className="text-[11px] text-primary hover:underline font-medium">
+          {t('common.viewAll')}
+        </button>
       </div>
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="p-3 bg-subtle dark:bg-slate-800/50 rounded-lg border border-border-color">
-          <p className="text-[10px] text-muted mb-1 uppercase tracking-wider font-semibold">Total Proyek</p>
+          <p className="text-[10px] text-muted mb-1 uppercase tracking-wider font-semibold">{t('dashboard.totalProjects')}</p>
           <p className="text-xl font-bold text-navy dark:text-slate-100">{total}</p>
         </div>
         <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
-          <p className="text-[10px] text-primary mb-1 uppercase tracking-wider font-semibold">Aktif</p>
+          <p className="text-[10px] text-primary mb-1 uppercase tracking-wider font-semibold">{t('dashboard.activeProjects')}</p>
           <p className="text-xl font-bold text-primary">{active}</p>
         </div>
       </div>

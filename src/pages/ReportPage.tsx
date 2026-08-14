@@ -51,7 +51,7 @@ export const ReportPage: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:hidden">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <FileText className="text-purple-600" />
+            <FileText className="text-primary" />
             {t('report.title')}
           </h1>
           <p className="text-slate-500 mt-1">{t('report.subtitle')}</p>
@@ -73,7 +73,7 @@ export const ReportPage: React.FC = () => {
           <select 
             value={reportType}
             onChange={(e) => setReportType(e.target.value as any)}
-            className="flex-1 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm text-slate-800 dark:text-slate-200 font-medium"
+            className="flex-1 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-sm text-slate-800 dark:text-slate-200 font-medium"
           >
             <option value="project_tasks">{t('report.typeProject')}</option>
             <option value="member_productivity">{t('report.typeMember')}</option>
@@ -84,7 +84,7 @@ export const ReportPage: React.FC = () => {
           <select 
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
-            className="flex-1 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm text-slate-800 dark:text-slate-200 font-medium"
+            className="flex-1 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-sm text-slate-800 dark:text-slate-200 font-medium"
           >
             <option value="all">{t('analytics.allProjects')}</option>
             {projects.map(p => (
@@ -104,7 +104,7 @@ export const ReportPage: React.FC = () => {
             <p className="text-sm text-slate-500 mt-1">Generated on {new Date().toLocaleString()}</p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{reportData.length}</p>
+            <p className="text-2xl font-bold text-primary">{reportData.length}</p>
             <p className="text-xs font-bold text-slate-500 uppercase">{t('report.totalTasks')}</p>
           </div>
         </div>
@@ -151,7 +151,7 @@ export const ReportPage: React.FC = () => {
                           const u = users.find(u => u.id === id);
                           if (!u) return null;
                           return (
-                            <div key={id} title={u.name} className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-[10px] font-bold border-2 border-white dark:border-slate-800 z-10">
+                            <div key={id} title={u.name} className="w-6 h-6 rounded-full bg-[#E3F2FD] text-[#0D47A1] flex items-center justify-center text-[10px] font-bold border-2 border-white dark:border-slate-800 z-10">
                               {u.name.charAt(0).toUpperCase()}
                             </div>
                           );

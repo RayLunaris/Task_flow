@@ -6,7 +6,20 @@
     "save": "Simpan",
     "cancel": "Batal",
     "clear": "Bersihkan",
-    "all": "Semua"
+    "all": "Semua",
+    "search": "Cari",
+    "status": "Status",
+    "priority": "Prioritas",
+    "dueDate": "Tenggat Waktu",
+    "recurring": "Berulang",
+    "workload": "Beban Kerja",
+    "active": "Aktif",
+    "done": "Selesai",
+    "overdue": "Terlambat",
+    "viewAll": "Lihat Semua",
+    "progress": "Progres",
+    "actions": "Tindakan",
+    "close": "Tutup"
   },
   "nav": {
     "tasks": "Tugas",
@@ -20,7 +33,39 @@
     "report": "Laporan",
     "settings": "Pengaturan",
     "audit": "Log Audit",
-    "myTasks": "Tugas Saya"
+    "myTasks": "Tugas Saya",
+    "notifications": "Notifikasi"
+  },
+  "navbar": {
+    "dashboard": "Dashboard",
+    "searchPlaceholder": "Cari atau ketik perintah...",
+    "light": "Terang",
+    "dark": "Gelap",
+    "exportData": "Ekspor data",
+    "toggleLanguage": "Ganti Bahasa",
+    "notifications": "Notifikasi",
+    "logout": "Keluar"
+  },
+  "auth": {
+    "welcomeBack": "Selamat Datang Kembali",
+    "createAccount": "Buat Akun",
+    "signIn": "Masuk",
+    "signUp": "Daftar",
+    "email": "Alamat Email",
+    "password": "Kata Sandi",
+    "fullName": "Nama Lengkap",
+    "role": "Peran",
+    "noAccount": "Belum punya akun?",
+    "haveAccount": "Sudah punya akun?",
+    "register": "Daftar",
+    "login": "Masuk",
+    "invalidCredentials": "Email atau kata sandi tidak valid",
+    "emailInUse": "Email sudah digunakan",
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manajer",
+      "member": "Anggota"
+    }
   },
   "sidebar": {
     "menu": "Menu Utama",
@@ -35,6 +80,52 @@
     "subtitle": "Berikut ringkasan tugas Anda untuk hari ini.",
     "yourTasks": "Tugas Anda"
   },
+  "dashboard": {
+    "welcomeHeading": "Hai, {{name}}! 👋",
+    "welcomeSubheading": "Apa rencanamu untuk hari ini?",
+    "welcomeDesc": "TaskFlow dirancang untuk mengatur, berkolaborasi, dan memantau tugas dengan cara modern.",
+    "quickActions": {
+      "manageTasks": "Kelola Tugas",
+      "sync": "Sinkron",
+      "collaborate": "Kolaborasi"
+    },
+    "recentNotifications": "Notifikasi",
+    "noNotifications": "Tidak ada notifikasi",
+    "todayTasks": "Tugas Hari Ini",
+    "completedTasks": "{{completed}}/{{total}} Selesai",
+    "noTasksToday": "Keren! Tidak ada tugas jatuh tempo hari ini.",
+    "projectStats": "Statistik Proyek",
+    "totalProjects": "Total Proyek",
+    "activeProjects": "Aktif",
+    "myAssignments": "Penugasan Saya",
+    "noAssignments": "Tidak ada penugasan tugas.",
+    "noDueDate": "Tanpa tenggat",
+    "productivitySummary": "Ringkasan Produktivitas",
+    "activeTasks": "Tugas Aktif",
+    "completed7Days": "Selesai (7 Hari)",
+    "completionRate": "Tingkat Penyelesaian",
+    "last7Days": "Aktivitas 7 Hari Terakhir",
+    "totalXp": "Total XP",
+    "dayStreak": "{{days}} Hari Streak",
+    "level": "Level {{level}}",
+    "xpToNext": "{{xp}} XP ke level selanjutnya",
+    "maxLevel": "Level Maksimal!",
+    "yourBadges": "Lencana Anda",
+    "noBadges": "Anda belum membuka lencana apapun.",
+    "noBadgesHint": "Selesaikan tugas dan pertahankan streak Anda untuk mendapatkannya!",
+    "unlocked": "Terbuka {{date}}"
+  },
+  "myTasks": {
+    "title": "Tugas Saya",
+    "allActive": "Semua Aktif",
+    "today": "Hari Ini",
+    "thisWeek": "Minggu Ini",
+    "overdue": "Terlambat",
+    "completed": "Selesai",
+    "sortBy": "Urutkan:",
+    "noTasksFound": "Tidak ada tugas ditemukan",
+    "noTasksMatch": "Anda tidak memiliki tugas yang cocok dengan filter saat ini."
+  },
   "taskForm": {
     "placeholder": "Apa yang perlu Anda selesaikan?",
     "addDetails": "Tambah Detail",
@@ -42,13 +133,22 @@
     "category": "Kategori",
     "priority": "Prioritas",
     "dueDate": "Tenggat Waktu",
-    "addTask": "Tambah Tugas"
+    "addTask": "Tambah Tugas",
+    "noProject": "Tanpa Proyek",
+    "noMilestone": "Tanpa Milestone",
+    "recurringTask": "Tugas Berulang",
+    "repeatEvery": "Ulangi setiap",
+    "frequency": {
+      "daily": "Hari",
+      "weekly": "Minggu",
+      "monthly": "Bulan"
+    }
   },
   "taskList": {
     "noTasks": "Belum ada tugas",
     "noTasksCategory": "Tidak ada tugas di kategori \"{{category}}\".",
     "noTasksFilter": "Coba sesuaikan filter Anda, atau tambahkan tugas baru!",
-    "cleanSlate": "Daftar masih kosong! Tambahkan tugas baru di atas untuk mulai."
+    "cleanSlate": "Daftar masih kosong! Tambahkan tugas baru di atas untuk mulai mengatur harimu."
   },
   "taskCard": {
     "subTasks": "Sub-tugas",
@@ -62,12 +162,13 @@
     "priority": "Prioritas"
   },
   "priority": {
+    "urgent": "Mendesak",
     "high": "Tinggi",
     "medium": "Sedang",
     "low": "Rendah"
   },
   "filter": {
-    "filterAndSort": "Filter & Sort",
+    "filterAndSort": "Filter & Urutkan",
     "clearFilters": "Hapus filter",
     "status": "Status",
     "active": "Aktif",
@@ -76,9 +177,149 @@
     "today": "Hari Ini",
     "thisWeek": "Minggu Ini",
     "overdue": "Terlambat",
-    "sortBy": "Urutkan",
+    "sortBy": "Urutkan Berdasarkan",
     "createdAt": "Dibuat pada",
     "name": "Nama"
+  },
+  "kanban": {
+    "title": "Papan Kanban",
+    "subtitle": "Visualisasikan dan kelola tahapan alur kerja",
+    "project": "Proyek",
+    "globalAll": "Global (Semua Proyek)",
+    "columns": {
+      "todo": "Akan Dikerjakan",
+      "in_progress": "Sedang Dikerjakan",
+      "review": "Ditinjau",
+      "done": "Selesai"
+    },
+    "noTasksColumn": "Tidak ada tugas di kolom ini"
+  },
+  "projects": {
+    "title": "Proyek",
+    "subtitle": "Kelola proyek tim dan ruang kerja Anda",
+    "newProject": "Proyek Baru",
+    "searchPlaceholder": "Cari proyek...",
+    "noProjectsTitle": "Belum Ada Proyek",
+    "noProjectsDesc": "Buat proyek pertamamu untuk mulai mengorganisasi tugas tim.",
+    "createFirstProject": "Buat Proyek",
+    "noMatch": "Tidak ada proyek yang sesuai dengan pencarian Anda.",
+    "tasks": "Tugas",
+    "members": "Anggota",
+    "due": "Tenggat",
+    "status": {
+      "active": "Aktif",
+      "on_hold": "Ditahan",
+      "completed": "Selesai",
+      "archived": "Diarsipkan"
+    },
+    "updateProgress": "Perbarui Progres",
+    "editProject": "Edit Proyek",
+    "deleteProject": "Hapus",
+    "progressModalTitle": "Perbarui Progres: {{name}}",
+    "progressPlaceholder": "Apa yang telah diselesaikan dalam pembaruan ini?",
+    "commitProgress": "Simpan Progres",
+    "deleteConfirm": "Apakah Anda yakin ingin menghapus {{name}}?"
+  },
+  "projectModal": {
+    "createTitle": "Buat Proyek",
+    "editTitle": "Edit Proyek",
+    "name": "Nama Proyek",
+    "namePlaceholder": "contoh: Redesain Situs Web",
+    "description": "Deskripsi (Opsional)",
+    "descriptionPlaceholder": "Tujuan proyek, tautan, atau catatan...",
+    "colorTheme": "Tema Warna",
+    "status": "Status",
+    "progress": "Progres Awal",
+    "startDate": "Tanggal Mulai",
+    "dueDate": "Target Tenggat",
+    "createButton": "Buat Proyek",
+    "saveButton": "Simpan Perubahan"
+  },
+  "milestones": {
+    "title": "Milestone",
+    "subtitle": "Pantau target pencapaian dan tenggat penting proyek",
+    "addMilestone": "Tambah Milestone",
+    "noProjectsTitle": "Proyek Tidak Ditemukan",
+    "noProjectsDesc": "Anda harus membuat proyek terlebih dahulu sebelum menambahkan milestone.",
+    "selectProject": "Pilih Proyek untuk Melihat Garis Waktu:",
+    "noMilestones": "Belum ada milestone yang dibuat untuk proyek ini.",
+    "status": {
+      "not_started": "Belum Dimulai",
+      "on_track": "Sesuai Jadwal",
+      "at_risk": "Beresiko",
+      "completed": "Selesai"
+    },
+    "overdue": "Terlambat",
+    "target": "Target",
+    "deleteConfirm": "Apakah Anda yakin ingin menghapus milestone ini?"
+  },
+  "milestoneModal": {
+    "createTitle": "Tambah Milestone",
+    "editTitle": "Edit Milestone",
+    "name": "Nama Milestone",
+    "namePlaceholder": "contoh: Rilis Versi Beta",
+    "project": "Proyek",
+    "selectProject": "Pilih Proyek",
+    "targetDate": "Tanggal Target",
+    "status": "Status",
+    "description": "Deskripsi (Opsional)",
+    "descriptionPlaceholder": "Apa tujuan dari milestone ini?",
+    "saveMilestone": "Simpan Milestone"
+  },
+  "team": {
+    "title": "Anggota Tim",
+    "subtitle": "Kelola anggota tim dan lihat beban kerja mereka",
+    "addMember": "Tambah Anggota",
+    "searchPlaceholder": "Cari anggota berdasarkan nama, email, atau peran...",
+    "noMembers": "Tidak ada anggota ditemukan.",
+    "noMatch": "Tidak ada anggota yang cocok dengan pencarian Anda.",
+    "you": "Anda",
+    "joined": "Bergabung {{date}}",
+    "workload": "Beban Kerja",
+    "active": "Aktif",
+    "done": "Selesai",
+    "overdue": "Terlambat",
+    "edit": "Edit",
+    "delete": "Hapus",
+    "deleteConfirm": "Apakah Anda yakin ingin menghapus {{name}}?"
+  },
+  "teamModal": {
+    "createTitle": "Tambah Anggota Tim",
+    "editTitle": "Edit Anggota Tim",
+    "name": "Nama Lengkap",
+    "namePlaceholder": "contoh: Budi Santoso",
+    "email": "Alamat Email",
+    "emailPlaceholder": "budi@example.com",
+    "role": "Peran",
+    "password": "Kata Sandi",
+    "newPassword": "Kata Sandi Baru (kosongkan jika tidak diubah)",
+    "addMember": "Tambah Anggota",
+    "saveChanges": "Simpan Perubahan"
+  },
+  "notifications": {
+    "title": "Notifikasi",
+    "subtitle": "Tetap terhubung dengan tugas, sebutan (@), dan pemberitahuan proyek.",
+    "markAllRead": "Tandai semua dibaca",
+    "allCaughtUp": "Semua sudah terbaca!",
+    "noNotifications": "Anda tidak memiliki notifikasi saat ini.",
+    "markRead": "Tandai dibaca",
+    "delete": "Hapus",
+    "justNow": "Baru saja",
+    "minutesAgo": "{{count}}m lalu",
+    "hoursAgo": "{{count}}h lalu",
+    "daysAgo": "{{count}}d lalu"
+  },
+  "comments": {
+    "title": "Komentar",
+    "placeholder": "Tulis komentar... (Ketik @ untuk menyebutkan)",
+    "members": "Anggota",
+    "noComments": "Belum ada komentar. Mulai percakapan sekarang!",
+    "deleteComment": "Hapus komentar",
+    "deleteConfirm": "Hapus komentar ini?",
+    "justNow": "Baru saja",
+    "minutesAgo": "{{count}}m lalu",
+    "hoursAgo": "{{count}}h lalu",
+    "daysAgo": "{{count}}d lalu"
   },
   "calendar": {
     "schedule": "Jadwal Tugas",
@@ -107,22 +348,6 @@
       "10": "November",
       "11": "Desember"
     }
-  },
-  "dashboard": {
-    "productivitySummary": "Ringkasan Produktivitas",
-    "activeTasks": "Tugas Aktif",
-    "completed7Days": "Selesai (7 Hari)",
-    "completionRate": "Tingkat Penyelesaian",
-    "last7Days": "Aktivitas 7 Hari Terakhir",
-    "totalXp": "Total XP",
-    "dayStreak": "{{days}} Hari Streak",
-    "level": "Level {{level}}",
-    "xpToNext": "{{xp}} XP ke level selanjutnya",
-    "maxLevel": "Level Maksimal!",
-    "yourBadges": "Lencana Anda",
-    "noBadges": "Anda belum membuka lencana apapun.",
-    "noBadgesHint": "Selesaikan tugas dan pertahankan streak Anda untuk mendapatkannya!",
-    "unlocked": "Terbuka {{date}}"
   },
   "levels": {
     "1": "Pemula / Rookie",
@@ -183,7 +408,8 @@
     "noActivity": "Belum ada aktivitas yang direkam.",
     "taskActivity": "Aktivitas Tugas",
     "saveTemplateTitle": "Simpan Daftar Periksa sebagai Template",
-    "templateName": "Nama Template"
+    "templateName": "Nama Template",
+    "addChecklistItem": "Tambah item daftar periksa..."
   },
   "audit": {
     "title": "Log Audit Sistem",

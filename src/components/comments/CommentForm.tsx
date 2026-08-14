@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, AtSign } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 interface CommentFormProps {
   onSubmit: (content: string, mentions: string[]) => void;
@@ -8,6 +9,7 @@ interface CommentFormProps {
 
 export const CommentForm: React.FC<CommentFormProps> = ({ onSubmit }) => {
   const { users } = useAuth();
+  const { t } = useTranslation();
   const [content, setContent] = useState('');
   const [showMentions, setShowMentions] = useState(false);
   const [mentionFilter, setMentionFilter] = useState('');
@@ -59,7 +61,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({ onSubmit }) => {
       {showMentions && filteredUsers.length > 0 && (
         <div className="absolute bottom-full left-0 mb-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden z-10">
           <div className="px-3 py-2 bg-slate-50 dark:bg-slate-900/50 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
-            Members
+            {t('comments.members')}
           </div>
           <div className="max-h-40 overflow-y-auto">
             {filteredUsers.map(u => (
@@ -67,9 +69,9 @@ export const CommentForm: React.FC<CommentFormProps> = ({ onSubmit }) => {
                 key={u.id}
                 type="button"
                 onClick={() => handleMentionSelect(u.name)}
-                className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-colors flex items-center gap-2"
+                className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-[#E3F2FD] dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
               >
-                <div className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 flex items-center justify-center text-[10px] font-bold">
+                <div className="w-6 h-6 rounded-full bg-[#E3F2FD] dark:bg-blue-900/50 text-[#0D47A1] dark:text-blue-300 flex items-center justify-center text-[10px] font-bold">
                   {u.name.charAt(0).toUpperCase()}
                 </div>
                 <span className="truncate">{u.name}</span>
@@ -91,14 +93,14 @@ export const CommentForm: React.FC<CommentFormProps> = ({ onSubmit }) => {
                 handleSubmit(e);
               }
             }}
-            placeholder="Write a comment... (Type @ to mention)"
-            className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-3 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 text-sm text-slate-800 dark:text-slate-200 resize-none min-h-[50px] max-h-32 custom-scrollbar"
+            placeholder={t('comments.placeholder')}
+            className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-3 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-sm text-slate-800 dark:text-slate-200 resize-none min-h-[50px] max-h-32 custom-scrollbar"
             rows={1}
           />
           <button 
             type="button"
             onClick={() => setContent(prev => prev + '@')}
-            className="absolute right-3 top-3 text-slate-400 hover:text-purple-500 transition-colors"
+            className="absolute right-3 top-3 text-slate-400 hover:text-primary transition-colors"
           >
             <AtSign size={18} />
           </button>
@@ -107,7 +109,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({ onSubmit }) => {
         <button
           type="submit"
           disabled={!content.trim()}
-          className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-xl p-3 transition-colors shrink-0 flex items-center justify-center h-[50px] w-[50px]"
+          className="bg-primary hover:bg-primary/90 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-xl p-3 transition-colors shrink-0 flex items-center justify-center h-[50px] w-[50px]"
         >
           <Send size={18} className={content.trim() ? "ml-1" : ""} />
         </button>

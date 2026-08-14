@@ -31,7 +31,7 @@ export const Sidebar: React.FC = () => {
   ] as const;
 
   return (
-    <aside className="hidden md:flex flex-col w-[80px] bg-primary h-screen py-8 items-center sticky top-0 rounded-r-[32px] shadow-[4px_0_24px_rgba(107,90,237,0.2)] transition-colors duration-300 z-20 shrink-0">
+    <aside className="hidden md:flex flex-col w-[80px] bg-primary h-screen py-8 items-center sticky top-0 rounded-r-[32px] shadow-[4px_0_20px_rgba(13,71,161,0.15)] transition-colors duration-300 z-20 shrink-0">
       <div className="flex-1 w-full flex flex-col items-center space-y-2">
         {navItems.map((item) => {
           const Icon = item.icon;

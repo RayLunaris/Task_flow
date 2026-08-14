@@ -50,11 +50,11 @@ interface TaskContextType {
 export const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 const DEFAULT_CATEGORIES: Category[] = [
-  { id: '1', name: 'Pribadi', color: '#7C3AED' },
-  { id: '2', name: 'Kerja', color: '#EC4899' },
-  { id: '3', name: 'Sekolah', color: '#14B8A6' },
+  { id: '1', name: 'Pribadi', color: '#2196F3' },
+  { id: '2', name: 'Kerja', color: '#0D47A1' },
+  { id: '3', name: 'Sekolah', color: '#90CAF9' },
   { id: '4', name: 'Belanja', color: '#F97316' },
-  { id: '5', name: 'Kesehatan', color: '#3B82F6' },
+  { id: '5', name: 'Kesehatan', color: '#10B981' },
 ];
 
 export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

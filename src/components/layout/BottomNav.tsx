@@ -14,8 +14,8 @@ export const BottomNav: React.FC = () => {
 
   const navItems = [
     { id: 'dashboard', path: '/dashboard', label: t('nav.dashboard'), icon: BarChart2 },
-    { id: 'my-tasks', path: '/my-tasks', label: 'My Tasks', icon: UserCheck },
-    { id: 'kanban', path: '/kanban', label: 'Kanban', icon: Columns },
+    { id: 'my-tasks', path: '/my-tasks', label: t('nav.myTasks'), icon: UserCheck },
+    { id: 'kanban', path: '/kanban', label: t('nav.kanban'), icon: Columns },
     { id: 'calendar', path: '/calendar', label: t('nav.calendar'), icon: Calendar },
   ] as const;
 

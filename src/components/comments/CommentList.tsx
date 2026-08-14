@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import type { Comment } from '../../types';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,16 +12,17 @@ interface CommentListProps {
 
 export const CommentList: React.FC<CommentListProps> = ({ comments, onDelete }) => {
   const { user: currentUser, users } = useAuth();
+  const { t } = useTranslation();
 
   const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
     
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    if (diffInSeconds < 60) return t('comments.justNow');
+    if (diffInSeconds < 3600) return t('comments.minutesAgo', { count: Math.floor(diffInSeconds / 60) });
+    if (diffInSeconds < 86400) return t('comments.hoursAgo', { count: Math.floor(diffInSeconds / 3600) });
+    if (diffInSeconds < 2592000) return t('comments.daysAgo', { count: Math.floor(diffInSeconds / 86400) });
     return date.toLocaleDateString();
   };
 
@@ -30,7 +32,7 @@ export const CommentList: React.FC<CommentListProps> = ({ comments, onDelete }) 
     return parts.map((part, i) => {
       if (part.startsWith('@')) {
         return (
-          <span key={i} className="font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 px-1 rounded">
+          <span key={i} className="font-bold text-[#0D47A1] dark:text-blue-300 bg-[#E3F2FD] dark:bg-blue-900/40 px-1 rounded">
             {part}
           </span>
         );
@@ -42,7 +44,7 @@ export const CommentList: React.FC<CommentListProps> = ({ comments, onDelete }) 
   if (comments.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-slate-500 dark:text-slate-400 text-sm">No comments yet. Start the conversation!</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm">{t('comments.noComments')}</p>
       </div>
     );
   }
@@ -85,9 +87,10 @@ export const CommentList: React.FC<CommentListProps> = ({ comments, onDelete }) 
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
                       <button 
                         onClick={() => {
-                          if(confirm('Delete this comment?')) onDelete(comment.id);
+                          if(confirm(t('comments.deleteConfirm'))) onDelete(comment.id);
                         }}
                         className="text-slate-400 hover:text-pink-600 p-1 rounded"
+                        title={t('comments.deleteComment')}
                       >
                         <Trash2 size={14} />
                       </button>

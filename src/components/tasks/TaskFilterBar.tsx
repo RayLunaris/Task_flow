@@ -37,14 +37,14 @@ export const TaskFilterBar: React.FC = () => {
           className={clsx(
             'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors border',
             isOpen || activeFiltersCount > 0
-              ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800'
+              ? 'bg-[#E3F2FD] dark:bg-blue-900/30 text-[#0D47A1] dark:text-blue-300 border-[#90CAF9] dark:border-blue-800'
               : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
           )}
         >
           <Filter size={16} />
           {t('filter.filterAndSort')}
           {activeFiltersCount > 0 && (
-            <span className="bg-purple-600 dark:bg-purple-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full ml-1">
+            <span className="bg-primary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full ml-1">
               {activeFiltersCount}
             </span>
           )}
@@ -69,7 +69,7 @@ export const TaskFilterBar: React.FC = () => {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
-                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"
               >
                 <option value="all">{t('filter.status')}: {t('common.all')}</option>
                 <option value="active">{t('filter.active')}</option>
@@ -79,7 +79,7 @@ export const TaskFilterBar: React.FC = () => {
               <select
                 value={filterPriority}
                 onChange={(e) => setFilterPriority(e.target.value as FilterPriority)}
-                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"
               >
                 <option value="all">{t('taskCard.priority')}: {t('common.all')}</option>
                 <option value="high">{t('priority.high')}</option>
@@ -90,7 +90,7 @@ export const TaskFilterBar: React.FC = () => {
               <select
                 value={filterDueDate}
                 onChange={(e) => setFilterDueDate(e.target.value as FilterDueDate)}
-                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"
               >
                 <option value="all">{t('filter.dueDate')}: {t('common.all')}</option>
                 <option value="today">{t('filter.today')}</option>
@@ -108,7 +108,7 @@ export const TaskFilterBar: React.FC = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortBy)}
-                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium"
               >
                 <option value="createdAt">{t('filter.createdAt')}</option>
                 <option value="dueDate">{t('filter.dueDate')}</option>

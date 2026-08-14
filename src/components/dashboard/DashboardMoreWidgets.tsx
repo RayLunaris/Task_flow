@@ -3,6 +3,7 @@ import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, CheckSquare } from 'lucide-react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 export const AssignedTasksWidget = () => {
   const { tasks } = useTasks();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   const assigned = tasks.filter(t => t.assigneeIds?.includes(user?.id || '') && !t.completed);
@@ -18,26 +20,28 @@ export const AssignedTasksWidget = () => {
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-sm">Penugasan Saya</h3>
+        <h3 className="font-semibold text-sm">{t('dashboard.myAssignments')}</h3>
         {assigned.length > 0 && (
-          <button onClick={() => navigate('/my-tasks')} className="text-[11px] text-primary hover:underline font-medium">Lihat Semua</button>
+          <button onClick={() => navigate('/my-tasks')} className="text-[11px] text-primary hover:underline font-medium">
+            {t('common.viewAll')}
+          </button>
         )}
       </div>
       
       <div className="space-y-2">
         {displayAssigned.length === 0 ? (
-          <div className="text-center text-xs text-muted py-4">Tidak ada penugasan.</div>
+          <div className="text-center text-xs text-muted py-4">{t('dashboard.noAssignments')}</div>
         ) : (
-          displayAssigned.map(t => (
-            <div key={t.id} className="flex items-center gap-3 p-2 hover:bg-subtle dark:hover:bg-slate-800 rounded-lg transition-colors border border-transparent hover:border-border-color group">
+          displayAssigned.map(task => (
+            <div key={task.id} className="flex items-center gap-3 p-2 hover:bg-subtle dark:hover:bg-slate-800 rounded-lg transition-colors border border-transparent hover:border-border-color group">
               <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                 <CheckSquare size={14} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{t.title}</p>
-                <p className="text-[10px] text-muted truncate">{t.dueDate ? format(new Date(t.dueDate), 'MMM d, yyyy') : 'No due date'}</p>
+                <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{task.title}</p>
+                <p className="text-[10px] text-muted truncate">{task.dueDate ? format(new Date(task.dueDate), 'MMM d, yyyy') : t('dashboard.noDueDate')}</p>
               </div>
-              <Badge variant={`priority-${t.priority}` as any}>{t.priority}</Badge>
+              <Badge variant={`priority-${task.priority}` as any}>{task.priority}</Badge>
             </div>
           ))
         )}
@@ -49,6 +53,7 @@ export const AssignedTasksWidget = () => {
 export const MiniCalendarWidget = () => {
   const [currentDate, setCurrentDate] = React.useState(new Date());
   const { tasks } = useTasks();
+  const { t } = useTranslation();
   
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
@@ -61,10 +66,22 @@ export const MiniCalendarWidget = () => {
     return tasks.some(t => t.dueDate && isSameDay(new Date(t.dueDate), day) && !t.completed);
   };
 
+  const dayHeaders = [
+    t('calendar.days.sun'),
+    t('calendar.days.mon'),
+    t('calendar.days.tue'),
+    t('calendar.days.wed'),
+    t('calendar.days.thu'),
+    t('calendar.days.fri'),
+    t('calendar.days.sat')
+  ];
+
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-sm">{format(currentDate, 'MMMM yyyy')}</h3>
+        <h3 className="font-semibold text-sm">
+          {t(`calendar.months.${currentDate.getMonth()}`)} {currentDate.getFullYear()}
+        </h3>
         <div className="flex gap-1">
           <button onClick={prevMonth} className="p-1 hover:bg-subtle rounded-md"><ChevronLeft size={16} /></button>
           <button onClick={nextMonth} className="p-1 hover:bg-subtle rounded-md"><ChevronRight size={16} /></button>
@@ -72,7 +89,7 @@ export const MiniCalendarWidget = () => {
       </div>
       
       <div className="grid grid-cols-7 gap-1 text-center mb-2">
-        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+        {dayHeaders.map(d => (
           <div key={d} className="text-[10px] font-semibold text-muted">{d}</div>
         ))}
       </div>

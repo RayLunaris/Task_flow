@@ -12,7 +12,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, className, c
   const clampedProgress = Math.max(0, Math.min(100, progress));
 
   return (
-    <div className={twMerge('w-full bg-[#EDE9FE] dark:bg-slate-800 rounded-full h-[5px]', className)}>
+    <div className={twMerge('w-full bg-[#E3F2FD] dark:bg-slate-800 rounded-full h-[5px]', className)}>
       <div
         className={clsx('h-full rounded-full transition-all duration-500 ease-out', color)}
         style={{ width: `${clampedProgress}%` }}

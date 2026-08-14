@@ -53,7 +53,7 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
       id: uuidv4(),
       name: projectData.name || 'New Project',
       description: projectData.description || '',
-      color: projectData.color || '#7C3AED',
+      color: projectData.color || '#2196F3',
       icon: projectData.icon,
       status: projectData.status || 'active',
       progress: projectData.progress || 0,

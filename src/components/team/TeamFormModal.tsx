@@ -4,6 +4,7 @@ import { X, Save } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import type { User } from '../../types';
 
 interface TeamFormModalProps {
@@ -14,6 +15,7 @@ interface TeamFormModalProps {
 
 export const TeamFormModal: React.FC<TeamFormModalProps> = ({ isOpen, onClose, memberToEdit }) => {
   const { addUser, updateUser } = useAuth();
+  const { t } = useTranslation();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -98,7 +100,7 @@ export const TeamFormModal: React.FC<TeamFormModalProps> = ({ isOpen, onClose, m
         >
           <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
             <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">
-              {memberToEdit ? 'Edit Team Member' : 'Add Team Member'}
+              {memberToEdit ? t('teamModal.editTitle') : t('teamModal.createTitle')}
             </h2>
             <button
               onClick={onClose}
@@ -117,65 +119,65 @@ export const TeamFormModal: React.FC<TeamFormModalProps> = ({ isOpen, onClose, m
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Full Name
+                {t('teamModal.name')}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. John Doe"
-                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 text-slate-800 dark:text-slate-100 font-medium"
+                placeholder={t('teamModal.namePlaceholder')}
+                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100 font-medium"
                 autoFocus
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Email Address
+                {t('teamModal.email')}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="john@example.com"
-                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 text-slate-800 dark:text-slate-100 font-medium"
+                placeholder={t('teamModal.emailPlaceholder')}
+                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100 font-medium"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Role
+                {t('teamModal.role')}
               </label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as any)}
-                className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               >
-                <option value="member">Member</option>
-                <option value="manager">Manager</option>
-                <option value="admin">Admin</option>
+                <option value="member">{t('auth.roles.member')}</option>
+                <option value="manager">{t('auth.roles.manager')}</option>
+                <option value="admin">{t('auth.roles.admin')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                {memberToEdit ? 'New Password (leave blank to keep current)' : 'Password'}
+                {memberToEdit ? t('teamModal.newPassword') : t('teamModal.password')}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 text-slate-800 dark:text-slate-100 font-medium"
+                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100 font-medium"
               />
             </div>
 
             <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
               <Button type="button" variant="secondary" onClick={onClose}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={!name.trim() || !email.trim()} icon={<Save size={18} />}>
-                {memberToEdit ? 'Save Changes' : 'Add Member'}
+                {memberToEdit ? t('teamModal.saveChanges') : t('teamModal.addMember')}
               </Button>
             </div>
           </form>

@@ -88,23 +88,33 @@ export const MyTasksPage: React.FC = () => {
       {/* Filters & Sorting */}
       <div className="flex flex-col md:flex-row justify-between gap-4 bg-card-bg dark:bg-slate-900 p-4 rounded-[14px] border border-border-color dark:border-slate-800">
         <div className="flex flex-wrap gap-2">
-          <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} icon={<ListTodo size={14} />}>All Active</FilterButton>
-          <FilterButton active={filter === 'today'} onClick={() => setFilter('today')} icon={<Calendar size={14} />}>Today</FilterButton>
-          <FilterButton active={filter === 'week'} onClick={() => setFilter('week')} icon={<Calendar size={14} />}>This Week</FilterButton>
-          <FilterButton active={filter === 'overdue'} onClick={() => setFilter('overdue')} icon={<AlertCircle size={14} />} color="text-danger bg-danger/10 border-danger/20 dark:bg-danger/20">Overdue</FilterButton>
-          <FilterButton active={filter === 'completed'} onClick={() => setFilter('completed')} icon={<CheckSquare size={14} />}>Completed</FilterButton>
+          <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} icon={<ListTodo size={14} />}>
+            {t('myTasks.allActive')}
+          </FilterButton>
+          <FilterButton active={filter === 'today'} onClick={() => setFilter('today')} icon={<Calendar size={14} />}>
+            {t('myTasks.today')}
+          </FilterButton>
+          <FilterButton active={filter === 'week'} onClick={() => setFilter('week')} icon={<Calendar size={14} />}>
+            {t('myTasks.thisWeek')}
+          </FilterButton>
+          <FilterButton active={filter === 'overdue'} onClick={() => setFilter('overdue')} icon={<AlertCircle size={14} />} color="text-danger bg-danger/10 border-danger/20 dark:bg-danger/20">
+            {t('myTasks.overdue')}
+          </FilterButton>
+          <FilterButton active={filter === 'completed'} onClick={() => setFilter('completed')} icon={<CheckSquare size={14} />}>
+            {t('myTasks.completed')}
+          </FilterButton>
         </div>
 
         <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-          <span className="font-medium">Sort by:</span>
+          <span className="font-medium">{t('myTasks.sortBy')}</span>
           <select 
             value={sortBy} 
             onChange={(e) => setSortBy(e.target.value as SortType)}
             className="bg-white dark:bg-slate-800 border border-border-color dark:border-slate-700 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/50"
           >
-            <option value="dueDate">Due Date</option>
-            <option value="priority">Priority</option>
-            <option value="name">Name</option>
+            <option value="dueDate">{t('filter.dueDate')}</option>
+            <option value="priority">{t('taskCard.priority')}</option>
+            <option value="name">{t('filter.name')}</option>
           </select>
         </div>
       </div>
@@ -115,8 +125,8 @@ export const MyTasksPage: React.FC = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 mb-4">
             <CheckSquare size={32} />
           </div>
-          <h3 className="text-lg font-bold text-navy dark:text-slate-300 mb-2">No tasks found</h3>
-          <p className="text-muted text-sm">You don't have any tasks matching the current filters.</p>
+          <h3 className="text-lg font-bold text-navy dark:text-slate-300 mb-2">{t('myTasks.noTasksFound')}</h3>
+          <p className="text-muted text-sm">{t('myTasks.noTasksMatch')}</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">

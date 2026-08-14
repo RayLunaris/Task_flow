@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { Mail, Lock, User as UserIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode }) => {
   const { register } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -20,13 +22,15 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
     if (register(name, email, password, role)) {
       navigate('/dashboard');
     } else {
-      setError('Email already in use');
+      setError(t('auth.emailInUse'));
     }
   };
 
   return (
     <div className="w-full">
-      <h2 className="text-[26px] font-bold text-center text-navy dark:text-slate-100 mb-6">Create Account</h2>
+      <h2 className="text-[26px] font-bold text-center text-navy dark:text-slate-100 mb-6">
+        {t('auth.createAccount')}
+      </h2>
       
       {error && (
         <div className="bg-danger/10 text-danger p-3 rounded-lg mb-4 text-sm">
@@ -36,7 +40,9 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            {t('auth.fullName')}
+          </label>
           <div className="relative">
             <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
@@ -51,7 +57,9 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            {t('auth.email')}
+          </label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
@@ -66,7 +74,9 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            {t('auth.password')}
+          </label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
@@ -82,15 +92,17 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Role (Simulation)</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            {t('auth.role')}
+          </label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as 'admin' | 'manager' | 'member')}
             className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-border-color dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none text-slate-700 dark:text-slate-200 transition-colors"
           >
-            <option value="member">Member</option>
-            <option value="manager">Manager</option>
-            <option value="admin">Admin</option>
+            <option value="member">{t('auth.roles.member')}</option>
+            <option value="manager">{t('auth.roles.manager')}</option>
+            <option value="admin">{t('auth.roles.admin')}</option>
           </select>
         </div>
 
@@ -98,14 +110,14 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
           type="submit"
           className="w-full mt-4"
         >
-          Sign Up
+          {t('auth.signUp')}
         </Button>
       </form>
 
       <p className="text-center text-sm text-muted mt-6">
-        Already have an account?{' '}
+        {t('auth.haveAccount')}{' '}
         <button onClick={onToggleMode} className="text-primary font-medium hover:underline">
-          Login
+          {t('auth.login')}
         </button>
       </p>
     </div>

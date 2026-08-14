@@ -60,7 +60,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
         particleCount: 30,
         spread: 60,
         origin: { x, y },
-        colors: ['#7C3AED', '#EC4899', '#14B8A6', '#F97316'],
+        colors: ['#2196F3', '#0D47A1', '#90CAF9', '#10B981'],
         disableForReducedMotion: true,
         zIndex: 100
       });

@@ -3,24 +3,27 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #6B5AED;
+  --color-primary: #2196F3;
   --color-primary-foreground: #FFFFFF;
-  --color-navy: #111827;
-  --color-page-bg: #F0F2F5;
+  --color-primary-dark: #0D47A1;
+  --color-primary-light: #90CAF9;
+  --color-primary-subtle: #E3F2FD;
+  --color-navy: #0D47A1;
+  --color-page-bg: #F4F8FC;
   
   --color-success: #10B981;
-  --color-info: #3B82F6;
+  --color-info: #2196F3;
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
   --color-urgent: #EF4444;
   --color-high: #F97316;
   --color-medium: #F59E0B;
-  --color-low: #3B82F6;
+  --color-low: #2196F3;
 
   --color-card-bg: #FFFFFF;
-  --color-border-color: #F3F4F6;
+  --color-border-color: #E2E8F0;
   --color-muted: #9CA3AF;
-  --color-subtle: #F9FAFB;
+  --color-subtle: #E3F2FD;
 
   --font-heading: "Inter", system-ui, sans-serif;
   --font-body: "Inter", system-ui, sans-serif;

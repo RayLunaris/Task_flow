@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import type { User } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { useTasks } from '../../hooks/useTasks';
+import { useTranslation } from 'react-i18next';
 
 interface MemberCardProps {
   member: User;
@@ -14,6 +15,7 @@ interface MemberCardProps {
 export const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit }) => {
   const { user: currentUser, deleteUser } = useAuth();
   const { tasks } = useTasks();
+  const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
 
   const isAdmin = currentUser?.role === 'admin';
@@ -43,14 +45,16 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit }) => {
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-lg">
+          <div className="w-12 h-12 rounded-full bg-[#E3F2FD] dark:bg-blue-900/40 text-[#0D47A1] dark:text-blue-300 flex items-center justify-center font-bold text-lg">
             {member.name?.charAt(0).toUpperCase() || '?'}
           </div>
           <div>
             <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100 flex items-center gap-2">
               {member.name || 'Unknown User'}
               {member.id === currentUser?.id && (
-                <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded uppercase font-bold">You</span>
+                <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded uppercase font-bold">
+                  {t('team.you')}
+                </span>
               )}
             </h3>
             <span className={clsx(
@@ -59,7 +63,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit }) => {
               member.role === 'manager' ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
               "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400"
             )}>
-              {member.role}
+              {t(`auth.roles.${member.role}`)}
             </span>
           </div>
         </div>
@@ -80,20 +84,20 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit }) => {
                     onClick={() => { setShowMenu(false); onEdit(member); }}
                     className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
                   >
-                    <Edit2 size={14} /> Edit
+                    <Edit2 size={14} /> {t('team.edit')}
                   </button>
                 )}
                 {canDelete && (
                   <button
                     onClick={() => { 
                       setShowMenu(false); 
-                      if(confirm(`Are you sure you want to delete ${member.name}?`)) {
+                      if(confirm(t('team.deleteConfirm', { name: member.name }))) {
                         deleteUser(member.id);
                       }
                     }}
                     className="w-full text-left px-3 py-2 text-sm text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-900/20 flex items-center gap-2"
                   >
-                    <Trash2 size={14} /> Delete
+                    <Trash2 size={14} /> {t('team.delete')}
                   </button>
                 )}
               </div>
@@ -109,29 +113,29 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit }) => {
         </div>
         <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
           <Calendar size={14} />
-          <span>Joined {new Date(member.createdAt).toLocaleDateString()}</span>
+          <span>{t('team.joined', { date: new Date(member.createdAt).toLocaleDateString() })}</span>
         </div>
       </div>
 
       <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
-        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Workload</h4>
+        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{t('team.workload')}</h4>
         <div className="grid grid-cols-3 gap-2 text-center">
           <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2">
             <div className="text-lg font-black text-blue-600 dark:text-blue-400">{activeTasks}</div>
             <div className="text-[10px] font-bold text-slate-500 uppercase mt-0.5 flex items-center justify-center gap-1">
-              <Clock size={10} /> Active
+              <Clock size={10} /> {t('team.active')}
             </div>
           </div>
           <div className="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-2">
             <div className="text-lg font-black text-teal-600 dark:text-teal-400">{doneTasks}</div>
             <div className="text-[10px] font-bold text-slate-500 uppercase mt-0.5 flex items-center justify-center gap-1">
-              <CheckCircle2 size={10} /> Done
+              <CheckCircle2 size={10} /> {t('team.done')}
             </div>
           </div>
           <div className="bg-pink-50 dark:bg-pink-900/20 rounded-lg p-2">
             <div className="text-lg font-black text-pink-600 dark:text-pink-400">{overdueTasks}</div>
             <div className="text-[10px] font-bold text-slate-500 uppercase mt-0.5 flex items-center justify-center gap-1">
-              <AlertCircle size={10} /> Overdue
+              <AlertCircle size={10} /> {t('team.overdue')}
             </div>
           </div>
         </div>

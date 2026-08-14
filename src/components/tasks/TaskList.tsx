@@ -116,8 +116,8 @@ export const TaskList: React.FC = () => {
   if (filteredAndSortedTasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="bg-purple-50 dark:bg-purple-900/30 p-6 rounded-full mb-4">
-          <ClipboardList size={48} className="text-purple-400 dark:text-purple-500" />
+        <div className="bg-[#E3F2FD] dark:bg-slate-800 p-6 rounded-full mb-4">
+          <ClipboardList size={48} className="text-primary" />
         </div>
         <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">{t('taskList.noTasks')}</h3>
         <p className="text-slate-500 dark:text-slate-400 max-w-sm">

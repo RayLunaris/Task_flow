@@ -140,7 +140,7 @@ export const ProductivityChart: React.FC = () => {
               />
               <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={48}>
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.count > 0 ? '#2563EB' : (theme === 'dark' ? '#334155' : '#e2e8f0')} />
+                  <Cell key={`cell-${index}`} fill={entry.count > 0 ? '#2196F3' : (theme === 'dark' ? '#334155' : '#e2e8f0')} />
                 ))}
               </Bar>
             </BarChart>

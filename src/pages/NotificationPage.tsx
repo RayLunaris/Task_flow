@@ -2,22 +2,24 @@ import React from 'react';
 import { Bell, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNotifications } from '../context/NotificationContext';
+import { useTranslation } from 'react-i18next';
 import { NotificationItem } from '../components/notifications/NotificationItem';
 import { Button } from '../components/ui/Button';
 
 export const NotificationPage: React.FC = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+  const { t } = useTranslation();
 
   return (
     <div className="max-w-4xl mx-auto pb-24">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold font-heading text-slate-800 dark:text-slate-100 flex items-center gap-3">
-            <Bell className="text-purple-600 dark:text-purple-400" size={32} />
-            Notifications
+            <Bell className="text-primary" size={32} />
+            {t('notifications.title')}
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Stay updated with your tasks, mentions, and project alerts.
+            {t('notifications.subtitle')}
           </p>
         </div>
 
@@ -27,7 +29,7 @@ export const NotificationPage: React.FC = () => {
             variant="secondary"
             icon={<Check size={18} />}
           >
-            Mark all as read
+            {t('notifications.markAllRead')}
           </Button>
         )}
       </div>
@@ -38,8 +40,8 @@ export const NotificationPage: React.FC = () => {
             <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check className="text-slate-300 dark:text-slate-600" size={32} />
             </div>
-            <p className="text-lg font-medium text-slate-700 dark:text-slate-300">All caught up!</p>
-            <p className="text-sm mt-1">You don't have any notifications at the moment.</p>
+            <p className="text-lg font-medium text-slate-700 dark:text-slate-300">{t('notifications.allCaughtUp')}</p>
+            <p className="text-sm mt-1">{t('notifications.noNotifications')}</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-100 dark:divide-slate-800">

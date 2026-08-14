@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { Mail, Lock } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 export const LoginForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode }) => {
   const { login } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,13 +20,15 @@ export const LoginForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode
     if (login(email, password)) {
       navigate('/dashboard');
     } else {
-      setError('Invalid email or password');
+      setError(t('auth.invalidCredentials'));
     }
   };
 
   return (
     <div className="w-full">
-      <h2 className="text-[26px] font-bold text-center text-navy dark:text-slate-100 mb-6">Welcome Back</h2>
+      <h2 className="text-[26px] font-bold text-center text-navy dark:text-slate-100 mb-6">
+        {t('auth.welcomeBack')}
+      </h2>
       
       {error && (
         <div className="bg-danger/10 text-danger p-3 rounded-lg mb-4 text-sm">
@@ -34,7 +38,9 @@ export const LoginForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            {t('auth.email')}
+          </label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
@@ -49,7 +55,9 @@ export const LoginForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            {t('auth.password')}
+          </label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
@@ -67,14 +75,14 @@ export const LoginForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode
           type="submit"
           className="w-full mt-2"
         >
-          Sign In
+          {t('auth.signIn')}
         </Button>
       </form>
 
       <p className="text-center text-sm text-muted mt-6">
-        Don't have an account?{' '}
+        {t('auth.noAccount')}{' '}
         <button onClick={onToggleMode} className="text-primary font-medium hover:underline">
-          Register
+          {t('auth.register')}
         </button>
       </p>
     </div>

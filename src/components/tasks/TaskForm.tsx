@@ -79,14 +79,14 @@ export const TaskForm: React.FC = () => {
               placeholder={t('taskForm.description')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900 resize-none min-h-[80px]"
+              className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary resize-none min-h-[80px]"
             />
             
             <div className="flex flex-wrap gap-3">
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as 'high' | 'medium' | 'low' | 'urgent')}
-                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               >
                 <option value="urgent">🔴 Urgent</option>
                 <option value="high">🟠 {t('priority.high')}</option>
@@ -97,7 +97,7 @@ export const TaskForm: React.FC = () => {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               >
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.name}>
@@ -113,7 +113,7 @@ export const TaskForm: React.FC = () => {
                     setProjectId(e.target.value);
                     setMilestoneId('');
                   }}
-                  className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
+                  className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
                 >
                   <option value="">No Project</option>
                   {projects.map((proj) => (
@@ -127,7 +127,7 @@ export const TaskForm: React.FC = () => {
                   <select
                     value={milestoneId}
                     onChange={(e) => setMilestoneId(e.target.value)}
-                    className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
+                    className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
                   >
                     <option value="">No Milestone</option>
                     {milestones.filter(m => m.projectId === projectId).map((m) => (
@@ -143,7 +143,7 @@ export const TaskForm: React.FC = () => {
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               />
               <div className="flex items-center gap-4 w-full mt-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
@@ -151,7 +151,7 @@ export const TaskForm: React.FC = () => {
                     type="checkbox"
                     checked={isRecurring}
                     onChange={(e) => setIsRecurring(e.target.checked)}
-                    className="rounded border-slate-300 text-purple-600 focus:ring-purple-500 w-4 h-4 cursor-pointer"
+                    className="rounded border-slate-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer"
                   />
                   <span>🔁 Recurring Task</span>
                 </label>
@@ -164,12 +164,12 @@ export const TaskForm: React.FC = () => {
                       min="1"
                       value={recurringInterval}
                       onChange={(e) => setRecurringInterval(Number(e.target.value) || 1)}
-                      className="w-16 text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-center"
+                      className="w-16 text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-center"
                     />
                     <select
                       value={recurringFrequency}
                       onChange={(e) => setRecurringFrequency(e.target.value as any)}
-                      className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800"
+                      className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800"
                     >
                       <option value="daily">Day(s)</option>
                       <option value="weekly">Week(s)</option>

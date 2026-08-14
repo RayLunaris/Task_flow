@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PlusCircle, Search, LayoutGrid, Folder } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useProjects } from '../context/ProjectContext';
+import { useTranslation } from 'react-i18next';
 import { ProjectCard } from '../components/projects/ProjectCard';
 import { ProjectFormModal } from '../components/projects/ProjectFormModal';
 import { Button } from '../components/ui/Button';
@@ -9,6 +10,7 @@ import type { Project } from '../types';
 
 export const ProjectsPage: React.FC = () => {
   const { projects } = useProjects();
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,13 +35,13 @@ export const ProjectsPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <LayoutGrid className="text-purple-500" />
-            Projects
+            <LayoutGrid className="text-primary" />
+            {t('projects.title')}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your team projects and workspaces</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{t('projects.subtitle')}</p>
         </div>
         <Button onClick={handleAddNew} icon={<PlusCircle size={20} />}>
-          New Project
+          {t('projects.newProject')}
         </Button>
       </div>
 
@@ -49,29 +51,29 @@ export const ProjectsPage: React.FC = () => {
         </div>
         <input
           type="text"
-          placeholder="Search projects..."
+          placeholder={t('projects.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 text-sm text-slate-800 dark:text-slate-200"
+          className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-sm text-slate-800 dark:text-slate-200"
         />
       </div>
 
       {projects.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-4 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-900/50">
-          <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 text-purple-500 rounded-full flex items-center justify-center mb-4">
+          <div className="w-16 h-16 bg-[#E3F2FD] dark:bg-slate-800 text-primary rounded-full flex items-center justify-center mb-4">
             <Folder size={32} />
           </div>
-          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">No Projects Yet</h3>
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{t('projects.noProjectsTitle')}</h3>
           <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-6">
-            Create your first project to start organizing tasks for your team.
+            {t('projects.noProjectsDesc')}
           </p>
           <Button onClick={handleAddNew} icon={<PlusCircle size={18} />}>
-            Create Project
+            {t('projects.createFirstProject')}
           </Button>
         </div>
       ) : filteredProjects.length === 0 ? (
         <div className="py-12 text-center text-slate-500 dark:text-slate-400">
-          No projects match your search criteria.
+          {t('projects.noMatch')}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

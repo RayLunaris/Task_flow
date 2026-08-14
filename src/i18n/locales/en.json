@@ -6,7 +6,20 @@
     "save": "Save",
     "cancel": "Cancel",
     "clear": "Clear",
-    "all": "All"
+    "all": "All",
+    "search": "Search",
+    "status": "Status",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "recurring": "Recurring",
+    "workload": "Workload",
+    "active": "Active",
+    "done": "Done",
+    "overdue": "Overdue",
+    "viewAll": "View All",
+    "progress": "Progress",
+    "actions": "Actions",
+    "close": "Close"
   },
   "nav": {
     "tasks": "Tasks",
@@ -20,7 +33,39 @@
     "report": "Reports",
     "settings": "Settings",
     "audit": "Audit Log",
-    "myTasks": "My Tasks"
+    "myTasks": "My Tasks",
+    "notifications": "Notifications"
+  },
+  "navbar": {
+    "dashboard": "Dashboard",
+    "searchPlaceholder": "Search or type command...",
+    "light": "Light",
+    "dark": "Dark",
+    "exportData": "Export data",
+    "toggleLanguage": "Change Language",
+    "notifications": "Notifications",
+    "logout": "Logout"
+  },
+  "auth": {
+    "welcomeBack": "Welcome Back",
+    "createAccount": "Create Account",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email Address",
+    "password": "Password",
+    "fullName": "Full Name",
+    "role": "Role",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "register": "Register",
+    "login": "Login",
+    "invalidCredentials": "Invalid email or password",
+    "emailInUse": "Email already in use",
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "member": "Member"
+    }
   },
   "sidebar": {
     "menu": "Main Menu",
@@ -35,6 +80,52 @@
     "subtitle": "Here's a breakdown of your tasks for today.",
     "yourTasks": "Your Tasks"
   },
+  "dashboard": {
+    "welcomeHeading": "Hi, {{name}}! 👋",
+    "welcomeSubheading": "What are your plans for today?",
+    "welcomeDesc": "TaskFlow is designed to organize, collaborate, and track tasks in a modern way.",
+    "quickActions": {
+      "manageTasks": "Manage Tasks",
+      "sync": "Sync",
+      "collaborate": "Collaborate"
+    },
+    "recentNotifications": "Notifications",
+    "noNotifications": "No notifications",
+    "todayTasks": "Today's Tasks",
+    "completedTasks": "{{completed}}/{{total}} Completed",
+    "noTasksToday": "Great! No tasks due today.",
+    "projectStats": "Project Stats",
+    "totalProjects": "Total Projects",
+    "activeProjects": "Active",
+    "myAssignments": "My Assignments",
+    "noAssignments": "No assigned tasks.",
+    "noDueDate": "No due date",
+    "productivitySummary": "Productivity Summary",
+    "activeTasks": "Active Tasks",
+    "completed7Days": "Completed (7 Days)",
+    "completionRate": "Completion Rate",
+    "last7Days": "Last 7 Days Activity",
+    "totalXp": "Total XP",
+    "dayStreak": "{{days}} Day Streak",
+    "level": "Level {{level}}",
+    "xpToNext": "{{xp}} XP to next level",
+    "maxLevel": "Max Level Reached!",
+    "yourBadges": "Your Badges",
+    "noBadges": "You haven't unlocked any badges yet.",
+    "noBadgesHint": "Complete tasks and keep your streak to earn them!",
+    "unlocked": "Unlocked {{date}}"
+  },
+  "myTasks": {
+    "title": "My Tasks",
+    "allActive": "All Active",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "overdue": "Overdue",
+    "completed": "Completed",
+    "sortBy": "Sort by",
+    "noTasksFound": "No tasks found",
+    "noTasksMatch": "You don't have any tasks matching the current filters."
+  },
   "taskForm": {
     "placeholder": "What needs to be done?",
     "addDetails": "Add Details",
@@ -42,7 +133,16 @@
     "category": "Category",
     "priority": "Priority",
     "dueDate": "Due Date",
-    "addTask": "Add Task"
+    "addTask": "Add Task",
+    "noProject": "No Project",
+    "noMilestone": "No Milestone",
+    "recurringTask": "Recurring Task",
+    "repeatEvery": "Repeat every",
+    "frequency": {
+      "daily": "Day(s)",
+      "weekly": "Week(s)",
+      "monthly": "Month(s)"
+    }
   },
   "taskList": {
     "noTasks": "No tasks yet",
@@ -62,6 +162,7 @@
     "priority": "Priority"
   },
   "priority": {
+    "urgent": "Urgent",
     "high": "High",
     "medium": "Medium",
     "low": "Low"
@@ -79,6 +180,146 @@
     "sortBy": "Sort By",
     "createdAt": "Created At",
     "name": "Name"
+  },
+  "kanban": {
+    "title": "Kanban Board",
+    "subtitle": "Visualize and manage workflow stages",
+    "project": "Project",
+    "globalAll": "Global (All Projects)",
+    "columns": {
+      "todo": "To Do",
+      "in_progress": "In Progress",
+      "review": "Review",
+      "done": "Done"
+    },
+    "noTasksColumn": "No tasks in this column"
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Manage your team projects and workspaces",
+    "newProject": "New Project",
+    "searchPlaceholder": "Search projects...",
+    "noProjectsTitle": "No Projects Yet",
+    "noProjectsDesc": "Create your first project to start organizing tasks for your team.",
+    "createFirstProject": "Create Project",
+    "noMatch": "No projects match your search criteria.",
+    "tasks": "Tasks",
+    "members": "Members",
+    "due": "Due",
+    "status": {
+      "active": "Active",
+      "on_hold": "On Hold",
+      "completed": "Completed",
+      "archived": "Archived"
+    },
+    "updateProgress": "Update Progress",
+    "editProject": "Edit Project",
+    "deleteProject": "Delete",
+    "progressModalTitle": "Update Progress: {{name}}",
+    "progressPlaceholder": "What was accomplished in this update?",
+    "commitProgress": "Commit Progress",
+    "deleteConfirm": "Are you sure you want to delete {{name}}?"
+  },
+  "projectModal": {
+    "createTitle": "Create Project",
+    "editTitle": "Edit Project",
+    "name": "Project Name",
+    "namePlaceholder": "e.g. Website Redesign",
+    "description": "Description (Optional)",
+    "descriptionPlaceholder": "Project goals, links, or notes...",
+    "colorTheme": "Color Theme",
+    "status": "Status",
+    "progress": "Initial Progress",
+    "startDate": "Start Date",
+    "dueDate": "Target Due Date",
+    "createButton": "Create Project",
+    "saveButton": "Save Changes"
+  },
+  "milestones": {
+    "title": "Milestones",
+    "subtitle": "Track key project deliverables and target dates",
+    "addMilestone": "Add Milestone",
+    "noProjectsTitle": "No Projects Found",
+    "noProjectsDesc": "You need to create a project first before you can add milestones.",
+    "selectProject": "Select Project to View Timeline:",
+    "noMilestones": "No milestones created for this project yet.",
+    "status": {
+      "not_started": "Not Started",
+      "on_track": "On Track",
+      "at_risk": "At Risk",
+      "completed": "Completed"
+    },
+    "overdue": "Overdue",
+    "target": "Target",
+    "deleteConfirm": "Are you sure you want to delete this milestone?"
+  },
+  "milestoneModal": {
+    "createTitle": "Add Milestone",
+    "editTitle": "Edit Milestone",
+    "name": "Milestone Name",
+    "namePlaceholder": "e.g. Beta Release",
+    "project": "Project",
+    "selectProject": "Select Project",
+    "targetDate": "Target Date",
+    "status": "Status",
+    "description": "Description (Optional)",
+    "descriptionPlaceholder": "What is the goal of this milestone?",
+    "saveMilestone": "Save Milestone"
+  },
+  "team": {
+    "title": "Team Members",
+    "subtitle": "Manage team members and view their workload",
+    "addMember": "Add Member",
+    "searchPlaceholder": "Search members by name, email, or role...",
+    "noMembers": "No members found.",
+    "noMatch": "No members match your search criteria.",
+    "you": "You",
+    "joined": "Joined {{date}}",
+    "workload": "Workload",
+    "active": "Active",
+    "done": "Done",
+    "overdue": "Overdue",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete {{name}}?"
+  },
+  "teamModal": {
+    "createTitle": "Add Team Member",
+    "editTitle": "Edit Team Member",
+    "name": "Full Name",
+    "namePlaceholder": "e.g. John Doe",
+    "email": "Email Address",
+    "emailPlaceholder": "john@example.com",
+    "role": "Role",
+    "password": "Password",
+    "newPassword": "New Password (leave blank to keep current)",
+    "addMember": "Add Member",
+    "saveChanges": "Save Changes"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Stay updated with your tasks, mentions, and project alerts.",
+    "markAllRead": "Mark all as read",
+    "allCaughtUp": "All caught up!",
+    "noNotifications": "You don't have any notifications at the moment.",
+    "markRead": "Mark as read",
+    "delete": "Delete",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "comments": {
+    "title": "Comments",
+    "placeholder": "Write a comment... (Type @ to mention)",
+    "members": "Members",
+    "noComments": "No comments yet. Start the conversation!",
+    "deleteComment": "Delete comment",
+    "deleteConfirm": "Delete this comment?",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
   },
   "calendar": {
     "schedule": "Task Schedule",
@@ -107,22 +348,6 @@
       "10": "November",
       "11": "December"
     }
-  },
-  "dashboard": {
-    "productivitySummary": "Productivity Summary",
-    "activeTasks": "Active Tasks",
-    "completed7Days": "Completed (7 Days)",
-    "completionRate": "Completion Rate",
-    "last7Days": "Last 7 Days Activity",
-    "totalXp": "Total XP",
-    "dayStreak": "{{days}} Day Streak",
-    "level": "Level {{level}}",
-    "xpToNext": "{{xp}} XP to next level",
-    "maxLevel": "Max Level Reached!",
-    "yourBadges": "Your Badges",
-    "noBadges": "You haven't unlocked any badges yet.",
-    "noBadgesHint": "Complete tasks and keep your streak to earn them!",
-    "unlocked": "Unlocked {{date}}"
   },
   "levels": {
     "1": "Pemula / Rookie",
@@ -183,7 +408,8 @@
     "noActivity": "No activity recorded yet.",
     "taskActivity": "Task Activity",
     "saveTemplateTitle": "Save Checklist as Template",
-    "templateName": "Template Name"
+    "templateName": "Template Name",
+    "addChecklistItem": "Add checklist item..."
   },
   "audit": {
     "title": "System Audit Log",

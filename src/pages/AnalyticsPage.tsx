@@ -26,8 +26,8 @@ export const AnalyticsPage: React.FC = () => {
     });
     return [
       { name: 'To Do', value: counts.todo, color: '#94a3b8' },
-      { name: 'In Progress', value: counts.in_progress, color: '#3b82f6' },
-      { name: 'Review', value: counts.review, color: '#f59e0b' },
+      { name: 'In Progress', value: counts.in_progress, color: '#2196F3' },
+      { name: 'Review', value: counts.review, color: '#90CAF9' },
       { name: 'Done', value: counts.done, color: '#10b981' },
     ];
   }, [filteredTasks]);
@@ -39,8 +39,8 @@ export const AnalyticsPage: React.FC = () => {
       counts[t.priority]++;
     });
     return [
-      { name: 'Low', value: counts.low, color: '#3b82f6' },
-      { name: 'Medium', value: counts.medium, color: '#eab308' },
+      { name: 'Low', value: counts.low, color: '#2196F3' },
+      { name: 'Medium', value: counts.medium, color: '#f59e0b' },
       { name: 'High', value: counts.high, color: '#f97316' },
       { name: 'Urgent', value: counts.urgent, color: '#ef4444' },
     ];
@@ -92,7 +92,7 @@ export const AnalyticsPage: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <BarChart2 className="text-purple-600" />
+            <BarChart2 className="text-primary" />
             {t('analytics.title')}
           </h1>
           <p className="text-slate-500 mt-1">{t('analytics.subtitle')}</p>
@@ -179,7 +179,7 @@ export const AnalyticsPage: React.FC = () => {
         {/* Completion Trend */}
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 md:col-span-2 lg:col-span-1">
           <div className="flex items-center gap-2 mb-6">
-            <Activity className="text-purple-500" size={20} />
+            <Activity className="text-primary" size={20} />
             <h3 className="font-bold text-slate-800 dark:text-slate-100">{t('analytics.completionTrend')}</h3>
           </div>
           <div className="h-64">
@@ -215,7 +215,7 @@ export const AnalyticsPage: React.FC = () => {
                   cursor={{ fill: 'rgba(226, 232, 240, 0.4)' }}
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />
-                <Bar dataKey="tasks" name="Active Tasks" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={24} />
+                <Bar dataKey="tasks" name="Active Tasks" fill="#2196F3" radius={[0, 4, 4, 0]} barSize={24} />
               </BarChart>
             </ResponsiveContainer>
           </div>

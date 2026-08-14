@@ -25,7 +25,7 @@ export const AuditLogPage: React.FC = () => {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <Shield className="text-purple-600" />
+            <Shield className="text-primary" />
             {t('audit.title')}
           </h1>
           <p className="text-slate-500 mt-1">{t('audit.subtitle')}</p>
@@ -63,7 +63,7 @@ export const AuditLogPage: React.FC = () => {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">
+                          <div className="w-6 h-6 rounded-full bg-[#E3F2FD] text-[#0D47A1] flex items-center justify-center text-xs font-bold">
                             {logUser?.name.charAt(0).toUpperCase() || '?'}
                           </div>
                           <span className="text-sm font-medium text-slate-800 dark:text-slate-200">

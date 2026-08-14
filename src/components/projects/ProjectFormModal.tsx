@@ -14,7 +14,7 @@ interface ProjectFormModalProps {
 }
 
 const COLORS = [
-  '#7C3AED', '#EC4899', '#14B8A6', '#F97316', '#3B82F6', '#EF4444', '#10B981', '#8B5CF6'
+  '#2196F3', '#0D47A1', '#90CAF9', '#14B8A6', '#10B981', '#F97316', '#EF4444', '#64748B'
 ];
 
 export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onClose, projectToEdit }) => {
@@ -30,32 +30,24 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
   const [dueDate, setDueDate] = useState('');
 
   useEffect(() => {
-    if (isOpen) {
-      if (projectToEdit) {
-        setName(projectToEdit.name);
-        setDescription(projectToEdit.description || '');
-        setColor(projectToEdit.color);
-        setStatus(projectToEdit.status);
-        setProgress(projectToEdit.progress || 0);
-        setStartDate(projectToEdit.startDate || '');
-        setDueDate(projectToEdit.dueDate || '');
-      } else {
-        setName('');
-        setDescription('');
-        setColor(COLORS[0]);
-        setStatus('active');
-        setProgress(0);
-        setStartDate('');
-        setDueDate('');
-      }
-      document.body.style.overflow = 'hidden';
+    if (projectToEdit) {
+      setName(projectToEdit.name);
+      setDescription(projectToEdit.description || '');
+      setColor(projectToEdit.color || COLORS[0]);
+      setStatus(projectToEdit.status);
+      setProgress(projectToEdit.progress || 0);
+      setStartDate(projectToEdit.startDate || '');
+      setDueDate(projectToEdit.dueDate || '');
     } else {
-      document.body.style.overflow = 'unset';
+      setName('');
+      setDescription('');
+      setColor(COLORS[0]);
+      setStatus('active');
+      setProgress(0);
+      setStartDate('');
+      setDueDate('');
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, projectToEdit]);
+  }, [projectToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -63,20 +55,26 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
     e.preventDefault();
     if (!name.trim()) return;
 
-    const projectData = {
-      name: name.trim(),
-      description: description.trim(),
-      color,
-      status,
-      progress,
-      startDate: startDate || undefined,
-      dueDate: dueDate || undefined,
-    };
-
     if (projectToEdit) {
-      updateProject(projectToEdit.id, projectData);
+      updateProject(projectToEdit.id, {
+        name: name.trim(),
+        description: description.trim() || undefined,
+        color,
+        status,
+        progress,
+        startDate: startDate || undefined,
+        dueDate: dueDate || undefined,
+      });
     } else {
-      addProject(projectData);
+      addProject({
+        name: name.trim(),
+        description: description.trim() || undefined,
+        color,
+        status,
+        progress,
+        startDate: startDate || undefined,
+        dueDate: dueDate || undefined,
+      });
     }
 
     onClose();
@@ -84,63 +82,55 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
 
   const modalContent = (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-          onClick={onClose}
-        />
-        
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-800"
         >
-          <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">
-              {projectToEdit ? 'Edit Project' : 'Create Project'}
+          <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+              {projectToEdit ? t('projectModal.editTitle') : t('projectModal.createTitle')}
             </h2>
             <button
               onClick={onClose}
-              className="p-2 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-800 transition-colors"
+              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-800 rounded-xl transition-colors"
             >
               <X size={20} />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Project Name
+                {t('projectModal.name')}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Website Redesign"
-                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 text-slate-800 dark:text-slate-100 font-medium"
+                placeholder={t('projectModal.namePlaceholder')}
+                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100 font-medium"
                 autoFocus
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Description
+                {t('projectModal.description')}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Optional description"
-                className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 resize-none min-h-[80px]"
+                placeholder={t('projectModal.descriptionPlaceholder')}
+                className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary resize-none min-h-[80px]"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
-                <Palette size={16} /> Color Theme
+                <Palette size={16} /> {t('projectModal.colorTheme')}
               </label>
               <div className="flex flex-wrap gap-3">
                 {COLORS.map((c) => (
@@ -162,48 +152,48 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Start Date
+                  {t('projectModal.startDate')}
                 </label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                  className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Due Date
+                  {t('projectModal.dueDate')}
                 </label>
                 <input
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                  className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
                 />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Status
+                {t('projectModal.status')}
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-900 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               >
-                <option value="active">🟢 Active</option>
-                <option value="on_hold">🟡 On Hold</option>
-                <option value="completed">🔵 Completed</option>
-                <option value="archived">⚪ Archived</option>
+                <option value="active">🟢 {t('projects.status.active')}</option>
+                <option value="on_hold">🟡 {t('projects.status.on_hold')}</option>
+                <option value="completed">🔵 {t('projects.status.completed')}</option>
+                <option value="archived">⚪ {t('projects.status.archived')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Progress ({progress}%)
+                {t('projectModal.progress')} ({progress}%)
               </label>
               <input
                 type="range"
@@ -211,7 +201,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
                 max="100"
                 value={progress}
                 onChange={(e) => setProgress(Number(e.target.value))}
-                className="w-full accent-purple-500"
+                className="w-full accent-primary"
               />
             </div>
 
@@ -220,7 +210,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
                 {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={!name.trim()} icon={<Save size={18} />}>
-                {projectToEdit ? 'Save Changes' : 'Create Project'}
+                {projectToEdit ? t('projectModal.saveButton') : t('projectModal.createButton')}
               </Button>
             </div>
           </form>
