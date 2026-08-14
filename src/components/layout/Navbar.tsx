@@ -147,13 +147,19 @@ export const Navbar: React.FC = () => {
               onClick={() => {
                 setShowProfileMenu(!showProfileMenu);
               }}
-              className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-white font-bold text-xs"
+              className="flex items-center justify-center rounded-full transition-transform active:scale-95 cursor-pointer"
             >
-              {user?.name.charAt(0).toUpperCase() || 'U'}
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user?.name || 'User'} className="w-7 h-7 rounded-full object-cover ring-2 ring-primary/40" />
+              ) : (
+                <div className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-white font-bold text-xs">
+                  {user?.name.charAt(0).toUpperCase() || 'U'}
+                </div>
+              )}
             </button>
 
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-border-color dark:border-slate-800 py-1 animate-in fade-in slide-in-from-top-2">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-border-color dark:border-slate-800 py-1 animate-in fade-in slide-in-from-top-2 z-50">
                 <div className="px-4 py-2 border-b border-border-color dark:border-slate-800">
                   <p className="text-sm font-semibold text-navy dark:text-slate-200 truncate">{user?.name}</p>
                   <p className="text-xs text-muted truncate">{user?.email}</p>
@@ -163,10 +169,20 @@ export const Navbar: React.FC = () => {
                 </div>
                 <button
                   onClick={() => {
+                    navigate('/settings');
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-subtle dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
+                >
+                  <span className="text-slate-500">⚙️</span>
+                  {t('nav.settings')}
+                </button>
+                <button
+                  onClick={() => {
                     logout();
                     setShowProfileMenu(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-subtle dark:hover:bg-slate-800 flex items-center gap-2"
+                  className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-subtle dark:hover:bg-slate-800 flex items-center gap-2 cursor-pointer"
                 >
                   <LogOut size={14} />
                   {t('navbar.logout')}

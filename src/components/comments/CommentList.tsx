@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import type { Comment } from '../../types';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Avatar } from '../ui/Avatar';
 
 interface CommentListProps {
   comments: Comment[];
@@ -70,9 +71,12 @@ export const CommentList: React.FC<CommentListProps> = ({ comments, onDelete }) 
               className="flex gap-3 group"
             >
               {/* Avatar */}
-              <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-300 shrink-0 mt-1">
-                {author ? author.name.charAt(0).toUpperCase() : '?'}
-              </div>
+              <Avatar 
+                name={author ? author.name : 'Unknown User'} 
+                src={author?.avatar} 
+                size="sm" 
+                className="shrink-0 mt-1" 
+              />
 
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">

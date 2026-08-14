@@ -1,11 +1,20 @@
+export type UserRole = 'admin' | 'manager' | 'member' | 'client';
+export type UserStatus = 'active' | 'invited' | 'inactive' | 'declined' | 'none';
+
 export interface User {
   id: string;
   name: string;
   email: string;
   password: string; // hashed simulasi
-  role: 'admin' | 'manager' | 'member';
+  role: UserRole;
   avatar?: string;
   department?: string;
+  title?: string;
+  phone?: string;
+  status?: UserStatus;
+  invitedBy?: string;
+  inviteToken?: string;
+  invitedAt?: string;
   createdAt: string;
 }
 
@@ -99,6 +108,8 @@ export interface Task {
   projectId?: string;
   assigneeIds: string[];
   reporterId: string;
+  reviewerId?: string;
+  collaboratorIds?: string[];
   category: string;
   dueDate?: string;
   completed: boolean;
@@ -114,6 +125,9 @@ export interface Task {
   needsApproval: boolean;
   approvalStatus?: 'pending' | 'approved' | 'rejected';
   approvalNote?: string;
+  revisionNote?: string;
+  submittedForReviewAt?: string;
+  reviewedAt?: string;
   milestoneId?: string;
   order: number;
   createdAt: string;
@@ -171,19 +185,31 @@ export interface Milestone {
 export interface Notification {
   id: string;
   userId: string;
-  type: 'task_assigned' | 'deadline_near' | 'comment' | 'approval' | 'milestone';
+  type: 'task_assigned' | 'deadline_near' | 'comment' | 'approval' | 'milestone' | 'team_invite';
   title: string;
   message: string;
   relatedId?: string;
   isRead: boolean;
   createdAt: string;
+  inviteStatus?: 'pending' | 'accepted' | 'declined';
+  inviteData?: {
+    inviterId: string;
+    inviterName: string;
+    role: UserRole;
+    department: string;
+    title?: string;
+  };
 }
 
 export interface Department {
   id: string;
   name: string;
-  headId?: string;
-  memberIds: string[];
+  description?: string;
+  icon?: string;
+  color?: string;
+  leadId?: string;
+  memberIds?: string[];
+  createdAt?: string;
 }
 
 export interface Client {

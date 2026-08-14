@@ -80,8 +80,12 @@ export const Sidebar: React.FC = () => {
       </div>
 
       <div className="mt-auto pt-4 border-t border-white/10 w-full flex justify-center">
-        <button title={user?.name} className="hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-navy rounded-full transition-all">
-          <Avatar name={user?.name || 'U'} size="sm" />
+        <button 
+          onClick={() => navigate('/settings')}
+          title={user?.name ? `${user.name} (${t('nav.settings')})` : t('nav.settings')}
+          className="hover:ring-2 hover:ring-white/80 hover:ring-offset-2 hover:ring-offset-primary rounded-full transition-all cursor-pointer focus:outline-none"
+        >
+          <Avatar name={user?.name || 'U'} src={user?.avatar} size="sm" />
         </button>
       </div>
     </aside>

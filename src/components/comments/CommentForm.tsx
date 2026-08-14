@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, AtSign } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { Avatar } from '../ui/Avatar';
 
 interface CommentFormProps {
   onSubmit: (content: string, mentions: string[]) => void;
@@ -71,9 +72,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({ onSubmit }) => {
                 onClick={() => handleMentionSelect(u.name)}
                 className="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-[#E3F2FD] dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
               >
-                <div className="w-6 h-6 rounded-full bg-[#E3F2FD] dark:bg-blue-900/50 text-[#0D47A1] dark:text-blue-300 flex items-center justify-center text-[10px] font-bold">
-                  {u.name.charAt(0).toUpperCase()}
-                </div>
+                <Avatar name={u.name} src={u.avatar} size="xs" className="w-6 h-6 text-[10px]" />
                 <span className="truncate">{u.name}</span>
               </button>
             ))}

@@ -9,6 +9,7 @@ interface NotificationContextType {
   notifications: Notification[];
   unreadCount: number;
   addNotification: (notification: Omit<Notification, 'id' | 'createdAt' | 'isRead'>) => void;
+  respondToTeamInvite: (notificationId: string, action: 'accept' | 'decline') => void;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   deleteNotification: (id: string) => void;
@@ -24,9 +25,29 @@ export const useNotifications = () => {
   return context;
 };
 
+const SEED_NOTIFICATIONS: Notification[] = [
+  {
+    id: 'notif-alex-invite',
+    userId: 'member-1', // Alex Rivera
+    type: 'team_invite',
+    title: 'Undangan Bergabung ke Tim TaskFlow',
+    message: 'Sarah Connor (Admin) mengundang Anda untuk bergabung ke tim sebagai Senior Frontend Developer (Engineering).',
+    isRead: false,
+    inviteStatus: 'pending',
+    inviteData: {
+      inviterId: 'admin-1',
+      inviterName: 'Sarah Connor',
+      role: 'member',
+      department: 'Engineering',
+      title: 'Senior Frontend Developer'
+    },
+    createdAt: new Date(Date.now() - 3600000).toISOString(),
+  }
+];
+
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [allNotifications, setAllNotifications] = useLocalStorage<Notification[]>('taskflow_notifications', []);
-  const { user } = useAuth();
+  const [allNotifications, setAllNotifications] = useLocalStorage<Notification[]>('taskflow_notifications', SEED_NOTIFICATIONS);
+  const { user, acceptTeamInvite, declineTeamInvite } = useAuth();
 
   // Only show notifications for the logged in user
   const userNotifications = user ? allNotifications.filter(n => n.userId === user.id) : [];
@@ -48,6 +69,46 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     setAllNotifications(prev => [newNotification, ...prev]);
   };
 
+  const respondToTeamInvite = (notificationId: string, action: 'accept' | 'decline') => {
+    const notif = allNotifications.find(n => n.id === notificationId);
+    if (!notif) return;
+
+    // 1. Update notification inviteStatus & isRead
+    setAllNotifications(prev => 
+      prev.map(n => 
+        n.id === notificationId 
+          ? { ...n, inviteStatus: action === 'accept' ? 'accepted' : 'declined', isRead: true } 
+          : n
+      )
+    );
+
+    // 2. Update user status in AuthContext
+    if (user) {
+      if (action === 'accept') {
+        acceptTeamInvite(user.id);
+      } else {
+        declineTeamInvite(user.id);
+      }
+    }
+
+    // 3. Send feedback notification to the inviter
+    const inviterId = notif.inviteData?.inviterId || 'admin-1';
+    if (user) {
+      const feedbackNotif: Notification = {
+        id: uuidv4(),
+        userId: inviterId,
+        type: 'team_invite',
+        title: action === 'accept' ? 'Undangan Tim Diterima! 🎉' : 'Undangan Tim Ditolak',
+        message: action === 'accept'
+          ? `${user.name} telah menerima undangan dan resmi bergabung dengan tim TaskFlow!`
+          : `${user.name} menolak undangan bergabung ke tim.`,
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      };
+      setAllNotifications(prev => [feedbackNotif, ...prev]);
+    }
+  };
+
   const markAsRead = (id: string) => {
     setAllNotifications(prev => 
       prev.map(n => n.id === id ? { ...n, isRead: true } : n)
@@ -65,14 +126,14 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     setAllNotifications(prev => prev.filter(n => n.id !== id));
   };
 
-  // Add a fake notification for testing if the user is new and has no notifications
+  // Welcome notification for new users
   useEffect(() => {
     if (user && userNotifications.length === 0) {
       addNotification({
         userId: user.id,
         type: 'task_assigned',
-        title: 'Welcome to TaskFlow Business!',
-        message: 'Your account is ready. Start creating projects and delegating tasks.',
+        title: 'Selamat Datang di TaskFlow Business!',
+        message: 'Akun Anda telah siap. Mulai kelola proyek dan kolaborasi tugas bersama tim.',
       });
     }
   }, [user]);
@@ -82,6 +143,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       notifications: sortedNotifications, 
       unreadCount, 
       addNotification, 
+      respondToTeamInvite,
       markAsRead, 
       markAllAsRead, 
       deleteNotification 

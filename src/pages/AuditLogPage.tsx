@@ -3,6 +3,7 @@ import { Shield, Clock, AlertTriangle, Monitor } from 'lucide-react';
 import { useActivity } from '../context/ActivityContext';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { Avatar } from '../components/ui/Avatar';
 
 export const AuditLogPage: React.FC = () => {
   const { auditLogs } = useActivity();
@@ -63,9 +64,7 @@ export const AuditLogPage: React.FC = () => {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-[#E3F2FD] text-[#0D47A1] flex items-center justify-center text-xs font-bold">
-                            {logUser?.name.charAt(0).toUpperCase() || '?'}
-                          </div>
+                          <Avatar name={logUser?.name || 'U'} src={logUser?.avatar} size="xs" className="w-6 h-6 text-[10px]" />
                           <span className="text-sm font-medium text-slate-800 dark:text-slate-200">
                             {logUser?.name || 'Unknown User'}
                           </span>

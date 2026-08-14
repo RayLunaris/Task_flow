@@ -145,7 +145,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
           </p>
         )}
         
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {task.status === 'review' && (
+            <Badge variant="category" color="#2563EB">
+              ⏱️ Waiting Review
+            </Badge>
+          )}
           {task.priority === 'urgent' && <Badge variant="priority-high">🔴 Urgent</Badge>}
           {task.priority === 'high' && <Badge variant="priority-high">🟠 {t('priority.high')}</Badge>}
           {task.priority === 'medium' && <Badge variant="priority-medium">🟡 {t('priority.medium')}</Badge>}

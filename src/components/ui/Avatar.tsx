@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
-  size?: 'xs' | 'sm' | 'md';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   src?: string;
 }
 
@@ -33,6 +33,8 @@ export const Avatar: React.FC<AvatarProps> = ({ name, size = 'sm', src, classNam
     xs: 'w-[22px] h-[22px] text-[10px]',
     sm: 'w-[32px] h-[32px] text-xs',
     md: 'w-[44px] h-[44px] text-sm',
+    lg: 'w-[64px] h-[64px] text-lg',
+    xl: 'w-[96px] h-[96px] text-2xl',
   };
 
   return (

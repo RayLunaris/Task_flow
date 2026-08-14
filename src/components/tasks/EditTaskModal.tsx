@@ -1,6 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Save, Folder, MessageSquare, AlignLeft, CheckSquare, Plus, Trash2, Download, Upload, Clock, Play, Square, Activity } from 'lucide-react';
+import { 
+  X, 
+  Save, 
+  MessageSquare, 
+  AlignLeft, 
+  CheckSquare, 
+  Plus, 
+  Trash2, 
+  Clock, 
+  Play, 
+  Square, 
+  Activity, 
+  CheckCircle2, 
+  AlertCircle, 
+  Send, 
+  RotateCcw
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,8 +37,21 @@ interface EditTaskModalProps {
 }
 
 export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onClose }) => {
-  const { updateTask, categories, checklistTemplates, saveChecklistTemplate, addSubTask, toggleSubTask, deleteSubTask, startTimer, stopTimer } = useTasks();
-  const { user } = useAuth();
+  const { 
+    updateTask, 
+    categories, 
+    addSubTask, 
+    toggleSubTask, 
+    deleteSubTask, 
+    startTimer, 
+    stopTimer,
+    submitForReview,
+    approveTask,
+    rejectTask,
+    tasks
+  } = useTasks();
+  
+  const { user, users } = useAuth();
   const { projects } = useProjects();
   const { milestones } = useMilestones();
   const { t } = useTranslation();
@@ -30,8 +59,6 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
 
   const [activeTab, setActiveTab] = useState<'details' | 'comments' | 'checklist' | 'activity'>('details');
   const [newSubTask, setNewSubTask] = useState('');
-  const [templateName, setTemplateName] = useState('');
-  const [showTemplateSave, setShowTemplateSave] = useState(false);
 
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || '');
@@ -39,6 +66,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
   const [category, setCategory] = useState(task.category);
   const [projectId, setProjectId] = useState(task.projectId || '');
   const [milestoneId, setMilestoneId] = useState(task.milestoneId || '');
+  const [assigneeId, setAssigneeId] = useState(task.assigneeIds?.[0] || '');
+  const [reviewerId, setReviewerId] = useState(task.reviewerId || '');
   const [dueDate, setDueDate] = useState(task.dueDate || '');
   const [reminderAt, setReminderAt] = useState(task.reminderAt || '');
   const [status, setStatus] = useState(task.status || 'todo');
@@ -49,6 +78,9 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
   );
   const [recurringInterval, setRecurringInterval] = useState(task.recurringConfig?.interval || 1);
 
+  const [showRevisionBox, setShowRevisionBox] = useState(false);
+  const [revisionText, setRevisionText] = useState('');
+
   useEffect(() => {
     if (isOpen) {
       setTitle(task.title);
@@ -57,6 +89,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
       setCategory(task.category);
       setProjectId(task.projectId || '');
       setMilestoneId(task.milestoneId || '');
+      setAssigneeId(task.assigneeIds?.[0] || '');
+      setReviewerId(task.reviewerId || '');
       setDueDate(task.dueDate || '');
       setReminderAt(task.reminderAt || '');
       setStatus(task.status || 'todo');
@@ -64,6 +98,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
       setRecurringFrequency((task.recurringConfig?.frequency as 'daily' | 'weekly' | 'monthly') || 'daily');
       setRecurringInterval(task.recurringConfig?.interval || 1);
       setActiveTab('details');
+      setShowRevisionBox(false);
+      setRevisionText('');
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -73,7 +109,22 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
     };
   }, [isOpen, task]);
 
+  // Compute workload count for all active users
+  const userWorkloadMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    const activeTasks = tasks.filter(t => t.status !== 'done' && !t.completed);
+    users.forEach(u => {
+      map[u.id] = activeTasks.filter(t => t.assigneeIds?.includes(u.id)).length;
+    });
+    return map;
+  }, [tasks, users]);
+
   if (!isOpen) return null;
+
+  const isReviewerOrManager = 
+    user?.role === 'admin' || 
+    user?.role === 'manager' || 
+    (task.reviewerId && user?.id === task.reviewerId);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +137,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
       category,
       projectId: projectId || undefined,
       milestoneId: milestoneId || undefined,
+      assigneeIds: assigneeId ? [assigneeId] : [],
+      reviewerId: reviewerId || undefined,
       dueDate: dueDate || undefined,
       reminderAt: reminderAt || undefined,
       status,
@@ -97,6 +150,22 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
     });
 
     onClose();
+  };
+
+  const handleApprove = () => {
+    approveTask(task.id);
+    onClose();
+  };
+
+  const handleReject = () => {
+    if (!revisionText.trim()) return;
+    rejectTask(task.id, revisionText.trim());
+    onClose();
+  };
+
+  const handleSubmitForReview = () => {
+    submitForReview(task.id, reviewerId || undefined);
+    setStatus('review');
   };
 
   const handleAddComment = (content: string, mentions: string[]) => {
@@ -152,8 +221,9 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800"
+          className="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-800"
         >
+          {/* Modal Header */}
           <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
             <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 truncate pr-4">
               {task.title}
@@ -166,172 +236,316 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
             </button>
           </div>
 
+          {/* Review & Approval Action Banner */}
+          {status === 'review' ? (
+            <div className="bg-blue-50/90 dark:bg-blue-950/50 p-4 border-b border-blue-200/60 dark:border-blue-800/60 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+                  <Clock className="text-blue-600 dark:text-blue-400 animate-spin" size={18} />
+                  <span className="font-bold text-sm">Status: Menunggu Persetujuan (Waiting for Review)</span>
+                </div>
+
+                {isReviewerOrManager && !showRevisionBox && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      icon={<RotateCcw size={14} />}
+                      onClick={() => setShowRevisionBox(true)}
+                      className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                    >
+                      Minta Revisi
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      icon={<CheckCircle2 size={14} />}
+                      onClick={handleApprove}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    >
+                      Setujui (Approve)
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {showRevisionBox && (
+                <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-blue-200 dark:border-blue-800 space-y-2 animate-in fade-in">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Catatan Masukan / Instruksi Revisi:
+                  </label>
+                  <textarea
+                    value={revisionText}
+                    onChange={(e) => setRevisionText(e.target.value)}
+                    placeholder="Jelaskan hal apa yang perlu diperbaiki atau disesuaikan..."
+                    className="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none h-16"
+                  />
+                  <div className="flex justify-end gap-2">
+                    <Button type="button" size="sm" variant="ghost" onClick={() => setShowRevisionBox(false)}>
+                      Batal
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="danger"
+                      disabled={!revisionText.trim()}
+                      onClick={handleReject}
+                      icon={<Send size={14} />}
+                    >
+                      Kirim Revisi
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : task.revisionNote ? (
+            <div className="bg-amber-50 dark:bg-amber-950/40 p-3.5 border-b border-amber-200/70 dark:border-amber-800/60 text-xs flex items-start gap-2.5 text-amber-800 dark:text-amber-300">
+              <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <strong className="block font-bold">Catatan Revisi Terakhir:</strong>
+                <p className="mt-0.5">{task.revisionNote}</p>
+              </div>
+            </div>
+          ) : null}
+
+          {/* Tabs Header */}
           <div className="flex border-b border-slate-100 dark:border-slate-800">
             <button 
               onClick={() => setActiveTab('details')}
               className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'details' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
             >
               <AlignLeft size={16} />
-              {t('taskModal.tabDetails')}
+              {t('taskModal.tabDetails', 'Detail')}
             </button>
             <button 
               onClick={() => setActiveTab('comments')}
               className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'comments' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
             >
               <MessageSquare size={16} />
-              {t('taskModal.tabComments')} ({(task.comments || []).length})
+              {t('taskModal.tabComments', 'Komentar')} ({(task.comments || []).length})
             </button>
             <button 
               onClick={() => setActiveTab('checklist')}
               className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'checklist' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
             >
               <CheckSquare size={16} />
-              {t('taskModal.tabChecklist')} ({(task.subTasks || []).length})
+              {t('taskModal.tabChecklist', 'Checklist')} ({(task.subTasks || []).length})
             </button>
             <button 
               onClick={() => setActiveTab('activity')}
               className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'activity' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
             >
               <Activity size={16} />
-              {t('taskModal.tabActivity')}
+              {t('taskModal.tabActivity', 'Aktivitas')}
             </button>
           </div>
 
+          {/* Time Tracking Row (Details tab) */}
           {activeTab === 'details' && (
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                  <Clock size={20} />
+                <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <Clock size={18} />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('taskModal.timeTracked')}</p>
-                  <p className="text-lg font-bold font-mono text-slate-800 dark:text-slate-100">
+                  <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">{t('taskModal.timeTracked', 'Waktu Tercatat')}</p>
+                  <p className="text-base font-bold font-mono text-slate-800 dark:text-slate-100">
                     {formatTime(totalTimeSpent)}
                   </p>
                 </div>
               </div>
-              <div>
+              <div className="flex items-center gap-2">
+                {status !== 'review' && status !== 'done' && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    icon={<Send size={14} />}
+                    onClick={handleSubmitForReview}
+                    className="border-primary/50 text-primary hover:bg-primary/10"
+                  >
+                    Kirim untuk Review
+                  </Button>
+                )}
+
                 {activeTimeEntry ? (
                   <Button 
                     type="button" 
+                    size="sm"
                     variant="danger" 
-                    icon={<Square size={16} />} 
+                    icon={<Square size={14} />} 
                     onClick={() => user && stopTimer(task.id, user.id)}
                     className="animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.3)]"
                   >
-                    {t('taskModal.stopTimer')}
+                    {t('taskModal.stopTimer', 'Stop')}
                   </Button>
                 ) : (
                   <Button 
                     type="button" 
+                    size="sm"
                     variant="primary" 
-                    icon={<Play size={16} />} 
+                    icon={<Play size={14} />} 
                     onClick={() => user && startTimer(task.id, user.id)}
                   >
-                    {t('taskModal.startTimer')}
+                    {t('taskModal.startTimer', 'Mulai')}
                   </Button>
                 )}
               </div>
             </div>
           )}
 
-          <div className="p-4 max-h-[50vh] overflow-y-auto custom-scrollbar">
+          {/* Tab Content */}
+          <div className="p-5 max-h-[50vh] overflow-y-auto custom-scrollbar">
             {activeTab === 'details' ? (
               <form id="edit-task-form" onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                {t('taskForm.placeholder')}
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100 font-medium"
-                autoFocus
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                {t('taskForm.description')}
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary resize-none min-h-[100px]"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Priority
-                </label>
-                <select
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value as any)}
-                  className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
-                >
-                  <option value="urgent">🔴 Urgent</option>
-                  <option value="high">🟠 {t('priority.high')}</option>
-                  <option value="medium">🟡 {t('priority.medium')}</option>
-                  <option value="low">🔵 {t('priority.low')}</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Category
-                </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.name}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {projects.length > 0 && (
-              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Project
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                    Judul Tugas *
                   </label>
-                  <div className="relative">
-                    <Folder size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100 font-medium"
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                    Deskripsi
+                  </label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary resize-none min-h-[90px]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                      Pelaksana (Assignee)
+                    </label>
                     <select
-                      value={projectId}
-                      onChange={(e) => {
-                        const newProjectId = e.target.value;
-                        setProjectId(newProjectId);
-                        setMilestoneId('');
-                      }}
-                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-sm text-slate-800 dark:text-slate-200 appearance-none font-medium"
+                      value={assigneeId}
+                      onChange={(e) => setAssigneeId(e.target.value)}
+                      className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200"
                     >
-                      <option value="">No Project</option>
-                      {projects.map(p => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
+                      <option value="">Belum Ditugaskan</option>
+                      {users.filter(u => u.status !== 'inactive' && u.role !== 'client').map((u) => {
+                        const count = userWorkloadMap[u.id] || 0;
+                        const dot = count >= 7 ? '🔴' : count >= 4 ? '🟡' : '🟢';
+                        return (
+                          <option key={u.id} value={u.id}>
+                            {dot} {u.name} ({count} task)
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                      Reviewer (Pemeriksa)
+                    </label>
+                    <select
+                      value={reviewerId}
+                      onChange={(e) => setReviewerId(e.target.value)}
+                      className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+                    >
+                      <option value="">Tanpa Reviewer Khusus</option>
+                      {users.filter(u => u.status !== 'inactive' && (u.role === 'admin' || u.role === 'manager')).map((u) => (
+                        <option key={u.id} value={u.id}>
+                          🔍 {u.name} ({u.role})
+                        </option>
                       ))}
                     </select>
                   </div>
                 </div>
 
-                {projectId && (
+                <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      Milestone
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                      Prioritas
                     </label>
-                    <div className="relative">
+                    <select
+                      value={priority}
+                      onChange={(e) => setPriority(e.target.value as any)}
+                      className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                    >
+                      <option value="urgent">🔴 Urgent</option>
+                      <option value="high">🟠 Tinggi</option>
+                      <option value="medium">🟡 Sedang</option>
+                      <option value="low">🔵 Rendah</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                      Status
+                    </label>
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value as any)}
+                      className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                    >
+                      <option value="todo">To Do</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="review">Waiting Review</option>
+                      <option value="done">Done (Selesai)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                      Kategori
+                    </label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                    >
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.name}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {projects.length > 0 && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                        Proyek
+                      </label>
+                      <select
+                        value={projectId}
+                        onChange={(e) => {
+                          setProjectId(e.target.value);
+                          setMilestoneId('');
+                        }}
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm text-slate-800 dark:text-slate-200"
+                      >
+                        <option value="">No Project</option>
+                        {projects.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                        Milestone
+                      </label>
                       <select
                         value={milestoneId}
                         onChange={(e) => setMilestoneId(e.target.value)}
-                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-sm text-slate-800 dark:text-slate-200 appearance-none font-medium"
+                        disabled={!projectId}
+                        className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm text-slate-800 dark:text-slate-200 disabled:opacity-50"
                       >
                         <option value="">No Milestone</option>
                         {milestones.filter(m => m.projectId === projectId).map(m => (
@@ -341,86 +555,68 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
                     </div>
                   </div>
                 )}
-              </div>
-            )}
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Due Date
-                </label>
-                <input
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-                  {t('taskModal.reminder')}
-                </label>
-                <input
-                  type="datetime-local"
-                  value={reminderAt}
-                  onChange={(e) => setReminderAt(e.target.value)}
-                  className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                Status
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
-              >
-                <option value="todo">To Do</option>
-                <option value="in_progress">In Progress</option>
-                <option value="review">Review</option>
-                <option value="done">Done</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-4 w-full mt-2">
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isRecurring}
-                    onChange={(e) => setIsRecurring(e.target.checked)}
-                    className="rounded border-slate-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer"
-                  />
-                  <span>🔁 Recurring Task</span>
-                </label>
-
-                {isRecurring && (
-                  <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-2">
-                    <span className="text-sm text-slate-500">Repeat every</span>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                      Tenggat Waktu (Due Date)
+                    </label>
                     <input
-                      type="number"
-                      min="1"
-                      value={recurringInterval}
-                      onChange={(e) => setRecurringInterval(Number(e.target.value) || 1)}
-                      className="w-16 text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-center"
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
                     />
-                    <select
-                      value={recurringFrequency}
-                      onChange={(e) => setRecurringFrequency(e.target.value as any)}
-                      className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800"
-                    >
-                      <option value="daily">Day(s)</option>
-                      <option value="weekly">Week(s)</option>
-                      <option value="monthly">Month(s)</option>
-                    </select>
                   </div>
-                )}
-              </div>
-            </form>
-            ) : activeTab === 'comments' && projectId ? (
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
+                      Pengingat (Reminder)
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={reminderAt}
+                      onChange={(e) => setReminderAt(e.target.value)}
+                      className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 w-full pt-1">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isRecurring}
+                      onChange={(e) => setIsRecurring(e.target.checked)}
+                      className="rounded border-slate-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                    />
+                    <span>🔁 Recurring Task</span>
+                  </label>
+
+                  {isRecurring && (
+                    <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-2">
+                      <span className="text-sm text-slate-500">Every</span>
+                      <input
+                        type="number"
+                        min="1"
+                        value={recurringInterval}
+                        onChange={(e) => setRecurringInterval(Number(e.target.value) || 1)}
+                        className="w-16 text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-center"
+                      />
+                      <select
+                        value={recurringFrequency}
+                        onChange={(e) => setRecurringFrequency(e.target.value as any)}
+                        className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-slate-800"
+                      >
+                        <option value="daily">Day(s)</option>
+                        <option value="weekly">Week(s)</option>
+                        <option value="monthly">Month(s)</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </form>
+            ) : activeTab === 'comments' ? (
               <div className="flex flex-col h-full min-h-[300px]">
                 <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                   <CommentList comments={task.comments || []} onDelete={handleDeleteComment} />
@@ -430,75 +626,12 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
             ) : activeTab === 'checklist' ? (
               <div className="space-y-4 min-h-[300px]">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-slate-800 dark:text-slate-100">Checklist</h3>
-                  <div className="flex items-center gap-2">
-                    {checklistTemplates.length > 0 && (
-                      <div className="relative group">
-                        <Button type="button" variant="secondary" icon={<Download size={14} />} className="text-xs py-1 px-2 h-auto">
-                          {t('taskModal.loadTemplate')}
-                        </Button>
-                        <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 p-1">
-                          {checklistTemplates.map(t => (
-                            <button
-                              key={t.id}
-                              type="button"
-                              onClick={() => {
-                                updateTask(task.id, {
-                                  subTasks: [
-                                    ...task.subTasks,
-                                    ...t.items.map(item => ({ ...item, id: uuidv4(), completed: false }))
-                                  ]
-                                });
-                              }}
-                              className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-md truncate"
-                            >
-                              {t.name}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {task.subTasks.length > 0 && (
-                      <Button 
-                        type="button" 
-                        variant="secondary" 
-                        icon={<Upload size={14} />} 
-                        className="text-xs py-1 px-2 h-auto"
-                        onClick={() => setShowTemplateSave(!showTemplateSave)}
-                      >
-                        {t('taskModal.saveTemplate')}
-                      </Button>
-                    )}
-                  </div>
+                  <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">Checklist / Subtasks</h3>
                 </div>
-
-                {showTemplateSave && (
-                  <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <input
-                      type="text"
-                      value={templateName}
-                      onChange={e => setTemplateName(e.target.value)}
-                      placeholder={t('taskModal.templateName')}
-                      className="flex-1 text-sm bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
-                    />
-                    <Button
-                      type="button"
-                      disabled={!templateName.trim()}
-                      onClick={() => {
-                        saveChecklistTemplate(templateName.trim(), task.subTasks.map(st => ({ id: uuidv4(), title: st.title, order: 0 })));
-                        setTemplateName('');
-                        setShowTemplateSave(false);
-                      }}
-                      className="py-1 px-3 h-auto text-xs"
-                    >
-                      Save
-                    </Button>
-                  </div>
-                )}
 
                 <div className="space-y-2">
                   {task.subTasks.map(st => (
-                    <div key={st.id} className="flex items-center justify-between group bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-100 dark:border-slate-700/50">
+                    <div key={st.id} className="flex items-center justify-between group bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/50">
                       <div className="flex items-center gap-3">
                         <input
                           type="checkbox"
@@ -513,7 +646,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
                       <button
                         type="button"
                         onClick={() => deleteSubTask(task.id, st.id)}
-                        className="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                        className="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1 cursor-pointer"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -534,32 +667,29 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
                     type="text"
                     value={newSubTask}
                     onChange={e => setNewSubTask(e.target.value)}
-                    placeholder="Add checklist item..."
-                    className="flex-1 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+                    placeholder="Tambah item checklist..."
+                    className="flex-1 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 text-slate-800 dark:text-slate-200"
                   />
-                  <Button type="submit" disabled={!newSubTask.trim()} icon={<Plus size={16} />} className="px-3">
-                    Add
+                  <Button type="submit" disabled={!newSubTask.trim()} icon={<Plus size={16} />} size="sm">
+                    Tambah
                   </Button>
                 </form>
               </div>
             ) : activeTab === 'activity' ? (
               <div className="space-y-4 min-h-[300px]">
-                <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">{t('taskModal.taskActivity')}</h3>
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm mb-4">Riwayat Aktivitas Tugas</h3>
                 {getTaskActivities(task.id).length === 0 ? (
-                  <p className="text-sm text-slate-500 text-center py-8">{t('taskModal.noActivity')}</p>
+                  <p className="text-sm text-slate-500 text-center py-8">Belum ada aktivitas tercatat.</p>
                 ) : (
-                  <div className="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-200 dark:before:bg-slate-700">
+                  <div className="space-y-3">
                     {getTaskActivities(task.id).map(log => (
-                      <div key={log.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                          <Activity size={16} />
+                      <div key={log.id} className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">
+                        <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-primary flex items-center justify-center shrink-0">
+                          <Activity size={15} />
                         </div>
-                        <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-bold text-slate-800 dark:text-slate-100 text-sm">{log.action}</span>
-                            <span className="text-xs text-slate-500">{new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                          </div>
-                          <p className="text-xs text-slate-500">{new Date(log.createdAt).toLocaleDateString()}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{log.action}</p>
+                          <p className="text-[10px] text-slate-400">{new Date(log.createdAt).toLocaleString()}</p>
                         </div>
                       </div>
                     ))}
@@ -569,13 +699,14 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
             ) : null}
           </div>
 
-          <div className="p-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+          {/* Footer */}
+          <div className="p-4 flex justify-end gap-2.5 border-t border-slate-100 dark:border-slate-800">
             <Button type="button" variant="secondary" onClick={onClose}>
-              {t('common.cancel')}
+              {t('common.cancel', 'Batal')}
             </Button>
             {activeTab === 'details' && (
-              <Button type="submit" form="edit-task-form" disabled={!title.trim()} icon={<Save size={18} />}>
-                {t('common.save')}
+              <Button type="submit" form="edit-task-form" disabled={!title.trim()} icon={<Save size={16} />}>
+                {t('common.save', 'Simpan Perubahan')}
               </Button>
             )}
           </div>

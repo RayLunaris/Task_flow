@@ -5,6 +5,7 @@ import { GripVertical, Clock, Paperclip, MessageCircle, CheckSquare } from 'luci
 import clsx from 'clsx';
 import type { Task } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { Avatar } from '../ui/Avatar';
 
 interface KanbanCardProps {
   task: Task;
@@ -111,13 +112,14 @@ export const KanbanCard: React.FC<KanbanCardProps> = ({ task }) => {
               const u = users.find(user => user.id === id);
               if (!u) return null;
               return (
-                <div 
-                  key={id} 
+                <Avatar
+                  key={id}
+                  name={u.name}
+                  src={u.avatar}
+                  size="xs"
                   title={u.name}
-                  className="w-6 h-6 rounded-full bg-[#E3F2FD] dark:bg-blue-900/50 text-[#0D47A1] dark:text-blue-300 flex items-center justify-center text-[10px] font-bold border border-white dark:border-slate-800"
-                >
-                  {u.name.charAt(0).toUpperCase()}
-                </div>
+                  className="w-6 h-6 border border-white dark:border-slate-800"
+                />
               );
             })}
           </div>

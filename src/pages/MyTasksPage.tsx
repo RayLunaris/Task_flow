@@ -8,7 +8,7 @@ import { TaskForm } from '../components/tasks/TaskForm';
 import { CheckSquare, Calendar, AlertCircle, ListTodo } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
-type FilterType = 'all' | 'today' | 'week' | 'overdue' | 'completed';
+type FilterType = 'all' | 'today' | 'week' | 'review' | 'overdue' | 'completed';
 type SortType = 'dueDate' | 'priority' | 'name';
 
 export const MyTasksPage: React.FC = () => {
@@ -23,7 +23,7 @@ export const MyTasksPage: React.FC = () => {
     if (!user) return [];
     
     // 1. Get user's tasks
-    let filtered = tasks.filter(t => t.assigneeIds?.includes(user.id));
+    let filtered = tasks.filter(t => t.assigneeIds?.includes(user.id) || (t.reviewerId === user.id && t.status === 'review'));
 
     // 1.5. Filter by category
     if (selectedCategory) {
@@ -35,8 +35,9 @@ export const MyTasksPage: React.FC = () => {
     today.setHours(0, 0, 0, 0);
 
     filtered = filtered.filter(task => {
-      if (filter === 'completed') return task.completed;
-      if (task.completed) return false;
+      if (filter === 'completed') return task.completed || task.status === 'done';
+      if (filter === 'review') return task.status === 'review';
+      if (task.completed || task.status === 'done') return false;
 
       if (filter === 'all') return true;
 
@@ -96,6 +97,9 @@ export const MyTasksPage: React.FC = () => {
           </FilterButton>
           <FilterButton active={filter === 'week'} onClick={() => setFilter('week')} icon={<Calendar size={14} />}>
             {t('myTasks.thisWeek')}
+          </FilterButton>
+          <FilterButton active={filter === 'review'} onClick={() => setFilter('review')} icon={<AlertCircle size={14} />} color="text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-950/40">
+            {t('myTasks.waitingReview', 'Waiting Review')}
           </FilterButton>
           <FilterButton active={filter === 'overdue'} onClick={() => setFilter('overdue')} icon={<AlertCircle size={14} />} color="text-danger bg-danger/10 border-danger/20 dark:bg-danger/20">
             {t('myTasks.overdue')}

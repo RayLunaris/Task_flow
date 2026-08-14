@@ -1,26 +1,44 @@
-import React, { useState } from 'react';
-import { PlusCircle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { PlusCircle, AlertTriangle } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
+import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/Button';
 import { useTranslation } from 'react-i18next';
 import { useProjects } from '../../context/ProjectContext';
 import { useMilestones } from '../../context/MilestoneContext';
 
 export const TaskForm: React.FC = () => {
-  const { addTask, categories, selectedCategory } = useTasks();
+  const { addTask, categories, selectedCategory, tasks } = useTasks();
+  const { user, users } = useAuth();
   const { projects } = useProjects();
   const { milestones } = useMilestones();
   const { t } = useTranslation();
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<'high' | 'medium' | 'low' | 'urgent'>('medium');
   const [category, setCategory] = useState(selectedCategory || (categories.length > 0 ? categories[0].name : 'Pribadi'));
   const [projectId, setProjectId] = useState<string>('');
   const [milestoneId, setMilestoneId] = useState<string>('');
+  const [assigneeId, setAssigneeId] = useState<string>(user?.id || '');
+  const [reviewerId, setReviewerId] = useState<string>('');
   const [dueDate, setDueDate] = useState('');
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringFrequency, setRecurringFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [recurringInterval, setRecurringInterval] = useState(1);
+
+  // Compute workload count for all active users
+  const userWorkloadMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    const activeTasks = tasks.filter(t => t.status !== 'done' && !t.completed);
+    users.forEach(u => {
+      map[u.id] = activeTasks.filter(t => t.assigneeIds?.includes(u.id)).length;
+    });
+    return map;
+  }, [tasks, users]);
+
+  const selectedAssigneeWorkload = assigneeId ? userWorkloadMap[assigneeId] || 0 : 0;
+  const isAssigneeOverloaded = selectedAssigneeWorkload >= 7;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +51,8 @@ export const TaskForm: React.FC = () => {
       category,
       projectId: projectId || undefined,
       milestoneId: milestoneId || undefined,
+      assigneeIds: assigneeId ? [assigneeId] : (user ? [user.id] : []),
+      reviewerId: reviewerId || undefined,
       dueDate: dueDate || undefined,
       isRecurring,
       recurringConfig: isRecurring ? {
@@ -48,6 +68,7 @@ export const TaskForm: React.FC = () => {
     setProjectId('');
     setMilestoneId('');
     setDueDate('');
+    setReviewerId('');
     setIsRecurring(false);
     setRecurringFrequency('daily');
     setRecurringInterval(1);
@@ -65,7 +86,7 @@ export const TaskForm: React.FC = () => {
       <div className="flex flex-col gap-4">
         <input
           type="text"
-          placeholder={t('taskForm.placeholder')}
+          placeholder={t('taskForm.placeholder', 'Tambahkan tugas baru... (Tekan Enter untuk menyimpan)')}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -76,24 +97,70 @@ export const TaskForm: React.FC = () => {
         {title && (
           <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
             <textarea
-              placeholder={t('taskForm.description')}
+              placeholder={t('taskForm.description', 'Tambahkan deskripsi atau instruksi pengerjaan...')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary resize-none min-h-[80px]"
             />
+
+            {/* Overcapacity Warning Banner */}
+            {isAssigneeOverloaded && (
+              <div className="p-2.5 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-700 dark:text-red-300 text-xs flex items-center gap-2 animate-in fade-in">
+                <AlertTriangle size={15} className="text-red-500 shrink-0" />
+                <span>
+                  <strong>Perhatian:</strong> Anggota yang dipilih saat ini memiliki <strong>{selectedAssigneeWorkload} tugas aktif</strong> (Overcapacity). Pertimbangkan untuk mendelegasikan ke anggota lain.
+                </span>
+              </div>
+            )}
             
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Priority */}
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as 'high' | 'medium' | 'low' | 'urgent')}
                 className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               >
                 <option value="urgent">🔴 Urgent</option>
-                <option value="high">🟠 {t('priority.high')}</option>
-                <option value="medium">🟡 {t('priority.medium')}</option>
-                <option value="low">🔵 {t('priority.low')}</option>
+                <option value="high">🟠 {t('priority.high', 'Tinggi')}</option>
+                <option value="medium">🟡 {t('priority.medium', 'Sedang')}</option>
+                <option value="low">🔵 {t('priority.low', 'Rendah')}</option>
               </select>
 
+              {/* Assignee with Workload Indicator */}
+              <div className="flex items-center gap-1.5">
+                <select
+                  value={assigneeId}
+                  onChange={(e) => setAssigneeId(e.target.value)}
+                  className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[200px]"
+                >
+                  <option value="">Pilih Pelaksana (Assignee)</option>
+                  {users.filter(u => u.status !== 'inactive' && u.role !== 'client').map((u) => {
+                    const count = userWorkloadMap[u.id] || 0;
+                    const dot = count >= 7 ? '🔴' : count >= 4 ? '🟡' : '🟢';
+                    return (
+                      <option key={u.id} value={u.id}>
+                        {dot} {u.name} ({count} task) - {u.department || 'General'}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+
+              {/* Reviewer */}
+              <select
+                value={reviewerId}
+                onChange={(e) => setReviewerId(e.target.value)}
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[180px]"
+              >
+                <option value="">Reviewer (Opsional)</option>
+                {users.filter(u => u.status !== 'inactive' && (u.role === 'admin' || u.role === 'manager')).map((u) => (
+                  <option key={u.id} value={u.id}>
+                    🔍 {u.name} ({u.role})
+                  </option>
+                ))}
+              </select>
+
+              {/* Category */}
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -106,45 +173,47 @@ export const TaskForm: React.FC = () => {
                 ))}
               </select>
 
-              <div className="flex flex-col gap-2">
+              {/* Project & Milestone */}
+              <select
+                value={projectId}
+                onChange={(e) => {
+                  setProjectId(e.target.value);
+                  setMilestoneId('');
+                }}
+                className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
+              >
+                <option value="">No Project</option>
+                {projects.map((proj) => (
+                  <option key={proj.id} value={proj.id}>
+                    {proj.name}
+                  </option>
+                ))}
+              </select>
+
+              {projectId && (
                 <select
-                  value={projectId}
-                  onChange={(e) => {
-                    setProjectId(e.target.value);
-                    setMilestoneId('');
-                  }}
+                  value={milestoneId}
+                  onChange={(e) => setMilestoneId(e.target.value)}
                   className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
                 >
-                  <option value="">No Project</option>
-                  {projects.map((proj) => (
-                    <option key={proj.id} value={proj.id}>
-                      {proj.name}
+                  <option value="">No Milestone</option>
+                  {milestones.filter(m => m.projectId === projectId).map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name}
                     </option>
                   ))}
                 </select>
+              )}
 
-                {projectId && (
-                  <select
-                    value={milestoneId}
-                    onChange={(e) => setMilestoneId(e.target.value)}
-                    className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium max-w-[150px]"
-                  >
-                    <option value="">No Milestone</option>
-                    {milestones.filter(m => m.projectId === projectId).map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </div>
-
+              {/* Due Date */}
               <input
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 className="text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-medium"
               />
+
+              {/* Recurring */}
               <div className="flex items-center gap-4 w-full mt-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
                   <input
@@ -189,7 +258,7 @@ export const TaskForm: React.FC = () => {
             icon={<PlusCircle size={18} />}
             className={!title.trim() ? 'opacity-50 cursor-not-allowed' : ''}
           >
-            {t('taskForm.addTask')}
+            {t('taskForm.addTask', 'Simpan & Tugaskan')}
           </Button>
         </div>
       </div>

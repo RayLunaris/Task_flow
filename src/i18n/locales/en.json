@@ -67,7 +67,8 @@
     "roles": {
       "admin": "Admin",
       "manager": "Manager",
-      "member": "Member"
+      "member": "Member",
+      "client": "Client / Viewer"
     }
   },
   "sidebar": {
@@ -270,25 +271,29 @@
     "saveMilestone": "Save Milestone"
   },
   "team": {
-    "title": "Team Members",
-    "subtitle": "Manage team members and view their workload",
-    "addMember": "Add Member",
-    "searchPlaceholder": "Search members by name, email, or role...",
+    "title": "Team Management",
+    "subtitle": "Manage member registrations, role authorizations, task allocations, and workload balancing.",
+    "addMember": "Invite / Add Member",
+    "searchPlaceholder": "Search members by name, email, title, or department...",
     "noMembers": "No members found.",
-    "noMatch": "No members match your search criteria.",
+    "noMatch": "No members match your filter criteria.",
     "you": "You",
     "joined": "Joined {{date}}",
     "workload": "Workload",
     "active": "Active",
     "done": "Done",
     "overdue": "Overdue",
-    "edit": "Edit",
+    "edit": "Edit Member",
     "delete": "Delete",
     "deleteConfirm": "Are you sure you want to delete {{name}}?"
   },
+  "roleMatrix": {
+    "title": "Role & Permission Matrix",
+    "subtitle": "Understand the authorization levels and capabilities for each role in TaskFlow workspace."
+  },
   "teamModal": {
-    "createTitle": "Add Team Member",
-    "editTitle": "Edit Team Member",
+    "createTitle": "Invite / Add Team Member",
+    "editTitle": "Edit Member Profile",
     "name": "Full Name",
     "namePlaceholder": "e.g. John Doe",
     "email": "Email Address",
@@ -310,7 +315,12 @@
     "justNow": "Just now",
     "minutesAgo": "{{count}}m ago",
     "hoursAgo": "{{count}}h ago",
-    "daysAgo": "{{count}}d ago"
+    "daysAgo": "{{count}}d ago",
+    "teamInvite": "Team Invitation",
+    "acceptInvite": "Join Team",
+    "declineInvite": "Decline",
+    "inviteAccepted": "You have joined this team",
+    "inviteDeclined": "Invitation declined"
   },
   "comments": {
     "title": "Comments",
@@ -367,6 +377,13 @@
     "department": "Department",
     "email": "Email Address",
     "saveProfile": "Save Profile",
+    "avatar": "Profile Avatar",
+    "avatarDesc": "Upload a photo from your local device or pick a preset.",
+    "uploadAvatar": "Upload Photo",
+    "removeAvatar": "Remove Photo",
+    "orPresets": "Or choose a preset avatar",
+    "profileUpdated": "Profile updated successfully!",
+    "fileTooLarge": "Image file is too large (max 5MB)",
     "preferences": "Preferences",
     "appearance": "Appearance",
     "appearanceDesc": "Toggle dark or light mode",

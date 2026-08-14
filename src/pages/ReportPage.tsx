@@ -5,6 +5,7 @@ import { useProjects } from '../context/ProjectContext';
 import { useMilestones } from '../context/MilestoneContext';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
+import { Avatar } from '../components/ui/Avatar';
 import { useTranslation } from 'react-i18next';
 import { exportTasksToExcel } from '../utils/exportUtils';
 
@@ -167,9 +168,14 @@ export const ReportPage: React.FC = () => {
                           const u = users.find(u => u.id === id);
                           if (!u) return null;
                           return (
-                            <div key={id} title={u.name} className="w-6 h-6 rounded-full bg-[#E3F2FD] text-[#0D47A1] flex items-center justify-center text-[10px] font-bold border-2 border-white dark:border-slate-800 z-10">
-                              {u.name.charAt(0).toUpperCase()}
-                            </div>
+                            <Avatar 
+                              key={id} 
+                              name={u.name} 
+                              src={u.avatar} 
+                              size="xs" 
+                              title={u.name} 
+                              className="w-6 h-6 border-2 border-white dark:border-slate-800 z-10" 
+                            />
                           );
                         })}
                         {(!task.assigneeIds || task.assigneeIds.length === 0) && (

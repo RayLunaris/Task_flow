@@ -67,7 +67,8 @@
     "roles": {
       "admin": "Admin",
       "manager": "Manajer",
-      "member": "Anggota"
+      "member": "Anggota",
+      "client": "Klien / Viewer"
     }
   },
   "sidebar": {
@@ -270,25 +271,29 @@
     "saveMilestone": "Simpan Milestone"
   },
   "team": {
-    "title": "Anggota Tim",
-    "subtitle": "Kelola anggota tim dan lihat beban kerja mereka",
-    "addMember": "Tambah Anggota",
-    "searchPlaceholder": "Cari anggota berdasarkan nama, email, atau peran...",
-    "noMembers": "Tidak ada anggota ditemukan.",
-    "noMatch": "Tidak ada anggota yang cocok dengan pencarian Anda.",
+    "title": "Team Management",
+    "subtitle": "Kelola pendaftaran anggota, hak akses peran, alokasi tugas, dan pemantauan kapasitas beban kerja.",
+    "addMember": "Undang / Tambah Anggota",
+    "searchPlaceholder": "Cari berdasarkan nama, email, jabatan, atau departemen...",
+    "noMembers": "Belum ada anggota tim ditemukan.",
+    "noMatch": "Tidak ada anggota yang cocok dengan kriteria filter.",
     "you": "Anda",
     "joined": "Bergabung {{date}}",
     "workload": "Beban Kerja",
     "active": "Aktif",
     "done": "Selesai",
     "overdue": "Terlambat",
-    "edit": "Edit",
+    "edit": "Edit Anggota",
     "delete": "Hapus",
     "deleteConfirm": "Apakah Anda yakin ingin menghapus {{name}}?"
   },
+  "roleMatrix": {
+    "title": "Matriks Peran & Hak Akses",
+    "subtitle": "Pahami tingkatan otorisasi dan kapabilitas untuk setiap peran di workspace TaskFlow."
+  },
   "teamModal": {
-    "createTitle": "Tambah Anggota Tim",
-    "editTitle": "Edit Anggota Tim",
+    "createTitle": "Tambah / Undang Anggota Tim",
+    "editTitle": "Edit Profil Anggota",
     "name": "Nama Lengkap",
     "namePlaceholder": "contoh: Budi Santoso",
     "email": "Alamat Email",
@@ -310,7 +315,12 @@
     "justNow": "Baru saja",
     "minutesAgo": "{{count}}m lalu",
     "hoursAgo": "{{count}}h lalu",
-    "daysAgo": "{{count}}d lalu"
+    "daysAgo": "{{count}}d lalu",
+    "teamInvite": "Undangan Tim",
+    "acceptInvite": "Gabung Tim",
+    "declineInvite": "Tolak",
+    "inviteAccepted": "Anda telah bergabung dengan tim ini",
+    "inviteDeclined": "Undangan ditolak"
   },
   "comments": {
     "title": "Komentar",
@@ -367,6 +377,13 @@
     "department": "Departemen",
     "email": "Alamat Email",
     "saveProfile": "Simpan Profil",
+    "avatar": "Avatar Profil",
+    "avatarDesc": "Unggah foto dari perangkat lokal Anda atau pilih avatar siap pakai.",
+    "uploadAvatar": "Unggah Foto",
+    "removeAvatar": "Hapus Foto",
+    "orPresets": "Atau pilih avatar siap pakai",
+    "profileUpdated": "Profil berhasil diperbarui!",
+    "fileTooLarge": "Ukuran foto terlalu besar (maksimal 5MB)",
     "preferences": "Preferensi",
     "appearance": "Tampilan",
     "appearanceDesc": "Beralih antara mode gelap atau terang",

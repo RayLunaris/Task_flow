@@ -39,6 +39,9 @@ interface TaskContextType {
   deleteCategory: (id: string) => void;
   startTimer: (taskId: string, userId: string) => void;
   stopTimer: (taskId: string, userId: string) => void;
+  submitForReview: (taskId: string, reviewerId?: string) => void;
+  approveTask: (taskId: string, approvalNote?: string) => void;
+  rejectTask: (taskId: string, revisionNote: string) => void;
   setSelectedCategory: (categoryName: string | null) => void;
   setFilterStatus: (status: FilterStatus) => void;
   setFilterPriority: (priority: FilterPriority) => void;
@@ -85,6 +88,8 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       category: taskData.category || 'Pribadi',
       assigneeIds: taskData.assigneeIds || (user ? [user.id] : []),
       reporterId: user?.id || 'unknown',
+      reviewerId: taskData.reviewerId,
+      collaboratorIds: taskData.collaboratorIds || [],
       status: taskData.status || 'todo',
       checklists: taskData.checklists || [],
       attachments: taskData.attachments || [],
@@ -92,6 +97,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       timeEntries: taskData.timeEntries || [],
       isRecurring: taskData.isRecurring || false,
       needsApproval: taskData.needsApproval || false,
+      approvalStatus: taskData.approvalStatus,
       order: tasks.length,
       dueDate: taskData.dueDate,
     };
@@ -110,7 +116,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (task.id === id) {
           const updatedTask = { ...task, ...updates, updatedAt: new Date().toISOString() };
           
-
           if (updates.status === 'done' && task.status !== 'done') {
             updatedTask.completed = true;
             updatedTask.completedAt = new Date().toISOString();
@@ -164,6 +169,51 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
+  const submitForReview = (taskId: string, reviewerId?: string) => {
+    const targetTask = tasks.find(t => t.id === taskId);
+    if (!targetTask) return;
+
+    updateTask(taskId, {
+      status: 'review',
+      approvalStatus: 'pending',
+      submittedForReviewAt: new Date().toISOString(),
+      ...(reviewerId ? { reviewerId } : {})
+    });
+    logActivity('Submitted task for review', 'task', taskId, targetTask.title);
+    logAudit(`User submitted task '${targetTask.title}' for review`);
+  };
+
+  const approveTask = (taskId: string, approvalNote?: string) => {
+    const targetTask = tasks.find(t => t.id === taskId);
+    if (!targetTask) return;
+
+    updateTask(taskId, {
+      status: 'done',
+      completed: true,
+      completedAt: new Date().toISOString(),
+      approvalStatus: 'approved',
+      approvalNote: approvalNote || 'Approved by reviewer',
+      reviewedAt: new Date().toISOString()
+    });
+    logActivity('Approved task', 'task', taskId, targetTask.title);
+    logAudit(`Reviewer approved task '${targetTask.title}'`);
+  };
+
+  const rejectTask = (taskId: string, revisionNote: string) => {
+    const targetTask = tasks.find(t => t.id === taskId);
+    if (!targetTask) return;
+
+    updateTask(taskId, {
+      status: 'in_progress',
+      completed: false,
+      approvalStatus: 'rejected',
+      revisionNote,
+      reviewedAt: new Date().toISOString()
+    });
+    logActivity(`Requested revision: "${revisionNote}"`, 'task', taskId, targetTask.title);
+    logAudit(`Reviewer requested revision on task '${targetTask.title}'`);
+  };
+
   const deleteTask = (id: string) => {
     const taskToDelete = tasks.find(t => t.id === id);
     if (taskToDelete) {
@@ -178,7 +228,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const result = Array.from(prev);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
-      // Update order field
       return result.map((task, index) => ({ ...task, order: index }));
     });
   };
@@ -198,6 +247,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             ...task,
             completed: isCompleted,
             completedAt: isCompleted ? new Date().toISOString() : undefined,
+            status: isCompleted ? ('done' as const) : ('todo' as const),
             updatedAt: new Date().toISOString(),
           };
           if (isCompleted) completedTask = updatedTask;
@@ -210,7 +260,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (isNewlyCompleted && ct) {
         if (ct.isRecurring && ct.recurringConfig) {
           const nextDueDate = calculateNextDueDate(ct.dueDate || new Date().toISOString().split('T')[0], ct.recurringConfig);
-          // Auto-generate the next task instance
           const nextTask: Task = {
             ...ct,
             id: uuidv4(),
@@ -222,12 +271,11 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             updatedAt: new Date().toISOString(),
             subTasks: ct.subTasks.map(st => ({ ...st, completed: false })),
             checklists: ct.checklists ? ct.checklists.map(cl => ({ ...cl, completed: false })) : [],
-            comments: [], // Don't carry over comments
+            comments: [],
           };
           newTasks.push(nextTask);
         }
 
-        // Run gamification logic asynchronously to not block state update immediately, or just call it directly
         setTimeout(() => {
           awardPointsForTask(ct);
           checkAndAwardBadges(newTasks);
@@ -315,7 +363,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const startTimer = (taskId: string, userId: string) => {
     setTasks(prev => prev.map(task => {
       if (task.id === taskId) {
-        // Stop any currently running timer for this user
         const newEntries = task.timeEntries.map(entry => {
           if (entry.userId === userId && !entry.endAt) {
             return { ...entry, endAt: new Date().toISOString(), duration: Math.floor((Date.now() - new Date(entry.startAt).getTime()) / 1000) };
@@ -355,7 +402,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }));
   };
 
-
   return (
     <TaskContext.Provider
       value={{
@@ -380,6 +426,9 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         deleteCategory,
         startTimer,
         stopTimer,
+        submitForReview,
+        approveTask,
+        rejectTask,
         setSelectedCategory,
         setFilterStatus,
         setFilterPriority,

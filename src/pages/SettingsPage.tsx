@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { User, Settings, Globe, Moon, Sun, Save, Bell } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { User, Settings, Globe, Moon, Sun, Save, Bell, Camera, Trash2, Check, Sparkles, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../components/ui/Button';
+import { Avatar } from '../components/ui/Avatar';
 
 export const SettingsPage: React.FC = () => {
   const { user, updateUser } = useAuth();
@@ -10,6 +11,19 @@ export const SettingsPage: React.FC = () => {
 
   const [name, setName] = useState(user?.name || '');
   const [department, setDepartment] = useState(user?.department || '');
+  const [avatar, setAvatar] = useState(user?.avatar || '');
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sync state if user changes
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setDepartment(user.department || '');
+      setAvatar(user.avatar || '');
+    }
+  }, [user]);
   
   // App Settings State
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -43,11 +57,81 @@ export const SettingsPage: React.FC = () => {
     i18n.changeLanguage(newLang);
   };
 
+  // Helper to compress local image files into efficient Base64 Data URL
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check size limit: 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMessage(t('settings.fileTooLarge'));
+      setTimeout(() => setErrorMessage(''), 4000);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_DIM = 256;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_DIM) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          }
+        } else {
+          if (height > MAX_DIM) {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          setAvatar(compressedDataUrl);
+          setErrorMessage('');
+        } else {
+          setAvatar(event.target?.result as string);
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+    // Reset file input so selecting the same file again triggers onChange
+    e.target.value = '';
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatar('');
+  };
+
+  const handleSelectPreset = (url: string) => {
+    setAvatar(url);
+  };
+
+  const presetAvatars = [
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+  ];
+
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
     if (user) {
-      updateUser(user.id, { name, department });
-      alert('Profile updated successfully!');
+      updateUser(user.id, { name, department, avatar });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3500);
     }
   };
 
@@ -69,6 +153,107 @@ export const SettingsPage: React.FC = () => {
             <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">{t('settings.userProfile')}</h2>
           </div>
           <div className="p-6">
+            {saveSuccess && (
+              <div className="mb-5 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+                <Check size={16} className="text-emerald-500 flex-shrink-0" />
+                <span>{t('settings.profileUpdated')}</span>
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="mb-5 p-3 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-700 dark:text-red-300 text-sm flex items-center gap-2">
+                <AlertCircle size={16} className="text-red-500 flex-shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            {/* Avatar Management Section */}
+            <div className="mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-700/60">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+                {t('settings.avatar')}
+              </label>
+
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="relative group shrink-0">
+                  <Avatar 
+                    name={name || user?.name || 'U'} 
+                    src={avatar} 
+                    size="xl" 
+                    className="ring-4 ring-white dark:ring-slate-800 shadow-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    title={t('settings.uploadAvatar')}
+                  >
+                    <Camera size={22} />
+                  </button>
+                </div>
+
+                <div className="flex-1 space-y-2 text-center sm:text-left">
+                  <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileChange} 
+                      accept="image/png, image/jpeg, image/webp, image/gif, image/svg+xml" 
+                      className="hidden" 
+                    />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      icon={<Camera size={14} />}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {t('settings.uploadAvatar')}
+                    </Button>
+
+                    {avatar && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        icon={<Trash2 size={14} />}
+                        onClick={handleRemoveAvatar}
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                      >
+                        {t('settings.removeAvatar')}
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {t('settings.avatarDesc')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Preset Avatars */}
+              <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-700/60">
+                <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2">
+                  <Sparkles size={13} className="text-primary" />
+                  <span>{t('settings.orPresets')}</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {presetAvatars.map((presetUrl, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleSelectPreset(presetUrl)}
+                      className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
+                        avatar === presetUrl 
+                          ? 'border-primary ring-2 ring-primary/40 scale-105' 
+                          : 'border-slate-200 dark:border-slate-700 hover:border-primary/60 opacity-80 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={presetUrl} alt={`Preset ${idx + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
