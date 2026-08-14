@@ -89,10 +89,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
       whileHover={{ scale: 1.01 }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       className={clsx(
-        'group flex items-start gap-3 p-4 rounded-2xl border transition-colors duration-300',
+        'group flex items-start gap-3 p-4 rounded-[14px] border transition-colors duration-300',
         task.completed
-          ? 'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800'
-          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-purple-200 dark:hover:border-purple-800'
+          ? 'bg-slate-50 dark:bg-slate-900/50 border-border-color dark:border-slate-800'
+          : 'bg-card-bg dark:bg-slate-900 border-border-color dark:border-slate-700 hover:border-primary/50 dark:hover:border-primary/50'
       )}
     >
       {isDragEnabled && (
@@ -112,8 +112,8 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
         className={clsx(
           'mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0',
           task.completed
-            ? 'bg-purple-500 border-purple-500 text-white'
-            : 'border-slate-300 dark:border-slate-600 hover:border-purple-400 dark:hover:border-purple-500 text-transparent'
+            ? 'bg-primary border-primary text-white'
+            : 'border-slate-300 dark:border-slate-600 hover:border-primary/80 text-transparent'
         )}
       >
         <motion.div
@@ -129,7 +129,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
         <h3
           className={clsx(
             'text-lg font-semibold truncate transition-colors duration-300',
-            task.completed ? 'text-slate-400 dark:text-slate-600 line-through' : 'text-slate-800 dark:text-slate-200'
+            task.completed ? 'text-slate-400 dark:text-slate-600 line-through' : 'text-navy dark:text-slate-200'
           )}
         >
           {task.title}

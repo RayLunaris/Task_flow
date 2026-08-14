@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { CheckSquare, Star, Globe, Sun, Moon, LogOut, ChevronDown, Bell } from 'lucide-react';
-import { useGamification } from '../../hooks/useGamification';
+import { CheckSquare, Globe, Sun, Moon, LogOut, Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../context/AuthContext';
@@ -8,7 +7,6 @@ import { useNotifications } from '../../context/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 
 export const Navbar: React.FC = () => {
-  const { progress } = useGamification();
   const { i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
@@ -22,29 +20,45 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-20 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-300">
-      <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-          <CheckSquare size={24} strokeWidth={2.5} />
-          <span className="text-xl font-bold font-heading tracking-tight text-slate-800 dark:text-slate-100">TaskFlow</span>
+    <header className="bg-transparent sticky top-0 z-20 pt-6 px-6 transition-colors duration-300">
+      <div className="w-full h-[52px] flex items-center justify-between">
+        <div className="hidden md:flex items-center gap-8">
+          <button className="text-lg font-bold font-heading text-navy dark:text-slate-100 border-b-2 border-primary pb-1">Dashboard</button>
+          
+          <div className="hidden lg:flex items-center ml-4 bg-white dark:bg-slate-800 rounded-full border border-border-color px-3 py-1.5 w-[250px] shadow-sm">
+            <span className="text-muted mr-2 text-xs">🔍</span>
+            <input type="text" placeholder="Search or type command" className="bg-transparent border-none outline-none text-xs w-full text-slate-700 dark:text-slate-200 placeholder:text-muted" />
+          </div>
+        </div>
+        
+        {/* Mobile Logo */}
+        <div className="md:hidden flex items-center gap-2 text-primary">
+          <CheckSquare size={20} strokeWidth={2.5} />
+          <span className="font-bold text-navy">TaskFlow</span>
         </div>
         <div className="flex items-center gap-3 text-sm font-medium text-slate-500 dark:text-slate-400">
           
-          <button 
-            onClick={toggleTheme}
-            className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-            title="Toggle Theme"
-          >
-            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-          </button>
+          <div className="flex items-center bg-white dark:bg-slate-800 rounded-full p-1 shadow-sm border border-border-color mr-2">
+            <button 
+              onClick={() => theme !== 'light' && toggleTheme()}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${theme === 'light' ? 'bg-primary text-white' : 'text-muted hover:text-slate-300'}`}
+            >
+              <Sun size={14} /> Light
+            </button>
+            <button 
+              onClick={() => theme !== 'dark' && toggleTheme()}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${theme === 'dark' ? 'bg-primary text-white' : 'text-muted hover:text-navy'}`}
+            >
+              <Moon size={14} /> Dark
+            </button>
+          </div>
 
           <button 
             onClick={toggleLanguage}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            className="flex items-center gap-1 p-2 rounded-full bg-white shadow-sm border border-border-color text-muted hover:text-primary transition-colors"
             title="Toggle Language"
           >
-            <Globe size={16} className="text-slate-500 dark:text-slate-400" />
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase">{i18n.language}</span>
+            <Globe size={16} />
           </button>
 
           <div className="relative">
@@ -53,48 +67,39 @@ export const Navbar: React.FC = () => {
                 navigate('/notifications');
                 setShowProfileMenu(false);
               }}
-              className="relative p-2 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="relative p-1.5 rounded-md text-muted hover:text-navy hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
               title="Notifications"
             >
-              <Bell size={16} className="text-slate-500 dark:text-slate-400" />
+              <Bell size={16} />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white rounded-full text-[10px] font-bold flex items-center justify-center border-2 border-white dark:border-slate-900">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </span>
+                <span className="absolute 1 top-0.5 right-0.5 w-2 h-2 bg-danger rounded-full" />
               )}
             </button>
           </div>
 
-          {/* Level indicator */}
-          <div className="hidden sm:flex items-center gap-2 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 transition-colors">
-            <div className="w-5 h-5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-[10px] font-black shadow-sm">
-              {progress.level}
-            </div>
-            <span className="text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1">
-              <Star size={12} className="text-yellow-400 fill-yellow-400" />
-              {progress.totalPoints}
-            </span>
+          <div className="hidden sm:flex items-center gap-2 px-2 py-1 transition-colors">
+            <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-slate-800 shadow-sm border border-border-color rounded-full text-[11px] font-bold text-navy dark:text-slate-200 hover:bg-slate-50 transition-colors">
+              <span className="text-primary">↓</span> Export data <span className="bg-primary text-white px-1.5 py-0.5 rounded text-[9px] ml-1">xls</span>
+            </button>
           </div>
 
-          <div className="relative">
+          {/* Hidden avatar on desktop because it's in sidebar, but we keep it here for mobile, or wait we can keep it here for simplicity or follow design precisely. I'll keep it here for dropdown. */}
+          <div className="relative md:hidden">
             <button
               onClick={() => {
                 setShowProfileMenu(!showProfileMenu);
               }}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              className="flex items-center justify-center w-7 h-7 rounded-full bg-primary text-white font-bold text-xs"
             >
-              <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800 rounded-full flex items-center justify-center font-bold text-sm">
-                {user?.name.charAt(0).toUpperCase() || 'U'}
-              </div>
-              <ChevronDown size={14} className="text-slate-500" />
+              {user?.name.charAt(0).toUpperCase() || 'U'}
             </button>
 
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 py-1 animate-in fade-in slide-in-from-top-2">
-                <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-800">
-                  <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{user?.name}</p>
-                  <p className="text-xs text-slate-500 truncate">{user?.email}</p>
-                  <span className="inline-block mt-1 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 text-blue-600 dark:text-blue-400">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-border-color dark:border-slate-800 py-1 animate-in fade-in slide-in-from-top-2">
+                <div className="px-4 py-2 border-b border-border-color dark:border-slate-800">
+                  <p className="text-sm font-semibold text-navy dark:text-slate-200 truncate">{user?.name}</p>
+                  <p className="text-xs text-muted truncate">{user?.email}</p>
+                  <span className="inline-block mt-1 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-subtle text-primary border border-primary/20">
                     {user?.role}
                   </span>
                 </div>
@@ -103,7 +108,7 @@ export const Navbar: React.FC = () => {
                     logout();
                     setShowProfileMenu(false);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2"
+                  className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-subtle dark:hover:bg-slate-800 flex items-center gap-2"
                 >
                   <LogOut size={14} />
                   Logout
@@ -116,4 +121,3 @@ export const Navbar: React.FC = () => {
     </header>
   );
 };
-

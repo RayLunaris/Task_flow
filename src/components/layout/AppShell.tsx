@@ -13,13 +13,12 @@ export const AppShell: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-slate-50/50 dark:bg-slate-950 pb-16 md:pb-0 transition-colors duration-300">
-      <Navbar />
+    <div className="min-h-screen flex font-sans bg-page-bg dark:bg-slate-950 pb-16 md:pb-0 transition-colors duration-300">
+      <Sidebar />
       
-      <div className="flex flex-1 max-w-7xl mx-auto w-full">
-        <Sidebar />
-        
-        <main className="flex-1 px-4 py-8 max-w-4xl mx-auto w-full min-h-[calc(100vh-4rem)]">
+      <div className="flex flex-col flex-1 w-full overflow-x-hidden">
+        <Navbar />
+        <main className="flex-1 px-6 py-8 w-full max-w-[1600px] mx-auto">
           <Outlet />
         </main>
       </div>

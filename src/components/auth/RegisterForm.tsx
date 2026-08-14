@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Mail, Lock, User as UserIcon } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode }) => {
   const { register } = useAuth();
@@ -25,10 +26,10 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold text-center text-slate-800 dark:text-slate-100 mb-6">Create Account</h2>
+      <h2 className="text-[26px] font-bold text-center text-navy dark:text-slate-100 mb-6">Create Account</h2>
       
       {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm">
+        <div className="bg-danger/10 text-danger p-3 rounded-lg mb-4 text-sm">
           {error}
         </div>
       )}
@@ -37,12 +38,12 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
           <div className="relative">
-            <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-slate-700 dark:text-slate-200"
+              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-border-color dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none text-slate-700 dark:text-slate-200 transition-colors"
               placeholder="John Doe"
               required
             />
@@ -52,12 +53,12 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-slate-700 dark:text-slate-200"
+              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-border-color dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none text-slate-700 dark:text-slate-200 transition-colors"
               placeholder="john@taskflow.com"
               required
             />
@@ -67,12 +68,12 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
         <div>
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-slate-700 dark:text-slate-200"
+              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-border-color dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none text-slate-700 dark:text-slate-200 transition-colors"
               placeholder="••••••••"
               required
               minLength={6}
@@ -85,7 +86,7 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as 'admin' | 'manager' | 'member')}
-            className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none text-slate-700 dark:text-slate-200"
+            className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-border-color dark:border-slate-800 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none text-slate-700 dark:text-slate-200 transition-colors"
           >
             <option value="member">Member</option>
             <option value="manager">Manager</option>
@@ -93,17 +94,17 @@ export const RegisterForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleM
           </select>
         </div>
 
-        <button
+        <Button
           type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2.5 rounded-lg transition-colors mt-4"
+          className="w-full mt-4"
         >
           Sign Up
-        </button>
+        </Button>
       </form>
 
-      <p className="text-center text-sm text-slate-500 mt-6">
+      <p className="text-center text-sm text-muted mt-6">
         Already have an account?{' '}
-        <button onClick={onToggleMode} className="text-purple-600 font-medium hover:underline">
+        <button onClick={onToggleMode} className="text-primary font-medium hover:underline">
           Login
         </button>
       </p>

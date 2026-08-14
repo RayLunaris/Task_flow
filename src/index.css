@@ -3,16 +3,32 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #0F172A;
+  --color-primary: #6B5AED;
   --color-primary-foreground: #FFFFFF;
-  --color-accent: #2563EB;
-  --font-heading: "Inter", sans-serif;
-  --font-body: "Inter", sans-serif;
+  --color-navy: #111827;
+  --color-page-bg: #F0F2F5;
+  
+  --color-success: #10B981;
+  --color-info: #3B82F6;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-urgent: #EF4444;
+  --color-high: #F97316;
+  --color-medium: #F59E0B;
+  --color-low: #3B82F6;
+
+  --color-card-bg: #FFFFFF;
+  --color-border-color: #F3F4F6;
+  --color-muted: #9CA3AF;
+  --color-subtle: #F9FAFB;
+
+  --font-heading: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
 }
 
 @layer base {
   body {
-    @apply font-body bg-slate-50/50 text-slate-800 min-h-screen transition-colors duration-300 antialiased;
+    @apply font-body bg-page-bg text-slate-700 min-h-screen transition-colors duration-300 antialiased;
   }
   
   .dark body {
@@ -20,6 +36,6 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight text-slate-900 dark:text-slate-50 font-semibold;
+    @apply font-heading tracking-tight text-navy dark:text-slate-50 font-semibold;
   }
 }
