@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { FileText, Download, Printer, Filter } from 'lucide-react';
+import { FileText, Download, Printer, Filter, FileSpreadsheet } from 'lucide-react';
 import { useTasks } from '../hooks/useTasks';
 import { useProjects } from '../context/ProjectContext';
+import { useMilestones } from '../context/MilestoneContext';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
 import { useTranslation } from 'react-i18next';
+import { exportTasksToExcel } from '../utils/exportUtils';
 
 export const ReportPage: React.FC = () => {
   const { tasks } = useTasks();
   const { projects } = useProjects();
+  const { milestones } = useMilestones();
   const { users } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   const [reportType, setReportType] = useState<'project_tasks' | 'member_productivity' | 'overdue'>('project_tasks');
   const [selectedProjectId, setSelectedProjectId] = useState<string>('all');
@@ -33,6 +36,16 @@ export const ReportPage: React.FC = () => {
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+  };
+
+  const handleExportExcel = () => {
+    exportTasksToExcel({
+      tasks: reportData,
+      projects,
+      users,
+      milestones,
+      language: i18n.language
+    });
   };
 
   // Generate Report Data
@@ -61,8 +74,11 @@ export const ReportPage: React.FC = () => {
           <Button variant="secondary" icon={<Printer size={16} />} onClick={handlePrint}>
             {t('report.print')}
           </Button>
-          <Button variant="primary" icon={<Download size={16} />} onClick={handleExportJSON}>
+          <Button variant="secondary" icon={<Download size={16} />} onClick={handleExportJSON}>
             {t('report.exportJson')}
+          </Button>
+          <Button variant="primary" icon={<FileSpreadsheet size={16} />} onClick={handleExportExcel}>
+            {t('report.exportExcel')}
           </Button>
         </div>
       </div>

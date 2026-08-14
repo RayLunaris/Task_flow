@@ -1,22 +1,52 @@
 import React, { useState } from 'react';
-import { CheckSquare, Globe, Sun, Moon, LogOut, Bell } from 'lucide-react';
+import { CheckSquare, Globe, Sun, Moon, LogOut, Bell, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../context/AuthContext';
+import { useTasks } from '../../hooks/useTasks';
+import { useProjects } from '../../context/ProjectContext';
+import { useMilestones } from '../../context/MilestoneContext';
 import { useNotifications } from '../../context/NotificationContext';
+import { exportTasksToExcel } from '../../utils/exportUtils';
 import { useNavigate } from 'react-router-dom';
 
 export const Navbar: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, users, logout } = useAuth();
+  const { tasks } = useTasks();
+  const { projects } = useProjects();
+  const { milestones } = useMilestones();
   const { unreadCount } = useNotifications();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exported, setExported] = useState(false);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'id' ? 'en' : 'id';
     i18n.changeLanguage(newLang);
+  };
+
+  const handleExport = () => {
+    setIsExporting(true);
+    try {
+      exportTasksToExcel({
+        tasks,
+        projects,
+        users,
+        milestones,
+        language: i18n.language
+      });
+      setExported(true);
+      setTimeout(() => {
+        setExported(false);
+      }, 2500);
+    } catch (error) {
+      console.error('Export error:', error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -86,8 +116,28 @@ export const Navbar: React.FC = () => {
           </div>
 
           <div className="hidden sm:flex items-center gap-2 px-2 py-1 transition-colors">
-            <button className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-slate-800 shadow-sm border border-border-color dark:border-slate-700 rounded-full text-[11px] font-bold text-navy dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-              <span className="text-primary">↓</span> {t('navbar.exportData')} <span className="bg-primary text-white px-1.5 py-0.5 rounded text-[9px] ml-1">xls</span>
+            <button 
+              onClick={handleExport}
+              disabled={isExporting}
+              className={`flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-slate-800 shadow-sm border rounded-full text-[11px] font-bold transition-all ${
+                exported 
+                  ? 'border-green-500 text-green-600 dark:text-green-400 bg-green-50/50 dark:bg-green-950/20' 
+                  : 'border-border-color dark:border-slate-700 text-navy dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-primary/50 cursor-pointer active:scale-95'
+              }`}
+              title={t('navbar.exportData')}
+            >
+              {exported ? (
+                <>
+                  <Check size={14} className="text-green-500 animate-in zoom-in" />
+                  <span>{t('navbar.exported')}</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-primary font-bold">↓</span>
+                  <span>{isExporting ? t('navbar.exporting') : t('navbar.exportData')}</span>
+                  <span className="bg-primary text-white px-1.5 py-0.5 rounded text-[9px] ml-1 font-extrabold uppercase">xls</span>
+                </>
+              )}
             </button>
           </div>
 

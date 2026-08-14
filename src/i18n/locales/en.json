@@ -19,7 +19,8 @@
     "viewAll": "View All",
     "progress": "Progress",
     "actions": "Actions",
-    "close": "Close"
+    "close": "Close",
+    "back": "Back"
   },
   "nav": {
     "tasks": "Tasks",
@@ -42,6 +43,8 @@
     "light": "Light",
     "dark": "Dark",
     "exportData": "Export data",
+    "exporting": "Exporting...",
+    "exported": "Exported!",
     "toggleLanguage": "Change Language",
     "notifications": "Notifications",
     "logout": "Logout"
@@ -386,6 +389,7 @@
     "subtitle": "Export or print detailed reports for your organization.",
     "print": "Print",
     "exportJson": "Export JSON",
+    "exportExcel": "Export Excel",
     "typeProject": "Project Task Status",
     "typeMember": "Member Productivity",
     "typeOverdue": "Overdue & Bottlenecks",

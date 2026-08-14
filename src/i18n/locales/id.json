@@ -19,7 +19,8 @@
     "viewAll": "Lihat Semua",
     "progress": "Progres",
     "actions": "Tindakan",
-    "close": "Tutup"
+    "close": "Tutup",
+    "back": "Kembali"
   },
   "nav": {
     "tasks": "Tugas",
@@ -42,6 +43,8 @@
     "light": "Terang",
     "dark": "Gelap",
     "exportData": "Ekspor data",
+    "exporting": "Mengekspor...",
+    "exported": "Terekspor!",
     "toggleLanguage": "Ganti Bahasa",
     "notifications": "Notifikasi",
     "logout": "Keluar"
@@ -386,6 +389,7 @@
     "subtitle": "Ekspor atau cetak laporan detail untuk organisasi Anda.",
     "print": "Cetak",
     "exportJson": "Ekspor JSON",
+    "exportExcel": "Ekspor Excel",
     "typeProject": "Status Tugas Proyek",
     "typeMember": "Produktivitas Anggota",
     "typeOverdue": "Terlambat & Hambatan",
