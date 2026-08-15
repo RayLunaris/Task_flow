@@ -12,157 +12,157 @@ type FilterType = 'all' | 'today' | 'week' | 'review' | 'overdue' | 'completed';
 type SortType = 'dueDate' | 'priority' | 'name';
 
 export const MyTasksPage: React.FC = () => {
-  const { user } = useAuth();
-  const { tasks, selectedCategory } = useTasks();
-  const { t } = useTranslation();
-  
-  const [filter, setFilter] = useState<FilterType>('all');
-  const [sortBy, setSortBy] = useState<SortType>('dueDate');
+ const { user } = useAuth();
+ const { tasks, selectedCategory } = useTasks();
+ const { t } = useTranslation();
+ 
+ const [filter, setFilter] = useState<FilterType>('all');
+ const [sortBy, setSortBy] = useState<SortType>('dueDate');
 
-  const myTasks = useMemo(() => {
-    if (!user) return [];
-    
-    // 1. Get user's tasks
-    let filtered = tasks.filter(t => t.assigneeIds?.includes(user.id) || (t.reviewerId === user.id && t.status === 'review'));
+ const myTasks = useMemo(() => {
+ if (!user) return [];
+ 
+ // 1. Get user's tasks
+ let filtered = tasks.filter(t => t.assigneeIds?.includes(user.id) || (t.reviewerId === user.id && t.status === 'review'));
 
-    // 1.5. Filter by category
-    if (selectedCategory) {
-      filtered = filtered.filter(task => task.category === selectedCategory);
-    }
+ // 1.5. Filter by category
+ if (selectedCategory) {
+ filtered = filtered.filter(task => task.category === selectedCategory);
+ }
 
-    // 2. Apply filter
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+ // 2. Apply filter
+ const today = new Date();
+ today.setHours(0, 0, 0, 0);
 
-    filtered = filtered.filter(task => {
-      if (filter === 'completed') return task.completed || task.status === 'done';
-      if (filter === 'review') return task.status === 'review';
-      if (task.completed || task.status === 'done') return false;
+ filtered = filtered.filter(task => {
+ if (filter === 'completed') return task.completed || task.status === 'done';
+ if (filter === 'review') return task.status === 'review';
+ if (task.completed || task.status === 'done') return false;
 
-      if (filter === 'all') return true;
+ if (filter === 'all') return true;
 
-      if (!task.dueDate) return filter !== 'overdue';
+ if (!task.dueDate) return filter !== 'overdue';
 
-      const dueDay = new Date(task.dueDate);
-      dueDay.setHours(0, 0, 0, 0);
-      const diffTime = dueDay.getTime() - today.getTime();
-      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+ const dueDay = new Date(task.dueDate);
+ dueDay.setHours(0, 0, 0, 0);
+ const diffTime = dueDay.getTime() - today.getTime();
+ const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
-      if (filter === 'today') return diffDays === 0;
-      if (filter === 'week') return diffDays >= 0 && diffDays <= 7;
-      if (filter === 'overdue') return diffDays < 0;
+ if (filter === 'today') return diffDays === 0;
+ if (filter === 'week') return diffDays >= 0 && diffDays <= 7;
+ if (filter === 'overdue') return diffDays < 0;
 
-      return true;
-    });
+ return true;
+ });
 
-    // 3. Apply sorting
-    filtered.sort((a, b) => {
-      if (sortBy === 'dueDate') {
-        const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
-        const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
-        return dateA - dateB;
-      }
-      if (sortBy === 'priority') {
-        const priorityWeight = { urgent: 4, high: 3, medium: 2, low: 1 };
-        return priorityWeight[b.priority] - priorityWeight[a.priority];
-      }
-      if (sortBy === 'name') {
-        return a.title.localeCompare(b.title);
-      }
-      return 0;
-    });
+ // 3. Apply sorting
+ filtered.sort((a, b) => {
+ if (sortBy === 'dueDate') {
+ const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
+ const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
+ return dateA - dateB;
+ }
+ if (sortBy === 'priority') {
+ const priorityWeight = { urgent: 4, high: 3, medium: 2, low: 1 };
+ return priorityWeight[b.priority] - priorityWeight[a.priority];
+ }
+ if (sortBy === 'name') {
+ return a.title.localeCompare(b.title);
+ }
+ return 0;
+ });
 
-    return filtered;
-  }, [tasks, user, filter, sortBy, selectedCategory]);
+ return filtered;
+ }, [tasks, user, filter, sortBy, selectedCategory]);
 
-  return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="mb-6 text-center sm:text-left">
-        <h1 className="text-[26px] font-bold text-navy dark:text-slate-100 mb-1">
-          {t('app.greeting', { name: user?.name?.split(' ')[0] || 'User' })}
-        </h1>
-        <p className="text-muted">{t('app.subtitle')}</p>
-      </div>
+ return (
+ <div className="space-y-6 animate-in fade-in slide-in- duration-500">
+ <div className="mb-6 text-center sm:text-left">
+ <h1 className="text-[26px] font-bold text-navy dark:text-slate-100 mb-1">
+ {t('app.greeting', { name: user?.name?.split(' ')[0] || 'User' })}
+ </h1>
+ <p className="text-muted">{t('app.subtitle')}</p>
+ </div>
 
-      <TaskForm />
+ <TaskForm />
 
-      {/* Filters & Sorting */}
-      <div className="flex flex-col md:flex-row justify-between gap-4 bg-card-bg dark:bg-slate-900 p-4 rounded-[14px] border border-border-color dark:border-slate-800">
-        <div className="flex flex-wrap gap-2">
-          <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} icon={<ListTodo size={14} />}>
-            {t('myTasks.allActive')}
-          </FilterButton>
-          <FilterButton active={filter === 'today'} onClick={() => setFilter('today')} icon={<Calendar size={14} />}>
-            {t('myTasks.today')}
-          </FilterButton>
-          <FilterButton active={filter === 'week'} onClick={() => setFilter('week')} icon={<Calendar size={14} />}>
-            {t('myTasks.thisWeek')}
-          </FilterButton>
-          <FilterButton active={filter === 'review'} onClick={() => setFilter('review')} icon={<AlertCircle size={14} />} color="text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-950/40">
-            {t('myTasks.waitingReview', 'Waiting Review')}
-          </FilterButton>
-          <FilterButton active={filter === 'overdue'} onClick={() => setFilter('overdue')} icon={<AlertCircle size={14} />} color="text-danger bg-danger/10 border-danger/20 dark:bg-danger/20">
-            {t('myTasks.overdue')}
-          </FilterButton>
-          <FilterButton active={filter === 'completed'} onClick={() => setFilter('completed')} icon={<CheckSquare size={14} />}>
-            {t('myTasks.completed')}
-          </FilterButton>
-        </div>
+ {/* Filters & Sorting */}
+ <div className="flex flex-col md:flex-row justify-between gap-4 bg-card-bg dark:bg-[#1A1A1A] p-4 rounded-[14px] border border-border-color dark:border-border-color">
+ <div className="flex flex-wrap gap-2">
+ <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} icon={<ListTodo size={14} />}>
+ {t('myTasks.allActive')}
+ </FilterButton>
+ <FilterButton active={filter === 'today'} onClick={() => setFilter('today')} icon={<Calendar size={14} />}>
+ {t('myTasks.today')}
+ </FilterButton>
+ <FilterButton active={filter === 'week'} onClick={() => setFilter('week')} icon={<Calendar size={14} />}>
+ {t('myTasks.thisWeek')}
+ </FilterButton>
+ <FilterButton active={filter === 'review'} onClick={() => setFilter('review')} icon={<AlertCircle size={14} />} color="text-primary bg-subtle border-blue-200 dark:bg-blue-950/40">
+ {t('myTasks.waitingReview', 'Waiting Review')}
+ </FilterButton>
+ <FilterButton active={filter === 'overdue'} onClick={() => setFilter('overdue')} icon={<AlertCircle size={14} />} color="text-danger bg-danger/10 border-danger/20 dark:bg-danger/20">
+ {t('myTasks.overdue')}
+ </FilterButton>
+ <FilterButton active={filter === 'completed'} onClick={() => setFilter('completed')} icon={<CheckSquare size={14} />}>
+ {t('myTasks.completed')}
+ </FilterButton>
+ </div>
 
-        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-          <span className="font-medium">{t('myTasks.sortBy')}</span>
-          <select 
-            value={sortBy} 
-            onChange={(e) => setSortBy(e.target.value as SortType)}
-            className="bg-white dark:bg-slate-800 border border-border-color dark:border-slate-700 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/50"
-          >
-            <option value="dueDate">{t('filter.dueDate')}</option>
-            <option value="priority">{t('taskCard.priority')}</option>
-            <option value="name">{t('filter.name')}</option>
-          </select>
-        </div>
-      </div>
+ <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+ <span className="font-medium">{t('myTasks.sortBy')}</span>
+ <select 
+ value={sortBy} 
+ onChange={(e) => setSortBy(e.target.value as SortType)}
+ className="bg-white dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/50"
+ >
+ <option value="dueDate">{t('filter.dueDate')}</option>
+ <option value="priority">{t('taskCard.priority')}</option>
+ <option value="name">{t('filter.name')}</option>
+ </select>
+ </div>
+ </div>
 
-      {/* Task List */}
-      {myTasks.length === 0 ? (
-        <div className="text-center py-16 px-4 bg-card-bg dark:bg-slate-900 rounded-[14px] border border-dashed border-border-color dark:border-slate-800">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 mb-4">
-            <CheckSquare size={32} />
-          </div>
-          <h3 className="text-lg font-bold text-navy dark:text-slate-300 mb-2">{t('myTasks.noTasksFound')}</h3>
-          <p className="text-muted text-sm">{t('myTasks.noTasksMatch')}</p>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-3">
-          <AnimatePresence initial={false}>
-            {myTasks.map(task => (
-              <TaskCard key={task.id} task={task} isDragEnabled={false} />
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
-    </div>
-  );
+ {/* Task List */}
+ {myTasks.length === 0 ? (
+ <div className="text-center py-16 px-4 bg-card-bg dark:bg-[#1A1A1A] rounded-[14px] border border-dashed border-border-color dark:border-border-color">
+ <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-[#242424] text-slate-400 mb-4">
+ <CheckSquare size={32} />
+ </div>
+ <h3 className="text-lg font-bold text-navy dark:text-slate-300 mb-2">{t('myTasks.noTasksFound')}</h3>
+ <p className="text-muted text-sm">{t('myTasks.noTasksMatch')}</p>
+ </div>
+ ) : (
+ <div className="flex flex-col gap-3">
+ <AnimatePresence initial={false}>
+ {myTasks.map(task => (
+ <TaskCard key={task.id} task={task} isDragEnabled={false} />
+ ))}
+ </AnimatePresence>
+ </div>
+ )}
+ </div>
+ );
 };
 
 const FilterButton: React.FC<{ 
-  active: boolean; 
-  onClick: () => void; 
-  children: React.ReactNode;
-  icon?: React.ReactNode;
-  color?: string;
+ active: boolean; 
+ onClick: () => void; 
+ children: React.ReactNode;
+ icon?: React.ReactNode;
+ color?: string;
 }> = ({ active, onClick, children, icon, color }) => {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-colors border ${
-        active 
-          ? 'bg-primary text-white border-primary' 
-          : color || 'bg-white text-slate-600 border-border-color hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-      }`}
-    >
-      {icon}
-      {children}
-    </button>
-  );
+ return (
+ <button
+ onClick={onClick}
+ className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-colors border ${
+ active 
+ ? 'bg-primary text-white border-primary' 
+ : color || 'bg-white text-slate-600 border-border-color hover:bg-slate-50 dark:bg-[#242424] dark:text-slate-300 dark:hover:bg-slate-700'
+ }`}
+ >
+ {icon}
+ {children}
+ </button>
+ );
 };

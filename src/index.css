@@ -3,27 +3,27 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #2196F3;
+  --color-primary: #0D9488;
   --color-primary-foreground: #FFFFFF;
-  --color-primary-dark: #0D47A1;
-  --color-primary-light: #90CAF9;
-  --color-primary-subtle: #E3F2FD;
-  --color-navy: #0D47A1;
-  --color-page-bg: #F4F8FC;
+  --color-primary-dark: #0F766E;
+  --color-primary-light: #5EEAD4;
+  --color-primary-subtle: #CCFBF1;
+  --color-navy: #0F172A;
+  --color-page-bg: #F7F7F5;
   
   --color-success: #10B981;
-  --color-info: #2196F3;
+  --color-info: #0D9488;
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
-  --color-urgent: #EF4444;
-  --color-high: #F97316;
-  --color-medium: #F59E0B;
-  --color-low: #2196F3;
+  --color-urgent: #DC2626;
+  --color-high: #D97706;
+  --color-medium: #059669;
+  --color-low: #0D9488;
 
   --color-card-bg: #FFFFFF;
-  --color-border-color: #E2E8F0;
-  --color-muted: #9CA3AF;
-  --color-subtle: #E3F2FD;
+  --color-border-color: #E5E7EB;
+  --color-muted: #64748B;
+  --color-subtle: #F1F5F9;
 
   --font-heading: "Inter", system-ui, sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
@@ -31,14 +31,14 @@
 
 @layer base {
   body {
-    @apply font-body bg-page-bg text-slate-700 min-h-screen transition-colors duration-300 antialiased;
+    @apply font-body bg-[#F7F7F5] text-[#27272A] min-h-screen transition-colors duration-300 antialiased;
   }
   
   .dark body {
-    @apply bg-slate-950 text-slate-200 antialiased;
+    @apply bg-[#1A1A1A] text-[#E4E4E7] antialiased;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight text-navy dark:text-slate-50 font-semibold;
+    @apply font-heading tracking-tight text-[#27272A] dark:text-[#E4E4E7] font-semibold;
   }
 }

@@ -23,44 +23,44 @@ import { ReportPage } from './pages/ReportPage';
 import './i18n';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <GamificationProvider>
-        <ProjectProvider>
-        <MilestoneProvider>
-        <NotificationProvider>
-        <ActivityProvider>
-        <TaskProvider>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<AppShell />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
-              <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="tasks" element={<Navigate to="/my-tasks" replace />} />
-              <Route path="my-tasks" element={<MyTasksPage />} />
-              <Route path="projects" element={<ProjectsPage />} />
-              <Route path="kanban" element={<KanbanPage />} />
-              <Route path="milestones" element={<MilestonePage />} />
-              <Route path="team" element={<TeamPage />} />
-              <Route path="calendar" element={<CalendarPage />} />
+ return (
+ <BrowserRouter>
+ <AuthProvider>
+ <GamificationProvider>
+ <ProjectProvider>
+ <MilestoneProvider>
+ <NotificationProvider>
+ <ActivityProvider>
+ <TaskProvider>
+ <Routes>
+ <Route path="/login" element={<LoginPage />} />
+ <Route path="/" element={<AppShell />}>
+ <Route index element={<Navigate to="/dashboard" replace />} />
+ <Route path="dashboard" element={<DashboardPage />} />
+ <Route path="tasks" element={<Navigate to="/my-tasks" replace />} />
+ <Route path="my-tasks" element={<MyTasksPage />} />
+ <Route path="projects" element={<ProjectsPage />} />
+ <Route path="kanban" element={<KanbanPage />} />
+ <Route path="milestones" element={<MilestonePage />} />
+ <Route path="team" element={<TeamPage />} />
+ <Route path="calendar" element={<CalendarPage />} />
 
-              <Route path="notifications" element={<NotificationPage />} />
-              <Route path="audit" element={<AuditLogPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="analytics" element={<AnalyticsPage />} />
-              <Route path="report" element={<ReportPage />} />
-            </Route>
-          </Routes>
-        </TaskProvider>
-        </ActivityProvider>
-        </NotificationProvider>
-        </MilestoneProvider>
-        </ProjectProvider>
-        </GamificationProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  );
+ <Route path="notifications" element={<NotificationPage />} />
+ <Route path="audit" element={<AuditLogPage />} />
+ <Route path="settings" element={<SettingsPage />} />
+ <Route path="analytics" element={<AnalyticsPage />} />
+ <Route path="report" element={<ReportPage />} />
+ </Route>
+ </Routes>
+ </TaskProvider>
+ </ActivityProvider>
+ </NotificationProvider>
+ </MilestoneProvider>
+ </ProjectProvider>
+ </GamificationProvider>
+ </AuthProvider>
+ </BrowserRouter>
+ );
 }
 
 export default App;

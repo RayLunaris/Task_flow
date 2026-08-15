@@ -52,8 +52,8 @@
   "auth": {
     "welcomeBack": "Selamat Datang Kembali",
     "createAccount": "Buat Akun",
-    "signIn": "Masuk",
-    "signUp": "Daftar",
+    "signIn": "Masuk ke Dashboard",
+    "signUp": "Buat Akun Sekarang",
     "email": "Alamat Email",
     "password": "Kata Sandi",
     "fullName": "Nama Lengkap",
@@ -87,7 +87,7 @@
   "dashboard": {
     "welcomeHeading": "Hai, {{name}}! 👋",
     "welcomeSubheading": "Apa rencanamu untuk hari ini?",
-    "welcomeDesc": "TaskFlow dirancang untuk mengatur, berkolaborasi, dan memantau tugas dengan cara modern.",
+    "welcomeDesc": "Lihat daftar tugas harian dan pantau metrik penyelesaian proyek tim Anda.",
     "quickActions": {
       "manageTasks": "Kelola Tugas",
       "sync": "Sinkron",

@@ -52,8 +52,8 @@
   "auth": {
     "welcomeBack": "Welcome Back",
     "createAccount": "Create Account",
-    "signIn": "Sign In",
-    "signUp": "Sign Up",
+    "signIn": "Log In to Dashboard",
+    "signUp": "Create Account Now",
     "email": "Email Address",
     "password": "Password",
     "fullName": "Full Name",
@@ -87,7 +87,7 @@
   "dashboard": {
     "welcomeHeading": "Hi, {{name}}! 👋",
     "welcomeSubheading": "What are your plans for today?",
-    "welcomeDesc": "TaskFlow is designed to organize, collaborate, and track tasks in a modern way.",
+    "welcomeDesc": "View daily task lists and monitor your team's project completion metrics.",
     "quickActions": {
       "manageTasks": "Manage Tasks",
       "sync": "Sync",
