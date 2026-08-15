@@ -37,7 +37,7 @@ export const Sidebar: React.FC = () => {
         <span className="font-bold text-[#F1F5F9] text-xl tracking-tight">TaskFlow</span>
       </div>
 
-      <div className="flex-1 w-full flex flex-col items-start space-y-1 px-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+      <div className="flex-1 w-full flex flex-col items-start space-y-1 px-3 overflow-y-auto overscroll-contain transform-gpu scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;
@@ -47,14 +47,14 @@ export const Sidebar: React.FC = () => {
               onClick={() => navigate(item.path)}
               title={item.label}
               className={clsx(
-                'flex items-center justify-start w-full h-10 px-3 transition-all duration-200 rounded-md relative',
+                'flex items-center justify-start w-full h-10 px-3 transition-colors duration-200 rounded-md relative group transform-gpu',
                 isActive
                   ? 'text-[#FFFFFF] bg-[#0D9488]/10'
                   : 'text-[#94A3B8] hover:text-[#FFFFFF] hover:bg-slate-800/50'
               )}
             >
               <div className={clsx("absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-[#0D9488] rounded-r-md transition-opacity duration-200", isActive ? "opacity-100" : "opacity-0")} />
-              <Icon size={18} strokeWidth={isActive ? 2.5 : 2} className="mr-3" />
+              <Icon size={18} strokeWidth={isActive ? 2.5 : 2} className="mr-3 shrink-0 transform-gpu" />
               <span className={clsx("text-sm font-medium", isActive ? "text-[#FFFFFF]" : "")}>{item.label}</span>
             </button>
           );
@@ -72,14 +72,14 @@ export const Sidebar: React.FC = () => {
                   onClick={() => navigate(item.path)}
                   title={item.label}
                   className={clsx(
-                    'flex items-center justify-start w-full h-10 px-3 transition-all duration-200 rounded-md relative',
+                    'flex items-center justify-start w-full h-10 px-3 transition-colors duration-200 rounded-md relative group transform-gpu',
                     isActive
                       ? 'text-[#FFFFFF] bg-[#0D9488]/10'
                       : 'text-[#94A3B8] hover:text-[#FFFFFF] hover:bg-slate-800/50'
                   )}
                 >
                   <div className={clsx("absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-[#0D9488] rounded-r-md transition-opacity duration-200", isActive ? "opacity-100" : "opacity-0")} />
-                  <Icon size={18} strokeWidth={isActive ? 2.5 : 2} className="mr-3" />
+                  <Icon size={18} strokeWidth={isActive ? 2.5 : 2} className="mr-3 shrink-0 transform-gpu" />
                   <span className={clsx("text-sm font-medium", isActive ? "text-[#FFFFFF]" : "")}>{item.label}</span>
                 </button>
               );
