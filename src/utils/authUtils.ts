@@ -1,8 +1,9 @@
+import bcrypt from 'bcryptjs';
+
 export const hashPassword = (password: string): string => {
- // Simple simulation of hashing for demo purposes
- return btoa(password).split('').reverse().join('');
+  return bcrypt.hashSync(password, 10);
 };
 
 export const verifyPassword = (password: string, hashed: string): boolean => {
- return hashPassword(password) === hashed;
+  return bcrypt.compareSync(password, hashed);
 };

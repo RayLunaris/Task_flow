@@ -14,15 +14,15 @@ import {
  Crown
 } from 'lucide-react';
 import clsx from 'clsx';
-import type { Department, User } from '../../types';
+import type { Department, PublicUser } from '../../types';
 import { getDepartmentColorStyles } from '../../utils/departmentData';
 import { Avatar } from '../ui/Avatar';
 import { useTasks } from '../../hooks/useTasks';
 
 interface DepartmentCardProps {
  department: Department;
- members: User[];
- allUsers: User[];
+ members: PublicUser[];
+ allUsers: PublicUser[];
  onSelect: (department: Department) => void;
 }
 

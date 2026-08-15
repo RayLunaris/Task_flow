@@ -3,13 +3,13 @@ import { createPortal } from 'react-dom';
 import { X, Save, FolderPlus, Palette, Code2, Rocket, Megaphone, Briefcase, Users, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/Button';
-import type { Department, User } from '../../types';
+import type { Department, PublicUser } from '../../types';
 
 interface DepartmentFormModalProps {
  isOpen: boolean;
  onClose: () => void;
  onSave: (department: Department) => void;
- users: User[];
+ users: PublicUser[];
  departmentToEdit?: Department | null;
 }
 

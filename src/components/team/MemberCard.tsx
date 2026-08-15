@@ -16,7 +16,7 @@ import {
  Briefcase 
 } from 'lucide-react';
 import clsx from 'clsx';
-import type { User } from '../../types';
+import type { PublicUser } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { useTasks } from '../../hooks/useTasks';
 import { useTranslation } from 'react-i18next';
@@ -24,8 +24,8 @@ import { Avatar } from '../ui/Avatar';
 import { WorkloadBadge } from '../ui/WorkloadBadge';
 
 interface MemberCardProps {
- member: User;
- onEdit: (member: User) => void;
+ member: PublicUser;
+ onEdit?: (user: PublicUser) => void;
 }
 
 export const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit }) => {
@@ -170,7 +170,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit }) => {
 
  {canEdit && (
  <button
- onClick={() => { setShowMenu(false); onEdit(member); }}
+ onClick={() => { setShowMenu(false); onEdit?.(member); }}
  className="w-full text-left px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
  >
  <Edit2 size={14} /> {t('team.edit', 'Edit Anggota')}

@@ -37,7 +37,7 @@ export const Sidebar: React.FC = () => {
         <span className="font-bold text-[#F1F5F9] text-xl tracking-tight">TaskFlow</span>
       </div>
 
-      <div className="flex-1 w-full flex flex-col items-start space-y-1 px-3">
+      <div className="flex-1 w-full flex flex-col items-start space-y-1 px-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;

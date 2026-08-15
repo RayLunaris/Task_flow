@@ -1,9 +1,9 @@
-import type { Task, Project, User, Milestone } from '../types';
+import type { Task, Project, PublicUser, Milestone } from '../types';
 
 export interface ExportDataParams {
  tasks: Task[];
  projects: Project[];
- users: User[];
+ users: PublicUser[];
  milestones: Milestone[];
  language?: string;
 }

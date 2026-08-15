@@ -15,7 +15,7 @@ import {
  Users
 } from 'lucide-react';
 import clsx from 'clsx';
-import type { Department, User, UserRole, UserStatus } from '../../types';
+import type { Department, PublicUser, UserRole, UserStatus } from '../../types';
 import { getDepartmentColorStyles } from '../../utils/departmentData';
 import { MemberCard } from './MemberCard';
 import { Button } from '../ui/Button';
@@ -27,7 +27,7 @@ interface DepartmentDetailViewProps {
  department: Department;
  onBack: () => void;
  onInviteToDepartment: (deptName: string) => void;
- onEditMember: (member: User) => void;
+ onEditMember: (member: PublicUser) => void;
  onOpenRoleMatrix: () => void;
 }
 

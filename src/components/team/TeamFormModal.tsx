@@ -4,12 +4,12 @@ import { X, Save, Send, UserPlus, Mail, Copy, Check, Users, UserCheck } from 'lu
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
-import type { User, UserRole, UserStatus } from '../../types';
+import type { PublicUser, UserRole, UserStatus } from '../../types';
 
 interface TeamFormModalProps {
  isOpen: boolean;
  onClose: () => void;
- memberToEdit?: User | null;
+ memberToEdit?: PublicUser | null;
  initialDepartment?: string;
 }
 

@@ -22,7 +22,7 @@ import { DepartmentFormModal } from '../components/team/DepartmentFormModal';
 import { Button } from '../components/ui/Button';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { DEFAULT_DEPARTMENTS } from '../utils/departmentData';
-import type { Department, User, UserRole, UserStatus } from '../types';
+import type { Department, PublicUser, UserRole, UserStatus } from '../types';
 
 export const TeamPage: React.FC = () => {
  const { users, user: currentUser } = useAuth();
@@ -40,7 +40,7 @@ export const TeamPage: React.FC = () => {
  const [isModalOpen, setIsModalOpen] = useState(false);
  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
  const [isRoleMatrixOpen, setIsRoleMatrixOpen] = useState(false);
- const [memberToEdit, setMemberToEdit] = useState<User | null>(null);
+ const [memberToEdit, setMemberToEdit] = useState<PublicUser | null>(null);
  const [deptToEdit, setDeptToEdit] = useState<Department | null>(null);
  const [inviteInitialDept, setInviteInitialDept] = useState<string | undefined>(undefined);
 
@@ -75,7 +75,7 @@ export const TeamPage: React.FC = () => {
  });
  }, [teamMembers, searchQuery, statusFilter, roleFilter, departmentFilter]);
 
- const handleEditMember = (member: User) => {
+ const handleEditMember = (member: PublicUser) => {
  setMemberToEdit(member);
  setInviteInitialDept(undefined);
  setIsModalOpen(true);

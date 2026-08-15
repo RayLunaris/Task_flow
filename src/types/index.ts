@@ -18,6 +18,8 @@ export interface User {
  createdAt: string;
 }
 
+export type PublicUser = Omit<User, 'password'>;
+
 export interface ProjectUpdate {
  id: string;
  userId: string;

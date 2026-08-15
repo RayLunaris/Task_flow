@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { User, UserRole, UserStatus } from '../types';
+import type { User, PublicUser, UserRole, UserStatus } from '../types';
 import { hashPassword, verifyPassword } from '../utils/authUtils';
 
 interface AuthContextType {
- user: User | null;
- users: User[];
+ user: PublicUser | null;
+ users: PublicUser[];
  login: (email: string, pass: string) => boolean;
  logout: () => void;
  register: (name: string, email: string, pass: string, role?: UserRole) => boolean;
@@ -41,6 +41,12 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+
+const sanitizeUser = (user: User): PublicUser => {
+  const { password, ...publicFields } = user;
+  return publicFields;
+};
 
 const SEED_USERS: User[] = [
  {
@@ -119,8 +125,9 @@ const SEED_USERS: User[] = [
 ];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
- const [users, setUsers] = useState<User[]>([]);
- const [user, setUser] = useState<User | null>(null);
+ const [internalUsers, setInternalUsers] = useState<User[]>([]);
+ const [user, setUser] = useState<PublicUser | null>(null);
+ const publicUsers = React.useMemo(() => internalUsers.map(sanitizeUser), [internalUsers]);
 
  useEffect(() => {
  // Load users from localStorage
@@ -133,34 +140,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  department: u.department || 'General',
  title: u.title || (u.role === 'admin' ? 'Workspace Admin' : u.role === 'manager' ? 'Project Manager' : u.role === 'client' ? 'Client Viewer' : 'Team Member')
  }));
- setUsers(migrated);
+ setInternalUsers(migrated);
  } else {
- setUsers(SEED_USERS);
+ setInternalUsers(SEED_USERS);
  localStorage.setItem('taskflow_users', JSON.stringify(SEED_USERS));
  }
 
  // Load active session
  const savedSession = localStorage.getItem('taskflow_session');
  if (savedSession) {
- const parsedSession: User = JSON.parse(savedSession);
+ const parsedSession: PublicUser = JSON.parse(savedSession);
  setUser(parsedSession);
  } else {
  const defaultUser = SEED_USERS[0];
- setUser(defaultUser);
- localStorage.setItem('taskflow_session', JSON.stringify(defaultUser));
+ setUser(sanitizeUser(defaultUser));
+ localStorage.setItem('taskflow_session', JSON.stringify(sanitizeUser(defaultUser)));
  }
  }, []);
 
  const login = (email: string, pass: string) => {
- const foundUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+ const foundUser = internalUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
  if (foundUser && verifyPassword(pass, foundUser.password)) {
  if (foundUser.status === 'inactive') {
  alert('This account is currently deactivated. Please contact your workspace administrator.');
  return false;
  }
 
- setUser(foundUser);
- localStorage.setItem('taskflow_session', JSON.stringify(foundUser));
+ setUser(sanitizeUser(foundUser));
+ localStorage.setItem('taskflow_session', JSON.stringify(sanitizeUser(foundUser)));
  return true;
  }
  return false;
@@ -172,7 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  };
 
  const register = (name: string, email: string, pass: string, role: UserRole = 'member') => {
- if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+ if (internalUsers.find(u => u.email.toLowerCase() === email.toLowerCase())) {
  return false; // Email already exists
  }
  
@@ -188,12 +195,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  createdAt: new Date().toISOString(),
  };
  
- const updatedUsers = [...users, newUser];
- setUsers(updatedUsers);
+ const updatedUsers = [...internalUsers, newUser];
+ setInternalUsers(updatedUsers);
  localStorage.setItem('taskflow_users', JSON.stringify(updatedUsers));
  
- setUser(newUser);
- localStorage.setItem('taskflow_session', JSON.stringify(newUser));
+ setUser(sanitizeUser(newUser));
+ localStorage.setItem('taskflow_session', JSON.stringify(sanitizeUser(newUser)));
  return true;
  };
 
@@ -207,7 +214,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  status: UserStatus = 'active',
  phone?: string
  ) => {
- if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+ if (internalUsers.find(u => u.email.toLowerCase() === email.toLowerCase())) {
  return false; 
  }
  const newUser: User = {
@@ -222,8 +229,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  phone,
  createdAt: new Date().toISOString(),
  };
- const updatedUsers = [...users, newUser];
- setUsers(updatedUsers);
+ const updatedUsers = [...internalUsers, newUser];
+ setInternalUsers(updatedUsers);
  localStorage.setItem('taskflow_users', JSON.stringify(updatedUsers));
  return true;
  };
@@ -234,11 +241,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  department: string = 'General', 
  title?: string
  ) => {
- const target = users.find(u => u.id === targetUserId);
+ const target = internalUsers.find(u => u.id === targetUserId);
  if (!target) return { success: false, inviteLink: '', error: 'Pengguna tidak ditemukan.' };
 
  const token = 'inv_' + crypto.randomUUID().slice(0, 10);
- const updatedUsers = users.map(u => 
+ const updatedUsers = internalUsers.map(u => 
  u.id === targetUserId 
  ? { 
  ...u, 
@@ -253,7 +260,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  : u
  );
 
- setUsers(updatedUsers);
+ setInternalUsers(updatedUsers);
  localStorage.setItem('taskflow_users', JSON.stringify(updatedUsers));
 
  // Send in-app notification to target user
@@ -295,7 +302,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  name?: string, 
  title?: string
  ) => {
- const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+ const existing = internalUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
  if (existing) {
  return inviteExistingUser(existing.id, role, department, title);
  }
@@ -318,8 +325,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  createdAt: new Date().toISOString(),
  };
 
- const updatedUsers = [...users, newUser];
- setUsers(updatedUsers);
+ const updatedUsers = [...internalUsers, newUser];
+ setInternalUsers(updatedUsers);
  localStorage.setItem('taskflow_users', JSON.stringify(updatedUsers));
 
  // Send in-app notification to new user
@@ -367,16 +374,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  };
 
  const resendInvite = (id: string) => {
- const target = users.find(u => u.id === id);
+ const target = internalUsers.find(u => u.id === id);
  if (!target) return { success: false, inviteLink: '' };
 
  const token = target.inviteToken || 'inv_' + crypto.randomUUID().slice(0, 10);
- const updatedUsers = users.map(u => 
+ const updatedUsers = internalUsers.map(u => 
  u.id === id 
  ? { ...u, inviteToken: token, invitedAt: new Date().toISOString(), status: 'invited' as UserStatus } 
  : u
  );
- setUsers(updatedUsers);
+ setInternalUsers(updatedUsers);
  localStorage.setItem('taskflow_users', JSON.stringify(updatedUsers));
 
  // Re-send notification
@@ -412,7 +419,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  };
 
  const toggleUserStatus = (id: string) => {
- const target = users.find(u => u.id === id);
+ const target = internalUsers.find(u => u.id === id);
  if (!target) return;
 
  const nextStatus: UserStatus = target.status === 'active' ? 'inactive' : 'active';
@@ -420,7 +427,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  };
 
  const updateUser = (id: string, updates: Partial<User>) => {
- const updatedUsers = users.map(u => 
+ const updatedUsers = internalUsers.map(u => 
  u.id === id ? { ...u, ...updates } : u
  );
  if (updates.password) {
@@ -429,26 +436,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  updatedUsers[uIndex].password = hashPassword(updates.password);
  }
  }
- setUsers(updatedUsers);
+ setInternalUsers(updatedUsers);
  localStorage.setItem('taskflow_users', JSON.stringify(updatedUsers));
  
  if (user && user.id === id) {
  const updatedSelf = updatedUsers.find(u => u.id === id)!;
- setUser(updatedSelf);
- localStorage.setItem('taskflow_session', JSON.stringify(updatedSelf));
+ setUser(sanitizeUser(updatedSelf));
+ localStorage.setItem('taskflow_session', JSON.stringify(sanitizeUser(updatedSelf)));
  }
  };
 
  const deleteUser = (id: string) => {
- const updatedUsers = users.filter(u => u.id !== id);
- setUsers(updatedUsers);
+ const updatedUsers = internalUsers.filter(u => u.id !== id);
+ setInternalUsers(updatedUsers);
  localStorage.setItem('taskflow_users', JSON.stringify(updatedUsers));
  };
 
  return (
  <AuthContext.Provider value={{ 
  user, 
- users, 
+ users: publicUsers, 
  login, 
  logout, 
  register, 
