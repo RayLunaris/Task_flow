@@ -184,10 +184,10 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
  onChange={(e) => setStatus(e.target.value as any)}
  className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium"
  >
- <option value="active"><div className="w-2 h-2 rounded-full bg-green-500" /> {t('projects.status.active')}</option>
- <option value="on_hold"><div className="w-2 h-2 rounded-full bg-yellow-500" /> {t('projects.status.on_hold')}</option>
- <option value="completed"><div className="w-2 h-2 rounded-full bg-blue-500" /> {t('projects.status.completed')}</option>
- <option value="archived"><div className="w-2 h-2 rounded-full bg-slate-300" /> {t('projects.status.archived')}</option>
+ <option value="active">{t('projects.status.active')}</option>
+ <option value="on_hold">{t('projects.status.on_hold')}</option>
+ <option value="completed">{t('projects.status.completed')}</option>
+ <option value="archived">{t('projects.status.archived')}</option>
  </select>
  </div>
 

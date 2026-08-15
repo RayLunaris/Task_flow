@@ -120,10 +120,10 @@ export const TaskForm: React.FC = () => {
  onChange={(e) => setPriority(e.target.value as 'high' | 'medium' | 'low' | 'urgent')}
  className="text-sm border border-[#E4E4E7] dark:border-[#333333] rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-[#0D9488] focus:border-[#0D9488] bg-[#FFFFFF] dark:bg-[#242424] text-[#27272A] dark:text-[#E4E4E7] font-medium"
  >
- <option value="urgent"><div className="w-2 h-2 rounded-full bg-red-500 mr-2" /> Urgent</option>
- <option value="high"><div className="w-2 h-2 rounded-full bg-orange-500 mr-2" /> {t('priority.high', 'Tinggi')}</option>
- <option value="medium"><div className="w-2 h-2 rounded-full bg-yellow-500 mr-2" /> {t('priority.medium', 'Sedang')}</option>
- <option value="low"><div className="w-2 h-2 rounded-full bg-blue-500 mr-2" /> {t('priority.low', 'Rendah')}</option>
+ <option value="urgent">Urgent</option>
+ <option value="high">{t('priority.high', 'Tinggi')}</option>
+ <option value="medium">{t('priority.medium', 'Sedang')}</option>
+ <option value="low">{t('priority.low', 'Rendah')}</option>
  </select>
 
  {/* Assignee with Workload Indicator */}
@@ -136,10 +136,9 @@ export const TaskForm: React.FC = () => {
  <option value="">Pilih Pelaksana (Assignee)</option>
  {users.filter(u => u.status !== 'inactive' && u.role !== 'client').map((u) => {
  const count = userWorkloadMap[u.id] || 0;
- const dot = count >= 7 ? '<div className="w-2 h-2 rounded-full bg-red-500 mr-2" />' : count >= 4 ? '<div className="w-2 h-2 rounded-full bg-yellow-500 mr-2" />' : '<div className="w-2 h-2 rounded-full bg-green-500 mr-2" />';
- return (
+  return (
  <option key={u.id} value={u.id}>
- {dot} {u.name} ({count} task) - {u.department || 'General'}
+ {u.name} ({count} task) - {u.department || 'General'}
  </option>
  );
  })}

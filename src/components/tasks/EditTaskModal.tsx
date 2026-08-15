@@ -438,10 +438,9 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  <option value="">Belum Ditugaskan</option>
  {users.filter(u => u.status !== 'inactive' && u.role !== 'client').map((u) => {
  const count = userWorkloadMap[u.id] || 0;
- const dot = count >= 7 ? '<div className="w-2 h-2 rounded-full bg-red-500 mr-2" />' : count >= 4 ? '<div className="w-2 h-2 rounded-full bg-yellow-500 mr-2" />' : '<div className="w-2 h-2 rounded-full bg-green-500 mr-2" />';
- return (
+  return (
  <option key={u.id} value={u.id}>
- {dot} {u.name} ({count} task)
+ {u.name} ({count} task)
  </option>
  );
  })}
@@ -477,10 +476,10 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  onChange={(e) => setPriority(e.target.value as any)}
  className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium"
  >
- <option value="urgent"><div className="w-2 h-2 rounded-full bg-red-500 mr-2" /> Urgent</option>
- <option value="high"><div className="w-2 h-2 rounded-full bg-orange-500 mr-2" /> Tinggi</option>
- <option value="medium"><div className="w-2 h-2 rounded-full bg-yellow-500 mr-2" /> Sedang</option>
- <option value="low"><div className="w-2 h-2 rounded-full bg-blue-500 mr-2" /> Rendah</option>
+ <option value="urgent">Urgent</option>
+ <option value="high">Tinggi</option>
+ <option value="medium">Sedang</option>
+ <option value="low">Rendah</option>
  </select>
  </div>
 

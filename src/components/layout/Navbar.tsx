@@ -8,7 +8,7 @@ import { useProjects } from '../../context/ProjectContext';
 import { useMilestones } from '../../context/MilestoneContext';
 import { useNotifications } from '../../context/NotificationContext';
 import { exportTasksToExcel } from '../../utils/exportUtils';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const Navbar: React.FC = () => {
  const { t, i18n } = useTranslation();
@@ -19,9 +19,29 @@ export const Navbar: React.FC = () => {
  const { milestones } = useMilestones();
  const { unreadCount } = useNotifications();
  const navigate = useNavigate();
+ const location = useLocation();
  const [showProfileMenu, setShowProfileMenu] = useState(false);
  const [isExporting, setIsExporting] = useState(false);
  const [exported, setExported] = useState(false);
+
+ const pathMap: Record<string, string> = {
+ 'dashboard': 'nav.dashboard',
+ 'my-tasks': 'nav.myTasks',
+ 'projects': 'nav.projects',
+ 'kanban': 'nav.kanban',
+ 'milestones': 'nav.milestones',
+ 'team': 'nav.team',
+ 'calendar': 'nav.calendar',
+ 'analytics': 'nav.analytics',
+ 'report': 'nav.report',
+ 'settings': 'nav.settings',
+ 'audit': 'nav.audit',
+ 'notifications': 'nav.notifications'
+ };
+
+ const currentPath = location.pathname.split('/')[1] || 'dashboard';
+ const titleKey = pathMap[currentPath] || 'nav.dashboard';
+ const pageTitle = t(titleKey);
 
  const toggleLanguage = () => {
  const newLang = i18n.language === 'id' ? 'en' : 'id';
@@ -53,8 +73,8 @@ export const Navbar: React.FC = () => {
  <header className="bg-transparent sticky top-0 z-20 pt-6 px-6 transition-colors duration-300">
  <div className="w-full h-[52px] flex items-center justify-between">
  <div className="hidden md:flex items-center gap-8">
- <button className="text-lg font-bold font-heading text-[#1E293B] dark:text-[#F1F5F9] border-b-2 border-[#0D9488] pb-1">
- {t('navbar.dashboard')}
+ <button className="text-lg font-bold font-heading text-[#1E293B] dark:text-[#F1F5F9] border-b-2 border-[#0D9488] pb-1 capitalize">
+ {pageTitle}
  </button>
  
  <div className="hidden lg:flex items-center ml-4 bg-[#FFFFFF] dark:bg-[#242424] rounded-lg border border-[#E5E7EB] dark:border-[#333333] px-3 py-1.5 w-[250px] shadow-sm">
@@ -67,11 +87,11 @@ export const Navbar: React.FC = () => {
  </div>
  </div>
  
- {/* Mobile Logo */}
- <div className="md:hidden flex items-center gap-2">
- <Command size={20} className="text-[#0D9488]" strokeWidth={2.5} />
- <span className="font-bold text-[#1E293B] dark:text-[#F1F5F9]">TaskFlow</span>
- </div>
+  {/* Mobile Logo / Page Title */}
+  <div className="md:hidden flex items-center gap-2">
+    <Command size={20} className="text-[#0D9488]" strokeWidth={2.5} />
+    <span className="font-bold text-[#1E293B] dark:text-[#F1F5F9] capitalize">{pageTitle}</span>
+  </div>
  
  <div className="flex items-center gap-4 text-sm font-medium">
  
