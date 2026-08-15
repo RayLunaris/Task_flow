@@ -4,7 +4,7 @@ import { ProgressBar } from '../ui/ProgressBar';
 import { Bell, Check, X, FileText, CheckCircle2, Clock } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../context/AuthContext';
-import { useProjects } from '../../context/ProjectContext';
+
 import { useNotifications } from '../../context/NotificationContext';
 import { useTranslation } from 'react-i18next';
 import { isToday, isBefore, startOfToday } from 'date-fns';
@@ -141,47 +141,6 @@ export const TodayTasksWidget = () => {
  </div>
  ))
  )}
- </div>
- </Card>
- );
-};
-
-export const ProjectStatsWidget = () => {
- const { projects } = useProjects();
- const { t } = useTranslation();
- const navigate = useNavigate();
- const activeProjects = projects.filter(p => p.status === 'active');
- const total = projects.length;
- const active = activeProjects.length;
-
- return (
- <Card>
- <div className="flex items-center justify-between mb-4">
- <h3 className="font-semibold text-sm text-[#1E293B] dark:text-[#E4E4E7]">{t('dashboard.projectStats')}</h3>
- <button onClick={() => navigate('/projects')} className="text-[11px] text-[#0D9488] hover:underline font-bold">
- {t('common.viewAll')}
- </button>
- </div>
- <div className="grid grid-cols-2 gap-3 mb-4">
- <div className="p-3 bg-[#F7F7F5] dark:bg-[#1A1A1A] rounded-md border border-[#E5E7EB] dark:border-[#333333]">
- <p className="text-[10px] text-[#64748B] mb-1 uppercase tracking-wider font-semibold">{t('dashboard.totalProjects')}</p>
- <p className="text-xl font-bold text-[#1E293B] dark:text-[#E4E4E7]">{total}</p>
- </div>
- <div className="p-3 bg-[#0D9488]/10 rounded-md border border-[#0D9488]/20">
- <p className="text-[10px] text-[#0D9488] mb-1 uppercase tracking-wider font-semibold">{t('dashboard.activeProjects')}</p>
- <p className="text-xl font-bold text-[#0D9488]">{active}</p>
- </div>
- </div>
- <div className="space-y-3">
- {activeProjects.slice(0, 2).map(p => (
- <div key={p.id}>
- <div className="flex justify-between text-xs mb-1">
- <span className="font-medium text-[#1E293B] dark:text-[#E4E4E7] truncate">{p.name}</span>
- <span className="text-[#64748B]">{p.progress}%</span>
- </div>
- <ProgressBar progress={p.progress} color="bg-[#0D9488]" />
- </div>
- ))}
  </div>
  </Card>
  );

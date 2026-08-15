@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { 
  QuickStats, 
  RecentNotifications, 
- TodayTasksWidget, 
- ProjectStatsWidget
+ TodayTasksWidget
 } from '../components/dashboard/DashboardWidgets';
 import { AssignedTasksWidget, MiniCalendarWidget } from '../components/dashboard/DashboardMoreWidgets';
+import { TaskForm } from '../components/tasks/TaskForm';
 import { isBefore, addDays, startOfToday } from 'date-fns';
 
 export const DashboardPage: React.FC = () => {
@@ -16,15 +16,19 @@ export const DashboardPage: React.FC = () => {
  const { tasks } = useTasks();
  const { t } = useTranslation();
  
- const upcomingTasksCount = tasks.filter(task => {
- if (!task.assigneeIds?.includes(user?.id || '')) return false;
- if (task.completed || !task.dueDate) return false;
- const due = new Date(task.dueDate);
- return !isBefore(due, startOfToday()) && isBefore(due, addDays(startOfToday(), 7));
- }).length;
+ const upcomingTasksCount = React.useMemo(() => {
+   const today = startOfToday();
+   const nextWeek = addDays(today, 7);
+   return tasks.filter(task => {
+     if (!task.assigneeIds?.includes(user?.id || '')) return false;
+     if (task.completed || !task.dueDate) return false;
+     const due = new Date(task.dueDate);
+     return !isBefore(due, today) && isBefore(due, nextWeek);
+   }).length;
+ }, [tasks, user?.id]);
  
  return (
- <div className="space-y-6 pb-12 animate-in fade-in slide-in- duration-500">
+ <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
  <div className="mb-8 flex flex-col xl:flex-row gap-6 items-start xl:items-center">
  <div className="flex-1">
  <h1 className="text-2xl font-bold tracking-tight text-[#1E293B] dark:text-[#F1F5F9] mb-1">
@@ -48,9 +52,9 @@ export const DashboardPage: React.FC = () => {
 
  {/* Kolom Samping (4 kolom) */}
  <div className="lg:col-span-4 flex flex-col gap-6">
+ <TaskForm />
  <MiniCalendarWidget />
  <RecentNotifications />
- <ProjectStatsWidget />
  </div>
  </div>
  </div>
