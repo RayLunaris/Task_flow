@@ -98,7 +98,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
  id: uuidv4(),
  userId: inviterId,
  type: 'team_invite',
- title: action === 'accept' ? 'Undangan Tim Diterima! 🎉' : 'Undangan Tim Ditolak',
+ title: action === 'accept' ? 'Undangan Tim Diterima!' : 'Undangan Tim Ditolak',
  message: action === 'accept'
  ? `${user.name} telah menerima undangan dan resmi bergabung dengan tim TaskFlow!`
  : `${user.name} menolak undangan bergabung ke tim.`,

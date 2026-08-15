@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MoreVertical, Edit2, Trash2, Users, Calendar, Folder } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, Users, Calendar, Folder, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import type { Project } from '../../types';
@@ -157,7 +157,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  onClick={() => setShowUpdateModal(false)}
  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors"
  >
- ✕
+ <X size={12} />
  </button>
  </div>
  <form onSubmit={handleCommit} className="p-4 space-y-4">
@@ -207,7 +207,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  onClick={() => setShowHistory(false)}
  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors"
  >
- ✕
+ <X size={12} />
  </button>
  </div>
  <div className="p-4 max-h-96 overflow-y-auto">

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Trash2, Edit2, Check, ChevronDown, Plus, GripVertical } from 'lucide-react';
+import { Trash2, Edit2, Check, ChevronDown, Plus, GripVertical, Repeat } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
@@ -160,7 +160,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
  </Badge>
  )}
  {task.isRecurring && (
- <Badge variant="category" color="#71717A">🔁 {t('common.recurring') || 'Berulang'}</Badge>
+ <Badge variant="category" color="#71717A"><Repeat size={10} /> {t('common.recurring') || 'Berulang'}</Badge>
  )}
  </div>
 

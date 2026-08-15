@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Command, Globe, Sun, Moon, LogOut, Bell, Check } from 'lucide-react';
+import { Command, Globe, Sun, Moon, LogOut, Bell, Check, Search, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../context/AuthContext';
@@ -58,7 +58,7 @@ export const Navbar: React.FC = () => {
  </button>
  
  <div className="hidden lg:flex items-center ml-4 bg-[#FFFFFF] dark:bg-[#242424] rounded-lg border border-[#E5E7EB] dark:border-[#333333] px-3 py-1.5 w-[250px] shadow-sm">
- <span className="text-[#64748B] mr-2 text-xs">🔍</span>
+ <Search size={14} className="text-[#64748B] mr-2" />
  <input 
  type="text" 
  placeholder={t('navbar.searchPlaceholder')} 
@@ -169,7 +169,7 @@ export const Navbar: React.FC = () => {
  }}
  className="w-full text-left px-4 py-2 text-sm text-[#1E293B] dark:text-[#E4E4E7] hover:bg-[#FAFAF9] dark:hover:bg-[#1A1A1A] flex items-center gap-2 cursor-pointer"
  >
- <span className="text-[#64748B]">⚙️</span>
+ <Settings size={14} className="text-[#64748B]" />
  {t('nav.settings')}
  </button>
  <button

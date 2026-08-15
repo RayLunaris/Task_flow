@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Save } from 'lucide-react';
+import { X, Save, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/Button';
 import { useMilestones } from '../../context/MilestoneContext';
@@ -167,10 +167,10 @@ export const MilestoneFormModal: React.FC<MilestoneFormModalProps> = ({
  onChange={(e) => setStatus(e.target.value as any)}
  className="w-full text-sm bg-slate-50 dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100"
  >
- <option value="not_started">⚪ {t('milestones.status.not_started')}</option>
- <option value="on_track">🟢 {t('milestones.status.on_track')}</option>
- <option value="at_risk">🟠 {t('milestones.status.at_risk')}</option>
- <option value="completed">✅ {t('milestones.status.completed')}</option>
+ <option value="not_started"><div className="w-2 h-2 rounded-full bg-slate-300" /> {t('milestones.status.not_started')}</option>
+ <option value="on_track"><div className="w-2 h-2 rounded-full bg-green-500" /> {t('milestones.status.on_track')}</option>
+ <option value="at_risk"><div className="w-2 h-2 rounded-full bg-orange-500" /> {t('milestones.status.at_risk')}</option>
+ <option value="completed"><CheckCircle2 size={16} /> {t('milestones.status.completed')}</option>
  </select>
  </div>
 

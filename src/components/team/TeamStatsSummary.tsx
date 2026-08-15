@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, UserCheck, Clock, Activity } from 'lucide-react';
+import { Users, UserCheck, Clock, Activity, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTasks } from '../../hooks/useTasks';
 
@@ -84,11 +84,11 @@ export const TeamStatsSummary: React.FC = () => {
  <div className="flex items-baseline gap-2">
  {overloadedCount > 0 ? (
  <span className="text-sm font-bold text-red-600 dark:text-red-400">
- ⚠️ {overloadedCount} Overload
+ <AlertTriangle size={14} className="text-yellow-500 mr-1" />️ {overloadedCount} Overload
  </span>
  ) : (
  <span className="text-sm font-bold text-teal-600 dark:text-teal-400">
- 🟢 Distribusi Sehat
+ <div className="w-2 h-2 rounded-full bg-green-500 mr-1" /> Distribusi Sehat
  </span>
  )}
  <span className="text-[11px] text-slate-400 font-medium">({activeTasks.length} task aktif)</span>

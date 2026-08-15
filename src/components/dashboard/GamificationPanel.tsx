@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy, Star, ChevronRight, Zap } from 'lucide-react';
+import { Trophy, Star, ChevronRight, Zap, Flame, Target } from 'lucide-react';
 import { useGamification } from '../../hooks/useGamification';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,17 @@ const containerVariants: any = {
 const itemVariants: any = {
  hidden: { opacity: 0, y: 15 },
  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+};
+
+
+const BadgeIcon = ({ icon }: { icon: string }) => {
+  switch (icon) {
+    case 'flame': return <Flame size={20} className="text-orange-500" />;
+    case 'zap': return <Zap size={20} className="text-yellow-500" />;
+    case 'target': return <Target size={20} className="text-red-500" />;
+    case 'trophy': return <Trophy size={20} className="text-yellow-600" />;
+    default: return <Trophy size={20} className="text-primary" />;
+  }
 };
 
 export const GamificationPanel: React.FC = () => {
@@ -107,7 +118,7 @@ export const GamificationPanel: React.FC = () => {
  className="bg-white dark:bg-[#1A1A1A] p-4 rounded-lg border border-border-color dark:border-border-color text-left transition-all"
  >
  <div className="w-10 h-10 bg-slate-50 dark:bg-[#242424] rounded-lg flex items-center justify-center mb-3 text-xl border border-slate-100 dark:border-border-color">
- {badge.icon}
+ {<BadgeIcon icon={badge.icon} />}
  </div>
  <h4 className="font-semibold text-slate-900 dark:text-slate-50 text-sm tracking-tight">{badge.name}</h4>
  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">{badge.description}</p>

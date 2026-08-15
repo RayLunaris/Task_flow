@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Clock, Paperclip, MessageCircle, CheckSquare } from 'lucide-react';
+import { GripVertical, Clock, Paperclip, MessageCircle, CheckSquare, Repeat } from 'lucide-react';
 import clsx from 'clsx';
 import type { Task } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -67,7 +67,7 @@ export const KanbanCard: React.FC<KanbanCardProps> = ({ task }) => {
  )}
  {task.isRecurring && (
  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-subtle text-primary dark:bg-blue-900/30 dark:text-primary">
- 🔁
+ <Repeat size={10} />
  </span>
  )}
  </div>

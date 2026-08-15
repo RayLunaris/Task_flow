@@ -156,7 +156,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onEdit }) => {
  className="w-full text-left px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2 cursor-pointer"
  >
  <Copy size={14} className="text-primary" /> 
- {copiedLink ? 'Link Tersalin! ✅' : 'Salin Link Undangan'}
+ {copiedLink ? 'Link Tersalin! <CheckCircle2 size={12} className="text-green-500 mr-1" />' : 'Salin Link Undangan'}
  </button>
  <button
  onClick={handleResend}
