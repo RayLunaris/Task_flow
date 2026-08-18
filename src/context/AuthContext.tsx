@@ -284,7 +284,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  },
  createdAt: new Date().toISOString(),
  };
- localStorage.setItem('taskflow_notifications', JSON.stringify([newNotif, ...allNotifs]));
+ 		const newValue = JSON.stringify([newNotif, ...allNotifs]);
+ 		localStorage.setItem("taskflow_notifications", newValue);
+ 		window.dispatchEvent(new StorageEvent("storage", { key: "taskflow_notifications", newValue }));
  } catch (e) {
  console.error('Failed to create notification', e);
  }
@@ -350,7 +352,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  },
  createdAt: new Date().toISOString(),
  };
- localStorage.setItem('taskflow_notifications', JSON.stringify([newNotif, ...allNotifs]));
+ 		const newValue = JSON.stringify([newNotif, ...allNotifs]);
+ 		localStorage.setItem("taskflow_notifications", newValue);
+ 		window.dispatchEvent(new StorageEvent("storage", { key: "taskflow_notifications", newValue }));
  } catch (e) {
  console.error('Failed to create notification', e);
  }
@@ -407,7 +411,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  },
  createdAt: new Date().toISOString(),
  };
- localStorage.setItem('taskflow_notifications', JSON.stringify([newNotif, ...allNotifs]));
+ 		const newValue = JSON.stringify([newNotif, ...allNotifs]);
+ 		localStorage.setItem("taskflow_notifications", newValue);
+ 		window.dispatchEvent(new StorageEvent("storage", { key: "taskflow_notifications", newValue }));
  } catch (e) {
  console.error(e);
  }

@@ -7,6 +7,7 @@ import { Avatar } from '../components/ui/Avatar';
 
 export const SettingsPage: React.FC = () => {
  const { user, updateUser } = useAuth();
+ const isAdmin = user?.role === 'admin';
  const { t, i18n } = useTranslation();
 
  const [name, setName] = useState(user?.name || '');
@@ -431,7 +432,8 @@ export const SettingsPage: React.FC = () => {
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="Masukkan nama perusahaan"
-                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+                disabled={!isAdmin}
+                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
               />
             </div>
             
@@ -444,7 +446,8 @@ export const SettingsPage: React.FC = () => {
                 value={companyWebsite}
                 onChange={(e) => setCompanyWebsite(e.target.value)}
                 placeholder="https://example.com"
-                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+                disabled={!isAdmin}
+                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -457,7 +460,8 @@ export const SettingsPage: React.FC = () => {
                 onChange={(e) => setCompanyAddress(e.target.value)}
                 rows={3}
                 placeholder="Alamat lengkap perusahaan"
-                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+                disabled={!isAdmin}
+                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -470,15 +474,18 @@ export const SettingsPage: React.FC = () => {
                 value={companyContact}
                 onChange={(e) => setCompanyContact(e.target.value)}
                 placeholder="Email atau nomor telepon yang bisa dihubungi"
-                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+                disabled={!isAdmin}
+                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
               />
             </div>
 
-            <div className="md:col-span-2 pt-2">
-              <Button type="submit" icon={<Save size={16} />}>
-                Simpan Profil Perusahaan
-              </Button>
-            </div>
+            {isAdmin && (
+              <div className="md:col-span-2 pt-2">
+                <Button type="submit" icon={<Save size={16} />}>
+                  Simpan Profil Perusahaan
+                </Button>
+              </div>
+            )}
           </form>
         </div>
       </div>
