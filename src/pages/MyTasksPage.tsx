@@ -5,25 +5,39 @@ import { useTasks } from '../hooks/useTasks';
 
 import { TaskCard } from '../components/tasks/TaskCard';
 import { TaskForm } from '../components/tasks/TaskForm';
-import { CheckSquare, Calendar, AlertCircle, ListTodo } from 'lucide-react';
+import { CheckSquare, Calendar, AlertCircle, ListTodo, Search } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
 type FilterType = 'all' | 'today' | 'week' | 'review' | 'overdue' | 'completed';
 type SortType = 'dueDate' | 'priority' | 'name';
 
 export const MyTasksPage: React.FC = () => {
- const { user } = useAuth();
+ const { user, users } = useAuth();
  const { tasks, selectedCategory } = useTasks();
  const { t } = useTranslation();
  
  const [filter, setFilter] = useState<FilterType>('all');
  const [sortBy, setSortBy] = useState<SortType>('dueDate');
+ const [searchQuery, setSearchQuery] = useState('');
 
  const myTasks = useMemo(() => {
  if (!user) return [];
  
- // 1. Get user's tasks
- let filtered = tasks.filter(t => t.assigneeIds?.includes(user.id) || (t.reviewerId === user.id && t.status === 'review'));
+ // 1. Get tasks for the user's team/department
+ const sameDeptUsers = users.filter(u => u.department === user.department).map(u => u.id);
+ let filtered = tasks.filter(t => {
+   const hasAssigneeInDept = t.assigneeIds?.some(id => sameDeptUsers.includes(id));
+   const isReviewerInDept = t.reviewerId && sameDeptUsers.includes(t.reviewerId);
+   return hasAssigneeInDept || (t.status === 'review' && isReviewerInDept);
+ });
+
+ if (searchQuery.trim()) {
+   const q = searchQuery.toLowerCase();
+   filtered = filtered.filter(task => 
+     task.title.toLowerCase().includes(q) || 
+     (task.description && task.description.toLowerCase().includes(q))
+   );
+ }
 
  // 1.5. Filter by category
  if (selectedCategory) {
@@ -73,55 +87,67 @@ export const MyTasksPage: React.FC = () => {
  });
 
  return filtered;
- }, [tasks, user, filter, sortBy, selectedCategory]);
+  }, [tasks, user, users, filter, sortBy, selectedCategory, searchQuery]);
 
- return (
- <div className="space-y-6 animate-in fade-in slide-in- duration-500">
- <div className="mb-6 text-center sm:text-left">
- <h1 className="text-[26px] font-bold text-navy dark:text-slate-100 mb-1">
- {t('app.greeting', { name: user?.name?.split(' ')[0] || 'User' })}
- </h1>
- <p className="text-muted">{t('app.subtitle')}</p>
- </div>
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in- duration-500">
+      <div className="mb-6 text-center sm:text-left">
+        <h1 className="text-[26px] font-bold text-navy dark:text-slate-100 mb-1">
+          {t('app.greeting', { name: user?.name?.split(' ')[0] || 'User' })}
+        </h1>
+        <p className="text-muted">{t('app.subtitle')}</p>
+      </div>
 
- <TaskForm />
+      <TaskForm />
 
- {/* Filters & Sorting */}
- <div className="flex flex-col md:flex-row justify-between gap-4 bg-card-bg dark:bg-[#1A1A1A] p-4 rounded-[14px] border border-border-color dark:border-border-color">
- <div className="flex flex-wrap gap-2">
- <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} icon={<ListTodo size={14} />}>
- {t('myTasks.allActive')}
- </FilterButton>
- <FilterButton active={filter === 'today'} onClick={() => setFilter('today')} icon={<Calendar size={14} />}>
- {t('myTasks.today')}
- </FilterButton>
- <FilterButton active={filter === 'week'} onClick={() => setFilter('week')} icon={<Calendar size={14} />}>
- {t('myTasks.thisWeek')}
- </FilterButton>
- <FilterButton active={filter === 'review'} onClick={() => setFilter('review')} icon={<AlertCircle size={14} />} color="text-primary bg-subtle border-blue-200 dark:bg-blue-950/40">
- {t('myTasks.waitingReview', 'Waiting Review')}
- </FilterButton>
- <FilterButton active={filter === 'overdue'} onClick={() => setFilter('overdue')} icon={<AlertCircle size={14} />} color="text-danger bg-danger/10 border-danger/20 dark:bg-danger/20">
- {t('myTasks.overdue')}
- </FilterButton>
- <FilterButton active={filter === 'completed'} onClick={() => setFilter('completed')} icon={<CheckSquare size={14} />}>
- {t('myTasks.completed')}
- </FilterButton>
- </div>
+      {/* Filters & Sorting */}
+      <div className="flex flex-col md:flex-row justify-between gap-4 bg-card-bg dark:bg-[#1A1A1A] p-4 rounded-[14px] border border-border-color dark:border-border-color">
+        <div className="flex flex-wrap gap-2">
+          <FilterButton active={filter === 'all'} onClick={() => setFilter('all')} icon={<ListTodo size={14} />}>
+            {t('myTasks.allActive')}
+          </FilterButton>
+          <FilterButton active={filter === 'today'} onClick={() => setFilter('today')} icon={<Calendar size={14} />}>
+            {t('myTasks.today')}
+          </FilterButton>
+          <FilterButton active={filter === 'week'} onClick={() => setFilter('week')} icon={<Calendar size={14} />}>
+            {t('myTasks.thisWeek')}
+          </FilterButton>
+          <FilterButton active={filter === 'review'} onClick={() => setFilter('review')} icon={<AlertCircle size={14} />} color="text-primary bg-subtle border-blue-200 dark:bg-blue-950/40">
+            {t('myTasks.waitingReview', 'Waiting Review')}
+          </FilterButton>
+          <FilterButton active={filter === 'overdue'} onClick={() => setFilter('overdue')} icon={<AlertCircle size={14} />} color="text-danger bg-danger/10 border-danger/20 dark:bg-danger/20">
+            {t('myTasks.overdue')}
+          </FilterButton>
+          <FilterButton active={filter === 'completed'} onClick={() => setFilter('completed')} icon={<CheckSquare size={14} />}>
+            {t('myTasks.completed')}
+          </FilterButton>
+        </div>
 
- <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
- <span className="font-medium">{t('myTasks.sortBy')}</span>
- <select 
- value={sortBy} 
- onChange={(e) => setSortBy(e.target.value as SortType)}
- className="bg-white dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/50"
- >
- <option value="dueDate">{t('filter.dueDate')}</option>
- <option value="priority">{t('taskCard.priority')}</option>
- <option value="name">{t('filter.name')}</option>
- </select>
- </div>
- </div>
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative w-full sm:w-auto">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder={t('myTasks.search', 'Cari tugas...')} 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full sm:w-48 bg-white dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg py-1.5 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm text-slate-800 dark:text-slate-100"
+            />
+          </div>
+          <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+            <span className="font-medium">{t('myTasks.sortBy')}</span>
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value as SortType)}
+              className="bg-white dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/50"
+            >
+              <option value="dueDate">{t('filter.dueDate')}</option>
+              <option value="priority">{t('taskCard.priority')}</option>
+              <option value="name">{t('filter.name')}</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
  {/* Task List */}
  {myTasks.length === 0 ? (

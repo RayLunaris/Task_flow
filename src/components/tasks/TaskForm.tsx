@@ -81,6 +81,10 @@ export const TaskForm: React.FC = () => {
  }
  };
 
+ if (user && user.role !== 'admin' && user.role !== 'manager') {
+ return null;
+ }
+
  return (
  <form onSubmit={handleSubmit} className="bg-[#FFFFFF] dark:bg-[#242424] p-6 rounded-lg shadow-sm border border-[#E4E4E7] dark:border-[#333333] mb-8 transition-colors duration-300">
  <div className="flex flex-col gap-4">
