@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Settings, Globe, Moon, Sun, Save, Bell, Camera, Trash2, Check, Sparkles, AlertCircle } from 'lucide-react';
+import { User, Settings, Globe, Moon, Sun, Save, Bell, Camera, Trash2, Check, Sparkles, AlertCircle, Building } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../components/ui/Button';
@@ -15,6 +15,41 @@ export const SettingsPage: React.FC = () => {
  const [saveSuccess, setSaveSuccess] = useState(false);
  const [errorMessage, setErrorMessage] = useState('');
  const fileInputRef = useRef<HTMLInputElement>(null);
+
+ // Company Settings State
+ const [companyName, setCompanyName] = useState('');
+ const [companyAddress, setCompanyAddress] = useState('');
+ const [companyContact, setCompanyContact] = useState('');
+ const [companyWebsite, setCompanyWebsite] = useState('');
+ const [companySaveSuccess, setCompanySaveSuccess] = useState(false);
+
+ useEffect(() => {
+   try {
+     const stored = localStorage.getItem('taskflow_company_settings');
+     if (stored) {
+       const parsed = JSON.parse(stored);
+       setCompanyName(parsed.companyName || '');
+       setCompanyAddress(parsed.companyAddress || '');
+       setCompanyContact(parsed.companyContact || '');
+       setCompanyWebsite(parsed.companyWebsite || '');
+     }
+   } catch (e) {
+     console.error('Error loading company settings', e);
+   }
+ }, []);
+
+ const handleSaveCompany = (e: React.FormEvent) => {
+   e.preventDefault();
+   const data = {
+     companyName,
+     companyAddress,
+     companyContact,
+     companyWebsite
+   };
+   localStorage.setItem('taskflow_company_settings', JSON.stringify(data));
+   setCompanySaveSuccess(true);
+   setTimeout(() => setCompanySaveSuccess(false), 3500);
+ };
 
  // Sync state if user changes
  useEffect(() => {
@@ -370,7 +405,83 @@ export const SettingsPage: React.FC = () => {
 
  </div>
  </div>
- </div>
- </div>
- );
+      </div>
+
+      {/* Company Profile Settings */}
+      <div className="bg-white dark:bg-[#242424] rounded-lg shadow-sm border border-border-color dark:border-border-color overflow-hidden">
+        <div className="p-6 border-b border-slate-100 dark:border-border-color/50 flex items-center gap-2">
+          <Building className="text-primary" size={20} />
+          <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Profil Perusahaan</h2>
+        </div>
+        <div className="p-6">
+          {companySaveSuccess && (
+            <div className="mb-5 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-sm flex items-center gap-2 animate-in fade-in slide-in-">
+              <Check size={16} className="text-emerald-500 flex-shrink-0" />
+              <span>Profil perusahaan berhasil disimpan.</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSaveCompany} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Nama Perusahaan
+              </label>
+              <input
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="Masukkan nama perusahaan"
+                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Website
+              </label>
+              <input
+                type="url"
+                value={companyWebsite}
+                onChange={(e) => setCompanyWebsite(e.target.value)}
+                placeholder="https://example.com"
+                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Alamat
+              </label>
+              <textarea
+                value={companyAddress}
+                onChange={(e) => setCompanyAddress(e.target.value)}
+                rows={3}
+                placeholder="Alamat lengkap perusahaan"
+                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Kontak (Email / Telepon)
+              </label>
+              <input
+                type="text"
+                value={companyContact}
+                onChange={(e) => setCompanyContact(e.target.value)}
+                placeholder="Email atau nomor telepon yang bisa dihubungi"
+                className="w-full text-sm bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-200"
+              />
+            </div>
+
+            <div className="md:col-span-2 pt-2">
+              <Button type="submit" icon={<Save size={16} />}>
+                Simpan Profil Perusahaan
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
