@@ -11,7 +11,6 @@ interface ProjectContextType {
  updateProject: (id: string, updates: Partial<Project>) => void;
  deleteProject: (id: string) => void;
  getProjectProgress: (projectId: string) => { total: number; completed: number; percentage: number };
- commitProjectProgress: (projectId: string, percentage: number, description: string) => void;
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -82,30 +81,8 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
  setProjects(prev => prev.filter(p => p.id !== id));
  };
 
- const commitProjectProgress = (projectId: string, percentage: number, description: string) => {
- if (!user) return;
- setProjects(prev => prev.map(p => {
- if (p.id === projectId) {
- const newUpdate = {
- id: uuidv4(),
- userId: user.id,
- percentage,
- description,
- createdAt: new Date().toISOString()
- };
- return {
- ...p,
- progress: percentage, // update main progress
- updates: [newUpdate, ...(p.updates || [])],
- updatedAt: new Date().toISOString()
- };
- }
- return p;
- }));
- };
-
  return (
- <ProjectContext.Provider value={{ projects, addProject, updateProject, deleteProject, getProjectProgress, commitProjectProgress }}>
+ <ProjectContext.Provider value={{ projects, addProject, updateProject, deleteProject, getProjectProgress }}>
  {children}
  </ProjectContext.Provider>
  );

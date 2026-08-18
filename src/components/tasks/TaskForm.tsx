@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { PlusCircle, AlertTriangle, Repeat, Search } from 'lucide-react';
+import React, { useState } from 'react';
+import { PlusCircle, Repeat, Search } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/Button';
@@ -8,7 +8,7 @@ import { useProjects } from '../../context/ProjectContext';
 import { useMilestones } from '../../context/MilestoneContext';
 
 export const TaskForm: React.FC = () => {
- const { addTask, categories, selectedCategory, tasks } = useTasks();
+ const { addTask, categories, selectedCategory } = useTasks();
  const { user, users } = useAuth();
  const { projects } = useProjects();
  const { milestones } = useMilestones();
@@ -20,29 +20,21 @@ export const TaskForm: React.FC = () => {
  const [category, setCategory] = useState(selectedCategory || (categories.length > 0 ? categories[0].name : 'Pribadi'));
  const [projectId, setProjectId] = useState<string>('');
  const [milestoneId, setMilestoneId] = useState<string>('');
- const [assigneeId, setAssigneeId] = useState<string>(user?.id || '');
+ const [assigneeDept, setAssigneeDept] = useState<string>(user?.department || '');
  const [reviewerId, setReviewerId] = useState<string>('');
  const [dueDate, setDueDate] = useState('');
  const [isRecurring, setIsRecurring] = useState(false);
  const [recurringFrequency, setRecurringFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
  const [recurringInterval, setRecurringInterval] = useState(1);
 
- // Compute workload count for all active users
- const userWorkloadMap = useMemo(() => {
- const map: Record<string, number> = {};
- const activeTasks = tasks.filter(t => t.status !== 'done' && !t.completed);
- users.forEach(u => {
- map[u.id] = activeTasks.filter(t => t.assigneeIds?.includes(u.id)).length;
- });
- return map;
- }, [tasks, users]);
-
- const selectedAssigneeWorkload = assigneeId ? userWorkloadMap[assigneeId] || 0 : 0;
- const isAssigneeOverloaded = selectedAssigneeWorkload >= 7;
+ // Daftar unik divisi
+ const departments = Array.from(new Set(users.map(u => u.department).filter(Boolean))) as string[];
 
  const handleSubmit = (e: React.FormEvent) => {
  e.preventDefault();
  if (!title.trim()) return;
+
+ const deptUsers = users.filter(u => u.department === assigneeDept).map(u => u.id);
 
  addTask({
  title: title.trim(),
@@ -51,7 +43,7 @@ export const TaskForm: React.FC = () => {
  category,
  projectId: projectId || undefined,
  milestoneId: milestoneId || undefined,
- assigneeIds: assigneeId ? [assigneeId] : (user ? [user.id] : []),
+ assigneeIds: deptUsers.length > 0 ? deptUsers : (user ? [user.id] : []),
  reviewerId: reviewerId || undefined,
  dueDate: dueDate || undefined,
  isRecurring,
@@ -107,16 +99,6 @@ export const TaskForm: React.FC = () => {
  className="w-full text-sm text-[#71717A] dark:text-[#E4E4E7] bg-[#FAFAF9] dark:bg-[#1A1A1A] p-3 rounded-lg border border-[#E4E4E7] dark:border-[#333333] focus:outline-none focus:ring-1 focus:ring-[#0D9488] focus:border-[#0D9488] resize-none min-h-[80px]"
  />
 
- {/* Overcapacity Warning Banner */}
- {isAssigneeOverloaded && (
- <div className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 text-red-700 dark:text-red-300 text-xs flex items-center gap-2 animate-in fade-in">
- <AlertTriangle size={15} className="text-red-500 shrink-0" />
- <span>
- <strong>Perhatian:</strong> Anggota yang dipilih saat ini memiliki <strong>{selectedAssigneeWorkload} tugas aktif</strong> (Overcapacity). Pertimbangkan untuk mendelegasikan ke anggota lain.
- </span>
- </div>
- )}
- 
  <div className="flex flex-wrap items-center gap-3">
  {/* Priority */}
  <select
@@ -130,22 +112,19 @@ export const TaskForm: React.FC = () => {
  <option value="low">{t('priority.low', 'Rendah')}</option>
  </select>
 
- {/* Assignee with Workload Indicator */}
+ {/* Assignee -> Department */}
  <div className="flex items-center gap-1.5">
  <select
- value={assigneeId}
- onChange={(e) => setAssigneeId(e.target.value)}
- className="text-sm border border-[#E4E4E7] dark:border-[#333333] rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-[#0D9488] focus:border-[#0D9488] bg-[#FFFFFF] dark:bg-[#242424] text-[#27272A] dark:text-[#E4E4E7] font-medium max-w-[200px]"
+ value={assigneeDept}
+ onChange={(e) => setAssigneeDept(e.target.value)}
+ className="text-sm border border-[#E4E4E7] dark:border-[#333333] rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-[#0D9488] focus:border-[#0D9488] bg-[#FFFFFF] dark:bg-[#242424] text-[#27272A] dark:text-[#E4E4E7] font-medium min-w-[200px]"
  >
- <option value="">Pilih Pelaksana (Assignee)</option>
- {users.filter(u => u.status !== 'inactive' && u.role !== 'client').map((u) => {
- const count = userWorkloadMap[u.id] || 0;
-  return (
- <option key={u.id} value={u.id}>
- {u.name} ({count} task) - {u.department || 'General'}
+ <option value="">Pilih Devisi/Tim</option>
+ {departments.map((dept) => (
+ <option key={dept} value={dept}>
+ {dept}
  </option>
- );
- })}
+ ))}
  </select>
  </div>
 

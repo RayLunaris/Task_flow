@@ -9,9 +9,10 @@ interface SubTaskItemProps {
  subTask: SubTask;
  onToggle: (id: string) => void;
  onDelete: (id: string) => void;
+ hideDelete?: boolean;
 }
 
-export const SubTaskItem: React.FC<SubTaskItemProps> = ({ subTask, onToggle, onDelete }) => {
+export const SubTaskItem: React.FC<SubTaskItemProps> = ({ subTask, onToggle, onDelete, hideDelete }) => {
  const { t } = useTranslation();
 
  return (
@@ -50,6 +51,7 @@ export const SubTaskItem: React.FC<SubTaskItemProps> = ({ subTask, onToggle, onD
  {subTask.title}
  </span>
 
+ {!hideDelete && (
  <button
  onClick={() => onDelete(subTask.id)}
  className="p-1.5 text-[#71717A] hover:text-[#DC2626] hover:bg-[#DC2626]/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
@@ -57,6 +59,7 @@ export const SubTaskItem: React.FC<SubTaskItemProps> = ({ subTask, onToggle, onD
  >
  <Trash2 size={14} />
  </button>
+ )}
  </motion.div>
  );
 };

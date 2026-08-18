@@ -25,7 +25,6 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
  const [description, setDescription] = useState('');
  const [color, setColor] = useState(COLORS[0]);
  const [status, setStatus] = useState<'active' | 'on_hold' | 'completed' | 'archived'>('active');
- const [progress, setProgress] = useState(0);
  const [startDate, setStartDate] = useState('');
  const [dueDate, setDueDate] = useState('');
 
@@ -35,7 +34,6 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
  setDescription(projectToEdit.description || '');
  setColor(projectToEdit.color || COLORS[0]);
  setStatus(projectToEdit.status);
- setProgress(projectToEdit.progress || 0);
  setStartDate(projectToEdit.startDate || '');
  setDueDate(projectToEdit.dueDate || '');
  } else {
@@ -43,7 +41,6 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
  setDescription('');
  setColor(COLORS[0]);
  setStatus('active');
- setProgress(0);
  setStartDate('');
  setDueDate('');
  }
@@ -61,7 +58,6 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
  description: description.trim() || undefined,
  color,
  status,
- progress,
  startDate: startDate || undefined,
  dueDate: dueDate || undefined,
  });
@@ -71,7 +67,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
  description: description.trim() || undefined,
  color,
  status,
- progress,
+ progress: 0,
  startDate: startDate || undefined,
  dueDate: dueDate || undefined,
  });
@@ -189,20 +185,6 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
  <option value="completed">{t('projects.status.completed')}</option>
  <option value="archived">{t('projects.status.archived')}</option>
  </select>
- </div>
-
- <div>
- <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
- {t('projectModal.progress')} ({progress}%)
- </label>
- <input
- type="range"
- min="0"
- max="100"
- value={progress}
- onChange={(e) => setProgress(Number(e.target.value))}
- className="w-full accent-primary"
- />
  </div>
 
  <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-border-color">

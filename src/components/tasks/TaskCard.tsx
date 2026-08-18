@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import type { Task } from '../../types';
 import { useTasks } from '../../hooks/useTasks';
+import { useAuth } from '../../context/AuthContext';
 import { Badge } from '../ui/Badge';
 import { getDueDateStatus } from '../../utils/dateUtils';
 import { ProgressBar } from '../ui/ProgressBar';
@@ -21,6 +22,8 @@ interface TaskCardProps {
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false }) => {
  const { toggleTaskCompletion, deleteTask, addSubTask, toggleSubTask, deleteSubTask, categories } = useTasks();
+ const { user } = useAuth();
+ const isMember = user?.role === 'member';
  const { t, i18n } = useTranslation();
  
  const dueDateStatus = getDueDateStatus(task.dueDate);
@@ -202,10 +205,11 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
  subTask={st}
  onToggle={(subTaskId) => toggleSubTask(task.id, subTaskId)}
  onDelete={(subTaskId) => deleteSubTask(task.id, subTaskId)}
+ hideDelete={isMember}
  />
  ))}
 
- {totalSubTasks < 10 && (
+ {totalSubTasks < 10 && !isMember && (
  <form onSubmit={handleAddSubTask} className="flex items-center gap-2 mt-2">
  <div className="relative flex-1">
  <input
@@ -238,6 +242,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
  >
  <Edit2 size={16} />
  </button>
+ {!isMember && (
  <button
  onClick={() => deleteTask(task.id)}
  className="p-2 text-[#71717A] hover:text-[#DC2626] hover:bg-[#DC2626]/10 rounded-lg transition-colors"
@@ -245,6 +250,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, isDragEnabled = false 
  >
  <Trash2 size={16} />
  </button>
+ )}
  </div>
  
  <EditTaskModal 

@@ -128,6 +128,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  user?.role === 'manager' || 
  (task.reviewerId && user?.id === task.reviewerId);
 
+ const isMember = user?.role === 'member';
+
  const handleSubmit = (e: React.FormEvent) => {
  e.preventDefault();
  if (!title.trim()) return;
@@ -409,7 +411,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  type="text"
  value={title}
  onChange={(e) => setTitle(e.target.value)}
- className="w-full text-sm bg-slate-50 dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100 font-medium"
+ disabled={isMember}
+ className="w-full text-sm bg-slate-50 dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-slate-800 dark:text-slate-100 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
  autoFocus
  />
  </div>
@@ -421,7 +424,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  <textarea
  value={description}
  onChange={(e) => setDescription(e.target.value)}
- className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#242424] p-2.5 rounded-lg border border-border-color dark:border-border-color focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary resize-none min-h-[90px]"
+ disabled={isMember}
+ className="w-full text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#242424] p-2.5 rounded-lg border border-border-color dark:border-border-color focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary resize-none min-h-[90px] disabled:opacity-60 disabled:cursor-not-allowed"
  />
  </div>
 
@@ -433,7 +437,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  <select
  value={assigneeId}
  onChange={(e) => setAssigneeId(e.target.value)}
- className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200"
+ disabled={isMember}
+ className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
  >
  <option value="">Belum Ditugaskan</option>
  {users.filter(u => u.status !== 'inactive' && u.role !== 'client').map((u) => {
@@ -454,9 +459,10 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  <select
  value={reviewerId}
  onChange={(e) => setReviewerId(e.target.value)}
- className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200"
+ disabled={isMember}
+ className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
  >
- <option value="">Tanpa Reviewer Khusus</option>
+ <option value="">Tanpa Reviewer</option>
  {users.filter(u => u.status !== 'inactive' && (u.role === 'admin' || u.role === 'manager')).map((u) => (
  <option key={u.id} value={u.id}>
  <Search size={14} className="mr-2" /> {u.name} ({u.role})
@@ -474,7 +480,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  <select
  value={priority}
  onChange={(e) => setPriority(e.target.value as any)}
- className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium"
+ disabled={isMember}
+ className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
  >
  <option value="urgent">Urgent</option>
  <option value="high">Tinggi</option>
@@ -490,7 +497,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  <select
  value={status}
  onChange={(e) => setStatus(e.target.value as any)}
- className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium"
+ disabled={isMember}
+ className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
  >
  <option value="todo">To Do</option>
  <option value="in_progress">In Progress</option>
@@ -506,7 +514,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  <select
  value={category}
  onChange={(e) => setCategory(e.target.value)}
- className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium"
+ disabled={isMember}
+ className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
  >
  {categories.map((cat) => (
  <option key={cat.id} value={cat.name}>
@@ -529,14 +538,15 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  setProjectId(e.target.value);
  setMilestoneId('');
  }}
- className="w-full bg-slate-50 dark:bg-[#242424]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm text-slate-800 dark:text-slate-200"
+ disabled={isMember}
+ className="w-full bg-slate-50 dark:bg-[#242424]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm text-slate-800 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
  >
  <option value="">No Project</option>
  {projects.map(p => (
  <option key={p.id} value={p.id}>{p.name}</option>
  ))}
  </select>
- </div>
+</div>
 
  <div>
  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">
@@ -545,8 +555,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  <select
  value={milestoneId}
  onChange={(e) => setMilestoneId(e.target.value)}
- disabled={!projectId}
- className="w-full bg-slate-50 dark:bg-[#242424]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm text-slate-800 dark:text-slate-200 disabled:opacity-50"
+ disabled={!projectId || isMember}
+ className="w-full bg-slate-50 dark:bg-[#242424]/50 border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm text-slate-800 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
  >
  <option value="">No Milestone</option>
  {milestones.filter(m => m.projectId === projectId).map(m => (
@@ -566,7 +576,8 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  type="date"
  value={dueDate}
  onChange={(e) => setDueDate(e.target.value)}
- className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium"
+ disabled={isMember}
+ className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
  />
  </div>
 
@@ -578,44 +589,48 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  type="datetime-local"
  value={reminderAt}
  onChange={(e) => setReminderAt(e.target.value)}
- className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium"
+ disabled={isMember}
+ className="w-full text-sm border border-border-color dark:border-border-color rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] text-slate-700 dark:text-slate-200 font-medium disabled:opacity-60 disabled:cursor-not-allowed"
  />
  </div>
  </div>
 
- <div className="flex items-center gap-4 w-full pt-1">
- <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
- <input
- type="checkbox"
- checked={isRecurring}
- onChange={(e) => setIsRecurring(e.target.checked)}
- className="rounded border-slate-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer"
- />
- <span><Repeat size={14} className="mr-2" /> Recurring Task</span>
- </label>
+            <div className="flex items-center gap-4 w-full pt-1">
+              <label className={`flex items-center gap-2 text-sm font-medium ${isMember ? 'text-slate-400 cursor-not-allowed' : 'text-slate-700 dark:text-slate-300 cursor-pointer'}`}>
+                <input
+                  type="checkbox"
+                  checked={isRecurring}
+                  onChange={(e) => setIsRecurring(e.target.checked)}
+                  disabled={isMember}
+                  className="rounded border-slate-300 text-primary focus:ring-primary w-4 h-4 disabled:opacity-60 disabled:cursor-not-allowed"
+                />
+                <span><Repeat size={14} className="mr-2" /> Recurring Task</span>
+              </label>
 
- {isRecurring && (
- <div className="flex items-center gap-2 animate-in fade-in slide-in-">
- <span className="text-sm text-slate-500">Every</span>
- <input
- type="number"
- min="1"
- value={recurringInterval}
- onChange={(e) => setRecurringInterval(Number(e.target.value) || 1)}
- className="w-16 text-sm border border-border-color dark:border-border-color rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-center"
- />
- <select
- value={recurringFrequency}
- onChange={(e) => setRecurringFrequency(e.target.value as any)}
- className="text-sm border border-border-color dark:border-border-color rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424]"
- >
- <option value="daily">Day(s)</option>
- <option value="weekly">Week(s)</option>
- <option value="monthly">Month(s)</option>
- </select>
- </div>
- )}
- </div>
+              {isRecurring && (
+                <div className="flex items-center gap-2 animate-in fade-in slide-in-">
+                  <span className="text-sm text-slate-500">Every</span>
+                  <input
+                    type="number"
+                    min="1"
+                    value={recurringInterval}
+                    onChange={(e) => setRecurringInterval(Number(e.target.value) || 1)}
+                    disabled={isMember}
+                    className="w-16 text-sm border border-border-color dark:border-border-color rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 text-center disabled:opacity-60 disabled:cursor-not-allowed"
+                  />
+                  <select
+                    value={recurringFrequency}
+                    onChange={(e) => setRecurringFrequency(e.target.value as any)}
+                    disabled={isMember}
+                    className="text-sm border border-border-color dark:border-border-color rounded-lg p-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white dark:bg-[#242424] disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <option value="daily">Day(s)</option>
+                    <option value="weekly">Week(s)</option>
+                    <option value="monthly">Month(s)</option>
+                  </select>
+                </div>
+              )}
+            </div>
  </form>
  ) : activeTab === 'comments' ? (
  <div className="flex flex-col h-full min-h-[300px]">
@@ -644,6 +659,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  {st.title}
  </span>
  </div>
+ {!isMember && (
  <button
  type="button"
  onClick={() => deleteSubTask(task.id, st.id)}
@@ -651,31 +667,34 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, isOpen, onCl
  >
  <Trash2 size={14} />
  </button>
+ )}
  </div>
  ))}
  </div>
 
- <form
- onSubmit={(e) => {
- e.preventDefault();
- if (!newSubTask.trim() || task.subTasks.length >= 20) return;
- addSubTask(task.id, newSubTask.trim());
- setNewSubTask('');
- }}
- className="flex items-center gap-2 mt-4"
- >
- <input
- type="text"
- value={newSubTask}
- onChange={e => setNewSubTask(e.target.value)}
- placeholder="Tambah item checklist..."
- className="flex-1 text-sm bg-white dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 text-slate-800 dark:text-slate-200"
- />
- <Button type="submit" disabled={!newSubTask.trim()} icon={<Plus size={16} />} size="sm">
- Tambah
- </Button>
- </form>
- </div>
+            {!isMember && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!newSubTask.trim() || task.subTasks.length >= 20) return;
+                  addSubTask(task.id, newSubTask.trim());
+                  setNewSubTask('');
+                }}
+                className="flex items-center gap-2 mt-4"
+              >
+                <input
+                  type="text"
+                  value={newSubTask}
+                  onChange={e => setNewSubTask(e.target.value)}
+                  placeholder="Tambah item checklist..."
+                  className="flex-1 text-sm bg-white dark:bg-[#242424] border border-border-color dark:border-border-color rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 text-slate-800 dark:text-slate-200"
+                />
+                <Button type="submit" disabled={!newSubTask.trim()} icon={<Plus size={16} />} size="sm">
+                  Tambah
+                </Button>
+              </form>
+            )}
+          </div>
  ) : activeTab === 'activity' ? (
  <div className="space-y-4 min-h-[300px]">
  <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm mb-4">Riwayat Aktivitas Tugas</h3>

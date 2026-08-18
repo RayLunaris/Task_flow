@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, BarChart2, Folder, Users, UserCheck, Flag, Columns, Settings, Shield, PieChart, FileText, Command } from 'lucide-react';
+import { Calendar, BarChart2, Folder, Users, UserCheck, Flag, Columns, Settings, Shield, PieChart, FileText, Command, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Avatar } from '../ui/Avatar';
 
 export const Sidebar: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -88,16 +88,24 @@ export const Sidebar: React.FC = () => {
         )}
       </div>
 
-      <div className="mt-auto pt-4 border-t border-slate-800/50 w-full flex items-center px-6">
+      <div className="mt-auto pt-4 border-t border-slate-800/50 w-full flex items-center px-6 justify-between">
         <button 
           onClick={() => navigate('/settings')}
-          className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer w-full text-left"
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer text-left flex-1 min-w-0"
         >
           <Avatar name={user?.name || 'U'} src={user?.avatar} size="sm" />
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 pr-2">
             <p className="text-sm font-medium text-[#F1F5F9] truncate">{user?.name || 'User'}</p>
             <p className="text-xs text-[#64748B] truncate capitalize">{user?.role || 'member'}</p>
           </div>
+        </button>
+
+        <button
+          onClick={() => logout()}
+          className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors cursor-pointer shrink-0"
+          title={t('navbar.logout', 'Logout')}
+        >
+          <LogOut size={18} />
         </button>
       </div>
     </aside>

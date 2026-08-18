@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { MoreVertical, Edit2, Trash2, Users, Calendar, Folder, X } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, Users, Calendar, Folder, X, CheckCircle2, Circle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import type { Project } from '../../types';
 import { useProjects } from '../../context/ProjectContext';
+import { useTasks } from '../../hooks/useTasks';
 import { useTranslation } from 'react-i18next';
 import { ProgressBar } from '../ui/ProgressBar';
 
@@ -13,24 +14,15 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => {
- const { commitProjectProgress, deleteProject } = useProjects();
+ const { deleteProject } = useProjects();
+ const { tasks } = useTasks();
  const { t } = useTranslation();
- const [showMenu, setShowMenu] = useState(false);
- const [showUpdateModal, setShowUpdateModal] = useState(false);
- const [newProgress, setNewProgress] = useState(project.progress || 0);
- const [progressMsg, setProgressMsg] = useState('');
- const [showHistory, setShowHistory] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showTasksModal, setShowTasksModal] = useState(false);
 
- const percentage = project.progress || 0;
-
- const handleCommit = (e: React.FormEvent) => {
- e.preventDefault();
- if (progressMsg.trim()) {
- commitProjectProgress(project.id, newProgress, progressMsg);
- setShowUpdateModal(false);
- setProgressMsg('');
- }
- };
+  const projectTasks = tasks.filter(t => t.projectId === project.id);
+  const completedTasks = projectTasks.filter(t => t.completed || t.status === 'done');
+  const percentage = projectTasks.length === 0 ? 0 : Math.round((completedTasks.length / projectTasks.length) * 100);
 
  return (
  <>
@@ -80,12 +72,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  {showMenu && (
  <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-[#242424] rounded-lg shadow-sm border border-slate-100 dark:border-border-color py-1 z-10 animate-in fade-in slide-in-">
  <button
- onClick={() => { setShowMenu(false); setShowUpdateModal(true); setNewProgress(percentage); setProgressMsg(''); }}
- className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
- >
- <Edit2 size={14} /> {t('projects.updateProgress')}
- </button>
- <button
  onClick={() => { setShowMenu(false); onEdit(project); }}
  className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
  >
@@ -127,7 +113,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  
  <div 
  className="pt-3 border-t border-slate-100 dark:border-border-color cursor-pointer group/progress"
- onClick={() => setShowHistory(true)}
+ onClick={() => setShowTasksModal(true)}
  >
  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5">
  <span className="font-bold text-slate-700 dark:text-slate-300 group-hover/progress:text-primary transition-colors">
@@ -136,102 +122,51 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  <span className="font-bold">{percentage}%</span>
  </div>
  <ProgressBar progress={percentage} color="bg-teal-500" />
- {(project.updates && project.updates.length > 0) && (
  <p className="text-[10px] text-slate-400 mt-1.5 line-clamp-1 italic">
- "{project.updates[0].description}"
+ {completedTasks.length} / {projectTasks.length} Tasks Completed
  </p>
- )}
  </div>
  </div>
  </motion.div>
-
- {/* Update Progress Modal */}
- {showUpdateModal && (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
- <div className="bg-white dark:bg-[#242424] rounded-lg w-full max-w-md shadow-sm overflow-hidden border border-slate-100 dark:border-border-color animate-in zoom-in-95 duration-200">
- <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-border-color/50">
- <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">
- {t('projects.progressModalTitle', { name: project.name })}
- </h2>
- <button 
- onClick={() => setShowUpdateModal(false)}
- className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors"
- >
- <X size={12} />
- </button>
- </div>
- <form onSubmit={handleCommit} className="p-4 space-y-4">
- <div>
- <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
- {t('projects.progress') || 'Progress'}: {newProgress}%
- </label>
- <input 
- type="range" min="0" max="100" 
- value={newProgress} 
- onChange={(e) => setNewProgress(Number(e.target.value))}
- className="w-full accent-primary"
- />
- </div>
- <div>
- <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
- {t('projects.description') || 'Message'}
- </label>
- <textarea 
- value={progressMsg}
- onChange={(e) => setProgressMsg(e.target.value)}
- placeholder={t('projects.progressPlaceholder')}
- className="w-full bg-slate-50 dark:bg-[#1A1A1A]/50 border border-border-color dark:border-border-color rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary text-sm text-slate-800 dark:text-slate-200 resize-none h-24"
- required
- />
- </div>
- <div className="flex justify-end gap-2 pt-2">
- <button type="button" onClick={() => setShowUpdateModal(false)} className="px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
- {t('common.cancel')}
- </button>
- <button type="submit" disabled={!progressMsg.trim()} className="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-lg disabled:opacity-50">
- {t('projects.commitProgress')}
- </button>
- </div>
- </form>
- </div>
- </div>
- )}
-
- {/* History Modal */}
- {showHistory && (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
- <div className="bg-white dark:bg-[#242424] rounded-lg w-full max-w-md shadow-sm overflow-hidden border border-slate-100 dark:border-border-color animate-in zoom-in-95 duration-200">
- <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-border-color/50">
- <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Progress History</h2>
- <button 
- onClick={() => setShowHistory(false)}
- className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors"
- >
- <X size={12} />
- </button>
- </div>
- <div className="p-4 max-h-96 overflow-y-auto">
- {(!project.updates || project.updates.length === 0) ? (
- <p className="text-sm text-slate-500 text-center py-4">No progress commits yet.</p>
- ) : (
- <div className="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-slate-200 dark:before:bg-slate-700">
- {project.updates.map(upd => (
- <div key={upd.id} className="relative flex gap-4">
- <div className="w-10 h-10 rounded-full bg-[#E3F2FD] dark:bg-blue-900/50 border-4 border-white dark:border-border-color flex items-center justify-center shrink-0 z-10 text-xs font-bold text-[#0D47A1] dark:text-primary">
- {upd.percentage}%
- </div>
- <div className="pt-2">
- <p className="text-xs text-slate-500 mb-1">{new Date(upd.createdAt).toLocaleString()}</p>
- <p className="text-sm text-slate-700 dark:text-slate-300">{upd.description}</p>
- </div>
- </div>
- ))}
- </div>
- )}
- </div>
- </div>
- </div>
- )}
- </>
+      {showTasksModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#242424] rounded-lg w-full max-w-md shadow-sm overflow-hidden border border-slate-100 dark:border-border-color animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-border-color/50">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Project Tasks</h2>
+              <button 
+                onClick={() => setShowTasksModal(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors"
+              >
+                <X size={12} />
+              </button>
+            </div>
+            <div className="p-4 max-h-96 overflow-y-auto">
+              {projectTasks.length === 0 ? (
+                <p className="text-sm text-slate-500 text-center py-4">No tasks in this project yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {projectTasks.map(task => {
+                    const isDone = task.completed || task.status === 'done';
+                    return (
+                      <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 dark:border-border-color bg-slate-50/50 dark:bg-[#1A1A1A]/50">
+                        <div className={clsx("shrink-0", isDone ? "text-teal-500" : "text-slate-300 dark:text-slate-600")}>
+                          {isDone ? <CheckCircle2 size={18} /> : <Circle size={18} />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={clsx("text-sm font-medium truncate", isDone ? "text-slate-500 line-through" : "text-slate-700 dark:text-slate-300")}>
+                            {task.title}
+                          </p>
+                          <p className="text-xs text-slate-500 capitalize">{task.status.replace('_', ' ')}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
  );
 };
