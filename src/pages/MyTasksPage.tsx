@@ -51,7 +51,6 @@ export const MyTasksPage: React.FC = () => {
  filtered = filtered.filter(task => {
  if (filter === 'completed') return task.completed || task.status === 'done';
  if (filter === 'review') return task.status === 'review';
- if (task.completed || task.status === 'done') return false;
 
  if (filter === 'all') return true;
 
@@ -64,13 +63,18 @@ export const MyTasksPage: React.FC = () => {
 
  if (filter === 'today') return diffDays === 0;
  if (filter === 'week') return diffDays >= 0 && diffDays <= 7;
- if (filter === 'overdue') return diffDays < 0;
+ if (filter === 'overdue') return diffDays < 0 && !task.completed;
 
  return true;
  });
 
  // 3. Apply sorting
  filtered.sort((a, b) => {
+ // Force completed tasks to the bottom
+ if (a.completed !== b.completed) {
+ return a.completed ? 1 : -1;
+ }
+
  if (sortBy === 'dueDate') {
  const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Infinity;
  const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;

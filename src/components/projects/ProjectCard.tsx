@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MoreVertical, Edit2, Trash2, Users, Calendar, Folder, X, CheckCircle2, Circle } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, Users, Calendar, Folder } from 'lucide-react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import type { Project } from '../../types';
@@ -7,6 +7,7 @@ import { useProjects } from '../../context/ProjectContext';
 import { useTasks } from '../../hooks/useTasks';
 import { useTranslation } from 'react-i18next';
 import { ProgressBar } from '../ui/ProgressBar';
+import { ProjectDetailModal } from './ProjectDetailModal';
 
 interface ProjectCardProps {
  project: Project;
@@ -18,7 +19,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  const { tasks } = useTasks();
  const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
-  const [showTasksModal, setShowTasksModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const projectTasks = tasks.filter(t => t.projectId === project.id);
   const completedTasks = projectTasks.filter(t => t.completed || t.status === 'done');
@@ -33,7 +34,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  exit={{ opacity: 0, scale: 0.9 }}
  whileHover={{ y: -4 }}
  transition={{ type: "spring", stiffness: 400, damping: 30 }}
- className="bg-white dark:bg-[#1A1A1A] rounded-lg border border-border-color dark:border-border-color shadow-sm hover:shadow-md p-5 flex flex-col transition-all duration-300 relative group"
+ className="bg-white dark:bg-[#1A1A1A] rounded-lg border border-border-color dark:border-border-color shadow-sm hover:shadow-md p-5 flex flex-col transition-all duration-300 relative group cursor-pointer"
+ onClick={() => setShowDetailModal(true)}
  >
  <div className="flex items-start justify-between mb-4">
  <div className="flex items-center gap-3">
@@ -63,7 +65,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  
  <div className="relative">
  <button 
- onClick={() => setShowMenu(!showMenu)}
+ onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
  className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-800 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
  >
  <MoreVertical size={18} />
@@ -72,13 +74,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  {showMenu && (
  <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-[#242424] rounded-lg shadow-sm border border-slate-100 dark:border-border-color py-1 z-10 animate-in fade-in slide-in-">
  <button
- onClick={() => { setShowMenu(false); onEdit(project); }}
+ onClick={(e) => { e.stopPropagation(); setShowMenu(false); onEdit(project); }}
  className="w-full text-left px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
  >
  <Edit2 size={14} /> {t('projects.editProject')}
  </button>
  <button
- onClick={() => { 
+ onClick={(e) => { 
+ e.stopPropagation();
  setShowMenu(false); 
  if (confirm(t('projects.deleteConfirm', { name: project.name }))) {
  deleteProject(project.id);
@@ -112,8 +115,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  </div>
  
  <div 
- className="pt-3 border-t border-slate-100 dark:border-border-color cursor-pointer group/progress"
- onClick={() => setShowTasksModal(true)}
+ className="pt-3 border-t border-slate-100 dark:border-border-color group/progress"
  >
  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5">
  <span className="font-bold text-slate-700 dark:text-slate-300 group-hover/progress:text-primary transition-colors">
@@ -128,45 +130,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit }) => 
  </div>
  </div>
  </motion.div>
-      {showTasksModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-[#242424] rounded-lg w-full max-w-md shadow-sm overflow-hidden border border-slate-100 dark:border-border-color animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-border-color/50">
-              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Project Tasks</h2>
-              <button 
-                onClick={() => setShowTasksModal(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-700 rounded-lg transition-colors"
-              >
-                <X size={12} />
-              </button>
-            </div>
-            <div className="p-4 max-h-96 overflow-y-auto">
-              {projectTasks.length === 0 ? (
-                <p className="text-sm text-slate-500 text-center py-4">No tasks in this project yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {projectTasks.map(task => {
-                    const isDone = task.completed || task.status === 'done';
-                    return (
-                      <div key={task.id} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 dark:border-border-color bg-slate-50/50 dark:bg-[#1A1A1A]/50">
-                        <div className={clsx("shrink-0", isDone ? "text-teal-500" : "text-slate-300 dark:text-slate-600")}>
-                          {isDone ? <CheckCircle2 size={18} /> : <Circle size={18} />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={clsx("text-sm font-medium truncate", isDone ? "text-slate-500 line-through" : "text-slate-700 dark:text-slate-300")}>
-                            {task.title}
-                          </p>
-                          <p className="text-xs text-slate-500 capitalize">{task.status.replace('_', ' ')}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+ <ProjectDetailModal 
+ project={project}
+ isOpen={showDetailModal}
+ onClose={() => setShowDetailModal(false)}
+ onEdit={() => { setShowDetailModal(false); onEdit(project); }}
+ />
     </>
  );
 };

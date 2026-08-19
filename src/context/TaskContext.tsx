@@ -6,6 +6,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useGamification } from '../hooks/useGamification';
 import { useAuth } from './AuthContext';
 import { useActivity } from './ActivityContext';
+import { useMilestones } from './MilestoneContext';
 import { calculateNextDueDate } from '../utils/recurringUtils';
 
 export type FilterStatus = 'all' | 'active' | 'completed';
@@ -71,9 +72,39 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
  const [sortOrder, setSortOrder] = useState<SortOrder>('desc'); // Default to newest first
  const [checklistTemplates, setChecklistTemplates] = useLocalStorage<ChecklistTemplate[]>('taskflow_checklist_templates', []);
 
- const { awardPointsForTask, checkAndAwardBadges } = useGamification();
- const { user } = useAuth();
- const { logActivity, logAudit } = useActivity();
+  const { awardPointsForTask, checkAndAwardBadges } = useGamification();
+  const { user } = useAuth();
+  const { logActivity, logAudit } = useActivity();
+  const { updateMilestone, milestones } = useMilestones();
+  const milestonesRef = React.useRef(milestones);
+
+  React.useEffect(() => {
+    milestonesRef.current = milestones;
+  }, [milestones]);
+
+  React.useEffect(() => {
+    milestonesRef.current.forEach(m => {
+      const mTasks = tasks.filter(t => t.milestoneId === m.id);
+      const total = mTasks.length;
+      if (total === 0) return;
+
+      const completed = mTasks.filter(t => t.completed || t.status === 'done').length;
+      const progress = Math.round((completed / total) * 100);
+
+      let newStatus = m.status;
+      if (progress === 100) {
+        newStatus = 'completed';
+      } else if (progress > 0 && m.status === 'not_started') {
+        newStatus = 'on_track';
+      } else if (progress < 100 && m.status === 'completed') {
+        newStatus = 'on_track';
+      }
+
+      if (m.progress !== progress || m.status !== newStatus) {
+        updateMilestone(m.id, { progress, status: newStatus });
+      }
+    });
+  }, [tasks]);
 
  const addTask = (taskData: Partial<Task>) => {
  const newTask: Task = {
@@ -100,6 +131,10 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
  approvalStatus: taskData.approvalStatus,
  order: tasks.length,
  dueDate: taskData.dueDate,
+  projectId: taskData.projectId,
+  milestoneId: taskData.milestoneId,
+  recurringConfig: taskData.recurringConfig,
+  reminderAt: taskData.reminderAt,
  };
  setTasks((prev) => [newTask, ...prev]);
  logActivity('Created task', 'task', newTask.id, newTask.title);

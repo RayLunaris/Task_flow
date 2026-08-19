@@ -77,6 +77,11 @@ export const TaskList: React.FC = () => {
 
  // 5. Sort
  result = [...result].sort((a, b) => {
+ // Force completed tasks to the bottom
+ if (a.completed !== b.completed) {
+ return a.completed ? 1 : -1;
+ }
+
  let comparison = 0;
  // If we are not filtering or sorting by anything else, we use the user-defined order
  if (sortBy === 'createdAt') {

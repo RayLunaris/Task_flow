@@ -183,6 +183,7 @@ export interface Milestone {
  targetDate: string;
  status: 'not_started' | 'on_track' | 'at_risk' | 'completed';
  taskIds: string[];
+  progress?: number;
  createdAt: string;
 }
 
