@@ -8,6 +8,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { ActivityProvider } from './context/ActivityContext';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage } from './pages/LoginPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CalendarPage } from './pages/CalendarPage';
 import { ProjectsPage } from './pages/ProjectsPage';
@@ -34,6 +35,7 @@ function App() {
  <TaskProvider>
  <Routes>
  <Route path="/login" element={<LoginPage />} />
+ <Route path="/reset-password" element={<ResetPasswordPage />} />
  <Route path="/" element={<AppShell />}>
  <Route index element={<Navigate to="/dashboard" replace />} />
  <Route path="dashboard" element={<DashboardPage />} />

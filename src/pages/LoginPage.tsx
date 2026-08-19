@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { LoginForm } from '../components/auth/LoginForm';
 import { RegisterForm } from '../components/auth/RegisterForm';
+import { ForgotPasswordForm } from '../components/auth/ForgotPasswordForm';
 import { Command } from 'lucide-react';
 import AuthSwitch from '../components/ui/auth-switch';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const LoginPage: React.FC = () => {
- const [isLogin, setIsLogin] = useState(true);
+ const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot_password'>('login');
 
  return (
  <div className="h-screen w-full flex bg-[#FAFAF9] dark:bg-[#1A1A1A] overflow-hidden">
@@ -65,23 +66,29 @@ export const LoginPage: React.FC = () => {
  {/* Form Card */}
  <div className="bg-[#FFFFFF] dark:bg-[#242424] rounded-md p-8 shadow-sm border border-[#E2E8F0] dark:border-[#333333] my-4">
  
- <div className="mb-6">
- <AuthSwitch isLogin={isLogin} onToggle={(val) => setIsLogin(val)} />
- </div>
+ {authMode !== 'forgot_password' && (
+   <div className="mb-6">
+   <AuthSwitch isLogin={authMode === 'login'} onToggle={(val) => setAuthMode(val ? 'login' : 'register')} />
+   </div>
+ )}
 
  <div className="relative">
  <AnimatePresence mode="wait">
  <motion.div
- key={isLogin ? 'login' : 'register'}
+ key={authMode}
  initial={{ opacity: 0, y: 10 }}
  animate={{ opacity: 1, y: 0 }}
  exit={{ opacity: 0, y: -10 }}
  transition={{ duration: 0.25, ease: 'easeOut' }}
  >
- {isLogin ? (
- <LoginForm onToggleMode={() => setIsLogin(false)} />
- ) : (
- <RegisterForm onToggleMode={() => setIsLogin(true)} />
+ {authMode === 'login' && (
+ <LoginForm onToggleMode={() => setAuthMode('register')} onForgotPassword={() => setAuthMode('forgot_password')} />
+ )}
+ {authMode === 'register' && (
+ <RegisterForm onToggleMode={() => setAuthMode('login')} />
+ )}
+ {authMode === 'forgot_password' && (
+ <ForgotPasswordForm onBackToLogin={() => setAuthMode('login')} />
  )}
  </motion.div>
  </AnimatePresence>

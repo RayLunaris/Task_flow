@@ -15,6 +15,8 @@ export interface User {
  invitedBy?: string;
  inviteToken?: string;
  invitedAt?: string;
+ resetToken?: string;
+ resetTokenExpires?: string;
  createdAt: string;
 }
 

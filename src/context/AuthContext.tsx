@@ -38,6 +38,9 @@ interface AuthContextType {
  toggleUserStatus: (id: string) => void;
  updateUser: (id: string, updates: Partial<User>) => void;
  deleteUser: (id: string) => void;
+ generatePasswordResetToken: (email: string) => string | null;
+ validateResetToken: (token: string) => string | null;
+ resetPassword: (email: string, newPass: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -458,6 +461,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  localStorage.setItem('taskflow_users', JSON.stringify(updatedUsers));
  };
 
+ const generatePasswordResetToken = (email: string) => {
+ const targetUser = internalUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+ if (!targetUser) return null;
+
+ const token = 'reset_' + crypto.randomUUID().replace(/-/g, '');
+ const expires = new Date(Date.now() + 3600000).toISOString();
+
+ updateUser(targetUser.id, { resetToken: token, resetTokenExpires: expires });
+ return token;
+ };
+
+ const validateResetToken = (token: string) => {
+ const targetUser = internalUsers.find(u => u.resetToken === token);
+ if (!targetUser || !targetUser.resetTokenExpires) return null;
+
+ if (new Date(targetUser.resetTokenExpires) < new Date()) {
+ return null;
+ }
+ return targetUser.email;
+ };
+
+ const resetPassword = (email: string, newPass: string) => {
+ const targetUser = internalUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+ if (targetUser) {
+ updateUser(targetUser.id, { 
+ password: newPass,
+ resetToken: undefined, 
+ resetTokenExpires: undefined 
+ });
+ }
+ };
+
  return (
  <AuthContext.Provider value={{ 
  user, 
@@ -474,7 +509,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
  resendInvite, 
  toggleUserStatus, 
  updateUser, 
- deleteUser 
+ deleteUser,
+ generatePasswordResetToken,
+ validateResetToken,
+ resetPassword
  }}>
  {children}
  </AuthContext.Provider>

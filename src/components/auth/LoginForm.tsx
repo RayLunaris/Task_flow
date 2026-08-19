@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/Button';
 
-export const LoginForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode }) => {
+export const LoginForm: React.FC<{ onToggleMode: () => void, onForgotPassword?: () => void }> = ({ onToggleMode, onForgotPassword }) => {
  const { login } = useAuth();
  const { t } = useTranslation();
  const navigate = useNavigate();
@@ -64,7 +64,7 @@ export const LoginForm: React.FC<{ onToggleMode: () => void }> = ({ onToggleMode
  <label className="text-sm font-semibold text-[#1E293B] dark:text-[#E4E4E7]">
  {t('auth.password')}
  </label>
- <button type="button" className="text-xs font-semibold text-[#0D9488] hover:text-[#0F766E] transition-colors">
+ <button type="button" onClick={onForgotPassword} className="text-xs font-semibold text-[#0D9488] hover:text-[#0F766E] transition-colors">
  Lupa sandi?
  </button>
  </div>
