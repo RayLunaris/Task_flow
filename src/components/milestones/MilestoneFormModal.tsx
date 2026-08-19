@@ -98,7 +98,7 @@ export const MilestoneFormModal: React.FC<MilestoneFormModalProps> = ({
  initial={{ opacity: 0, scale: 0.95, y: 20 }}
  animate={{ opacity: 1, scale: 1, y: 0 }}
  exit={{ opacity: 0, scale: 0.95, y: 20 }}
- className="relative w-full max-w-md bg-white dark:bg-[#1A1A1A] rounded-lg shadow-sm overflow-hidden border border-border-color dark:border-border-color"
+ className="relative w-[92%] sm:w-full max-w-md bg-white dark:bg-[#1A1A1A] rounded-lg shadow-sm overflow-hidden border border-border-color dark:border-border-color"
  >
  <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-border-color">
  <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">

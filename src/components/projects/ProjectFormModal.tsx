@@ -83,7 +83,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({ isOpen, onCl
  initial={{ opacity: 0, scale: 0.95 }}
  animate={{ opacity: 1, scale: 1 }}
  exit={{ opacity: 0, scale: 0.95 }}
- className="bg-white dark:bg-[#1A1A1A] rounded-lg w-full max-w-md shadow-sm overflow-hidden border border-slate-100 dark:border-border-color"
+ className="bg-white dark:bg-[#1A1A1A] rounded-lg w-[92%] sm:w-full max-w-md shadow-sm overflow-hidden border border-slate-100 dark:border-border-color"
  >
  <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-border-color">
  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">

@@ -19,7 +19,7 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({ id, title, tasks, co
  });
 
  return (
- <div className="flex flex-col flex-shrink-0 w-80 bg-slate-50 dark:bg-[#1A1A1A]/50 rounded-lg overflow-hidden border border-border-color dark:border-border-color h-full max-h-full">
+ <div className="flex flex-col flex-shrink-0 w-[280px] sm:w-80 bg-slate-50 dark:bg-[#1A1A1A]/50 rounded-lg overflow-hidden border border-border-color dark:border-border-color h-full max-h-full">
  <div className={clsx("p-4 border-b border-border-color dark:border-border-color", color)}>
  <div className="flex items-center justify-between">
  <h3 className="font-bold text-sm uppercase tracking-wider">{title}</h3>

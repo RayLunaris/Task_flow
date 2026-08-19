@@ -173,7 +173,7 @@ export const RoleMatrixModal: React.FC<RoleMatrixModalProps> = ({ isOpen, onClos
  initial={{ opacity: 0, scale: 0.95, y: 15 }}
  animate={{ opacity: 1, scale: 1, y: 0 }}
  exit={{ opacity: 0, scale: 0.95, y: 15 }}
- className="relative w-full max-w-4xl bg-white dark:bg-[#1A1A1A] rounded-lg shadow-sm overflow-hidden border border-border-color dark:border-border-color flex flex-col max-h-[85vh]"
+ className="relative w-[92%] sm:w-full max-w-4xl bg-white dark:bg-[#1A1A1A] rounded-lg shadow-sm overflow-hidden border border-border-color dark:border-border-color flex flex-col max-h-[85vh]"
  >
  {/* Modal Header */}
  <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-border-color">

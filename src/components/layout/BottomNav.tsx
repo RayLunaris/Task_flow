@@ -21,7 +21,7 @@ export const BottomNav: React.FC = () => {
 
  return (
  <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card-bg dark:bg-[#1A1A1A] border-t border-border-color pb-safe z-50 transition-colors duration-300">
- <div className="flex justify-around items-center h-[60px]">
+ <div className="flex justify-around items-center h-[68px]">
  {navItems.map((item) => {
  const Icon = item.icon;
  const isActive = currentView === item.id;

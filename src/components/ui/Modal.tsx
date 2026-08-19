@@ -41,7 +41,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, 
  className={twMerge(
  clsx(
  'backdrop:bg-black/50 backdrop:backdrop-blur-sm',
- 'm-auto rounded-lg p-0 shadow-sm border border-border-color bg-card-bg w-full max-w-md open:animate-in open:fade-in open:zoom-in-95',
+ 'm-auto rounded-lg p-0 shadow-sm border border-border-color bg-card-bg w-[92%] sm:w-full max-w-md open:animate-in open:fade-in open:zoom-in-95',
  'dark:bg-[#1A1A1A] dark:border-border-color dark:text-slate-100 text-slate-800',
  className
  )
