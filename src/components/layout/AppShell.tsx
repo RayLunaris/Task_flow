@@ -9,7 +9,7 @@ export const AppShell: React.FC = () => {
  const { user } = useAuth();
 
  if (!user) {
- return <Navigate to="/login" replace />;
+ return <Navigate to="/find-workspace" replace />;
  }
 
  return (

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { WorkspaceProvider } from './context/WorkspaceContext';
 import { TaskProvider } from './context/TaskContext';
 import { GamificationProvider } from './context/GamificationContext';
 import { ProjectProvider } from './context/ProjectContext';
@@ -8,6 +9,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import { ActivityProvider } from './context/ActivityContext';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage } from './pages/LoginPage';
+import { FindWorkspacePage } from './pages/FindWorkspacePage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CalendarPage } from './pages/CalendarPage';
@@ -27,6 +29,7 @@ function App() {
  return (
  <BrowserRouter>
  <AuthProvider>
+ <WorkspaceProvider>
  <GamificationProvider>
  <ProjectProvider>
  <MilestoneProvider>
@@ -34,6 +37,7 @@ function App() {
  <ActivityProvider>
  <TaskProvider>
  <Routes>
+ <Route path="/find-workspace" element={<FindWorkspacePage />} />
  <Route path="/login" element={<LoginPage />} />
  <Route path="/reset-password" element={<ResetPasswordPage />} />
  <Route path="/" element={<AppShell />}>
@@ -46,7 +50,6 @@ function App() {
  <Route path="milestones" element={<MilestonePage />} />
  <Route path="team" element={<TeamPage />} />
  <Route path="calendar" element={<CalendarPage />} />
-
  <Route path="notifications" element={<NotificationPage />} />
  <Route path="audit" element={<AuditLogPage />} />
  <Route path="settings" element={<SettingsPage />} />
@@ -60,6 +63,7 @@ function App() {
  </MilestoneProvider>
  </ProjectProvider>
  </GamificationProvider>
+ </WorkspaceProvider>
  </AuthProvider>
  </BrowserRouter>
  );

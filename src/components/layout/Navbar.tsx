@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Command, Globe, Sun, Moon, LogOut, Bell, Check, Search, Settings } from 'lucide-react';
+import { Command, Globe, Sun, Moon, LogOut, Bell, Check, Search, Settings, Building2, ChevronDown, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { useAuth } from '../../context/AuthContext';
+import { useWorkspace } from '../../context/WorkspaceContext';
 import { useTasks } from '../../hooks/useTasks';
 import { useProjects } from '../../context/ProjectContext';
 import { useMilestones } from '../../context/MilestoneContext';
@@ -14,6 +15,7 @@ export const Navbar: React.FC = () => {
  const { t, i18n } = useTranslation();
  const { theme, toggleTheme } = useTheme();
  const { user, users, logout } = useAuth();
+ const { workspaces, activeWorkspace, switchWorkspace, createWorkspace } = useWorkspace();
  const { tasks } = useTasks();
  const { projects } = useProjects();
  const { milestones } = useMilestones();
@@ -21,6 +23,7 @@ export const Navbar: React.FC = () => {
  const navigate = useNavigate();
  const location = useLocation();
  const [showProfileMenu, setShowProfileMenu] = useState(false);
+ const [showWorkspaceMenu, setShowWorkspaceMenu] = useState(false);
  const [isExporting, setIsExporting] = useState(false);
  const [exported, setExported] = useState(false);
 
@@ -69,13 +72,62 @@ export const Navbar: React.FC = () => {
  }
  };
 
+ const handleCreateWorkspace = () => {
+   const name = window.prompt("Enter new workspace name:");
+   if (name && name.trim()) {
+     createWorkspace(name.trim());
+     setShowWorkspaceMenu(false);
+   }
+ };
+
  return (
  <header className="bg-transparent sticky top-0 z-20 pt-6 px-6 transition-colors duration-300">
  <div className="w-full h-[52px] flex items-center justify-between">
- <div className="hidden md:flex items-center gap-8">
+ <div className="hidden md:flex items-center gap-4">
  <button className="text-lg font-bold font-heading text-[#1E293B] dark:text-[#F1F5F9] border-b-2 border-[#0D9488] pb-1 capitalize">
  {pageTitle}
  </button>
+
+ {/* Workspace Switcher */}
+ <div className="relative ml-4">
+   <button 
+     onClick={() => setShowWorkspaceMenu(!showWorkspaceMenu)}
+     className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-[#242424] border border-[#E5E7EB] dark:border-[#333333] rounded-md shadow-sm hover:border-[#0D9488] transition-colors cursor-pointer"
+   >
+     <Building2 size={14} className="text-[#0D9488]" />
+     <span className="text-sm font-semibold text-[#1E293B] dark:text-[#E4E4E7] max-w-[150px] truncate">
+       {activeWorkspace?.name || 'Select Workspace'}
+     </span>
+     <ChevronDown size={14} className="text-[#64748B]" />
+   </button>
+   
+   {showWorkspaceMenu && (
+     <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-[#242424] border border-[#E5E7EB] dark:border-[#333333] rounded-md shadow-lg py-1 z-50">
+       <div className="px-3 py-2 text-xs font-bold text-[#64748B] uppercase tracking-wider">
+         Workspaces
+       </div>
+       {workspaces.map(w => (
+         <button
+           key={w.id}
+           onClick={() => { switchWorkspace(w.id); setShowWorkspaceMenu(false); }}
+           className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between hover:bg-[#FAFAF9] dark:hover:bg-[#1A1A1A] cursor-pointer ${activeWorkspace?.id === w.id ? 'text-[#0D9488] bg-[#0D9488]/5 font-semibold' : 'text-[#1E293B] dark:text-[#E4E4E7]'}`}
+         >
+           <span className="truncate">{w.name}</span>
+           {activeWorkspace?.id === w.id && <Check size={14} />}
+         </button>
+       ))}
+       <div className="border-t border-[#E5E7EB] dark:border-[#333333] mt-1 pt-1">
+         <button
+           onClick={handleCreateWorkspace}
+           className="w-full text-left px-4 py-2 text-sm text-[#0D9488] hover:bg-[#0D9488]/10 flex items-center gap-2 font-medium cursor-pointer"
+         >
+           <Plus size={14} />
+           Buat Perusahaan Baru
+         </button>
+       </div>
+     </div>
+   )}
+ </div>
  
  <div className="hidden lg:flex items-center ml-4 bg-[#FFFFFF] dark:bg-[#242424] rounded-lg border border-[#E5E7EB] dark:border-[#333333] px-3 py-1.5 w-[250px] shadow-sm">
  <Search size={14} className="text-[#64748B] mr-2" />
@@ -88,9 +140,15 @@ export const Navbar: React.FC = () => {
  </div>
  
   {/* Mobile Logo / Page Title */}
-  <div className="md:hidden flex items-center gap-2">
-    <Command size={20} className="text-[#0D9488]" strokeWidth={2.5} />
-    <span className="font-bold text-[#1E293B] dark:text-[#F1F5F9] capitalize">{pageTitle}</span>
+  <div className="md:hidden flex flex-col gap-1">
+    <div className="flex items-center gap-2">
+      <Command size={20} className="text-[#0D9488]" strokeWidth={2.5} />
+      <span className="font-bold text-[#1E293B] dark:text-[#F1F5F9] capitalize">{pageTitle}</span>
+    </div>
+    <div className="text-[10px] font-semibold text-[#64748B] flex items-center gap-1">
+      <Building2 size={10} />
+      <span className="truncate max-w-[120px]">{activeWorkspace?.name || 'Workspace'}</span>
+    </div>
   </div>
  
  <div className="flex items-center gap-4 text-sm font-medium">

@@ -5,6 +5,7 @@ import type { Task, Category, ChecklistTemplate } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useGamification } from '../hooks/useGamification';
 import { useAuth } from './AuthContext';
+import { useWorkspace } from './WorkspaceContext';
 import { useActivity } from './ActivityContext';
 import { useMilestones } from './MilestoneContext';
 import { calculateNextDueDate } from '../utils/recurringUtils';
@@ -62,7 +63,15 @@ const DEFAULT_CATEGORIES: Category[] = [
 ];
 
 export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
- const [tasks, setTasks] = useLocalStorage<Task[]>('taskflow_tasks', []);
+ const [allTasks, setTasks] = useLocalStorage<Task[]>('taskflow_tasks', []);
+ const { activeWorkspace } = useWorkspace();
+ 
+ const tasks = React.useMemo(() => {
+   if (!activeWorkspace) return [];
+   // Retroactively support old tasks that don't have workspaceId
+   return allTasks.filter(t => t.workspaceId === activeWorkspace.id || !t.workspaceId);
+ }, [allTasks, activeWorkspace]);
+
  const [categories, setCategories] = useLocalStorage<Category[]>('taskflow_categories', DEFAULT_CATEGORIES);
  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
@@ -107,8 +116,10 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [tasks]);
 
  const addTask = (taskData: Partial<Task>) => {
+ if (!activeWorkspace) return;
  const newTask: Task = {
  id: uuidv4(),
+ workspaceId: activeWorkspace.id,
  title: taskData.title || 'New Task',
  description: taskData.description || '',
  completed: false,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
@@ -9,6 +9,8 @@ export const LoginForm: React.FC<{ onToggleMode: () => void, onForgotPassword?: 
  const { login } = useAuth();
  const { t } = useTranslation();
  const navigate = useNavigate();
+ const [searchParams] = useSearchParams();
+ const workspaceName = searchParams.get('workspaceName');
  const [email, setEmail] = useState('');
  const [password, setPassword] = useState('');
  const [error, setError] = useState('');
@@ -28,7 +30,7 @@ export const LoginForm: React.FC<{ onToggleMode: () => void, onForgotPassword?: 
  <div className="w-full flex flex-col h-full">
  <div className="text-center mb-6">
  <h2 className="text-2xl font-bold text-[#1E293B] dark:text-[#E4E4E7]">
- {t('auth.welcomeBack')}
+ {workspaceName ? `Login ke ${workspaceName}` : t('auth.welcomeBack')}
  </h2>
  <p className="text-[#71717A] mt-1.5 text-sm">
  Silakan masukkan kredensial Anda untuk mengakses akun.

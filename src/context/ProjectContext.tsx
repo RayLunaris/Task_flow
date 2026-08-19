@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import type { Project } from '../types';
 import { useAuth } from './AuthContext';
+import { useWorkspace } from './WorkspaceContext';
 
 interface ProjectContextType {
  projects: Project[];
@@ -24,13 +25,14 @@ export const useProjects = () => {
 };
 
 export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
- const [projects, setProjects] = useLocalStorage<Project[]>('taskflow_projects', []);
+ const [allProjects, setProjects] = useLocalStorage<Project[]>('taskflow_projects', []);
  const { user } = useAuth();
- 
- // Note: we can't easily get tasks inside ProjectProvider without causing circular dependencies 
- // if we import useTasks. But wait, we can just fetch tasks from localStorage for progress calculation, 
- // or we can calculate it dynamically in the component. Let's do a simple localStorage read for now, 
- // or we can leave getProjectProgress to just read 'taskflow_tasks'.
+ const { activeWorkspace } = useWorkspace();
+
+ const projects = React.useMemo(() => {
+   if (!activeWorkspace) return [];
+   return allProjects.filter(p => p.workspaceId === activeWorkspace.id || !p.workspaceId);
+ }, [allProjects, activeWorkspace]);
  
  const getProjectProgress = (projectId: string) => {
  try {
@@ -48,8 +50,10 @@ export const ProjectProvider: React.FC<{ children: ReactNode }> = ({ children })
  };
 
  const addProject = (projectData: Partial<Project>) => {
+ if (!activeWorkspace) return;
  const newProject: Project = {
  id: uuidv4(),
+ workspaceId: activeWorkspace.id,
  name: projectData.name || 'New Project',
  description: projectData.description || '',
  color: projectData.color || '#2196F3',
