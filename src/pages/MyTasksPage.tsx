@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import { useWorkspace } from '../context/WorkspaceContext';
 import { useTasks } from '../hooks/useTasks';
 
 import { TaskCard } from '../components/tasks/TaskCard';
@@ -12,7 +13,8 @@ type FilterType = 'all' | 'today' | 'week' | 'review' | 'overdue' | 'completed';
 type SortType = 'dueDate' | 'priority' | 'name';
 
 export const MyTasksPage: React.FC = () => {
- const { user, users } = useAuth();
+ const { user } = useAuth();
+ const { workspaceUsers: users } = useWorkspace();
  const { tasks, selectedCategory } = useTasks();
  const { t } = useTranslation();
  

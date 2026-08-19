@@ -1,10 +1,12 @@
 import React from 'react';
 import { Users, UserCheck, Clock, Activity, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useWorkspace } from '../../context/WorkspaceContext';
 import { useTasks } from '../../hooks/useTasks';
 
 export const TeamStatsSummary: React.FC = () => {
- const { users, user: currentUser } = useAuth();
+ const { user: currentUser } = useAuth();
+ const { workspaceUsers: users } = useWorkspace();
  const { tasks } = useTasks();
 
  const teamMembers = users.filter(u => u.id === currentUser?.id || (u.status && u.status !== 'none'));

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { useAuth } from '../../context/AuthContext';
+
+import { useWorkspace } from '../../context/WorkspaceContext';
 import { useTasks } from '../../hooks/useTasks';
 import { Avatar } from '../ui/Avatar';
 import { WorkloadBadge, getWorkloadStatus } from '../ui/WorkloadBadge';
@@ -7,7 +8,7 @@ import { Search, Filter, Zap } from 'lucide-react';
 import clsx from 'clsx';
 
 export const TeamWorkloadTab: React.FC = () => {
- const { users } = useAuth();
+ const { workspaceUsers: users } = useWorkspace();
  const { tasks } = useTasks();
 
  const [departmentFilter, setDepartmentFilter] = useState<string>('all');

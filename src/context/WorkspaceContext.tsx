@@ -1,49 +1,35 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from './AuthContext';
-import type { Workspace } from '../types';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import type { Workspace, PublicUser } from '../types';
 
 interface WorkspaceContextType {
   workspaces: Workspace[];
   activeWorkspace: Workspace | null;
+  workspaceUsers: PublicUser[];
   createWorkspace: (name: string) => void;
   switchWorkspace: (id: string) => void;
+  inviteUserToWorkspace: (userId: string) => void;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
 export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, updateUser } = useAuth();
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
-  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string | null>(null);
-
-  // Load workspaces from local storage on mount
-  useEffect(() => {
-    const savedWorkspaces = localStorage.getItem('taskflow_workspaces');
-    if (savedWorkspaces) {
-      setWorkspaces(JSON.parse(savedWorkspaces));
-    }
-  }, []);
-
-  // Sync to local storage
-  useEffect(() => {
-    localStorage.setItem('taskflow_workspaces', JSON.stringify(workspaces));
-  }, [workspaces]);
+  const { user, users, updateUser } = useAuth();
+  const [workspaces, setWorkspaces] = useLocalStorage<Workspace[]>('taskflow_workspaces', []);
+  const [activeWorkspaceId, setActiveWorkspaceId] = useLocalStorage<string | null>('taskflow_active_workspace', null);
 
   // Ensure default workspace exists for the user
   useEffect(() => {
     if (!user) return;
     
-    // Check if there are any workspaces for this user
+    // Find workspaces this user belongs to
     let userWorkspaces = workspaces.filter(w => w.ownerId === user.id || w.memberIds.includes(user.id));
     
-    if (userWorkspaces.length === 0 && workspaces.length > 0) {
-      // It's possible workspaces exist but none for this user (in a real app)
-      // Here we will just create one for them
-    }
-    
-    if (workspaces.length === 0 || userWorkspaces.length === 0) {
-      // Create default workspace
+    // Only create a default workspace if the user truly has none
+    if (userWorkspaces.length === 0) {
+      // Check for pending workspace name from registration flow
       const pendingName = localStorage.getItem('pending_workspace_name');
       if (pendingName) {
         localStorage.removeItem('pending_workspace_name');
@@ -55,14 +41,14 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         memberIds: [user.id],
         createdAt: new Date().toISOString()
       };
-      setWorkspaces(prev => [...prev, defaultWorkspace]);
+      setWorkspaces([...workspaces, defaultWorkspace]);
       userWorkspaces = [defaultWorkspace];
     }
 
-    // Determine active workspace
-    if (!activeWorkspaceId) {
+    // Determine active workspace — restore from persisted ID or pick user's first
+    if (!activeWorkspaceId || !workspaces.find(w => w.id === activeWorkspaceId)) {
       const targetId = user.lastActiveWorkspaceId || userWorkspaces[0]?.id;
-      if (targetId && workspaces.find(w => w.id === targetId)) {
+      if (targetId && userWorkspaces.find(w => w.id === targetId)) {
         setActiveWorkspaceId(targetId);
       } else if (userWorkspaces.length > 0) {
         setActiveWorkspaceId(userWorkspaces[0].id);
@@ -93,8 +79,25 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const activeWorkspace = workspaces.find(w => w.id === activeWorkspaceId) || null;
 
+  const workspaceUsers = useMemo(() => {
+    if (!activeWorkspace) return [];
+    return users.filter(u => activeWorkspace.memberIds.includes(u.id) || activeWorkspace.ownerId === u.id);
+  }, [activeWorkspace, users]);
+
+  const inviteUserToWorkspace = (userId: string) => {
+    if (!activeWorkspace) return;
+    if (activeWorkspace.memberIds.includes(userId)) return;
+    
+    setWorkspaces(prev => prev.map(w => {
+      if (w.id === activeWorkspace.id) {
+        return { ...w, memberIds: [...w.memberIds, userId] };
+      }
+      return w;
+    }));
+  };
+
   return (
-    <WorkspaceContext.Provider value={{ workspaces, activeWorkspace, createWorkspace, switchWorkspace }}>
+    <WorkspaceContext.Provider value={{ workspaces, activeWorkspace, workspaceUsers, createWorkspace, switchWorkspace, inviteUserToWorkspace }}>
       {children}
     </WorkspaceContext.Provider>
   );

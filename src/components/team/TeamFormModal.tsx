@@ -4,6 +4,7 @@ import { X, Save, Send, UserPlus, Mail, Copy, Check, Users, UserCheck } from 'lu
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
+import { useWorkspace } from '../../context/WorkspaceContext';
 import type { PublicUser, UserRole, UserStatus } from '../../types';
 
 interface TeamFormModalProps {
@@ -27,7 +28,8 @@ const DEPARTMENTS = [
 ];
 
 export const TeamFormModal: React.FC<TeamFormModalProps> = ({ isOpen, onClose, memberToEdit, initialDepartment }) => {
- const { users, user: currentUser, addUser, updateUser, inviteUser, inviteExistingUser } = useAuth();
+ const { user: currentUser, addUser, updateUser, inviteUser, inviteExistingUser } = useAuth();
+ const { workspaceUsers: users, inviteUserToWorkspace } = useWorkspace();
 
  const [activeTab, setActiveTab] = useState<'existing' | 'email' | 'manual'>('existing');
  
@@ -95,6 +97,7 @@ export const TeamFormModal: React.FC<TeamFormModalProps> = ({ isOpen, onClose, m
  const target = users.find(u => u.id === selectedUserId);
  const result = inviteExistingUser(selectedUserId, role, department, title.trim() || target?.title);
  if (result.success) {
+ inviteUserToWorkspace(selectedUserId);
  setSuccessInvite({ 
  link: result.inviteLink, 
  email: target?.email || '',
@@ -115,7 +118,8 @@ export const TeamFormModal: React.FC<TeamFormModalProps> = ({ isOpen, onClose, m
  }
 
  const result = inviteUser(email.trim(), role, department, name.trim(), title.trim());
- if (result.success) {
+ if (result.success && result.user) {
+ inviteUserToWorkspace(result.user.id);
  setSuccessInvite({ link: result.inviteLink, email: email.trim(), targetName: name.trim() || email.trim() });
  } else {
  setError(result.error || 'Gagal mengirim undangan.');
@@ -147,11 +151,12 @@ export const TeamFormModal: React.FC<TeamFormModalProps> = ({ isOpen, onClose, m
  setError('Password wajib diisi untuk registrasi manual.');
  return;
  }
- const success = addUser(name.trim(), email.trim(), password, role, department, title.trim(), status);
- if (success) {
+ const result = addUser(name.trim(), email.trim(), password, role, department, title.trim(), status);
+ if (result.success && result.userId) {
+ inviteUserToWorkspace(result.userId);
  onClose();
  } else {
- setError('Email sudah terdaftar pada workspace ini.');
+ setError('Gagal menambahkan anggota. Email mungkin sudah terdaftar.');
  }
  }
  };

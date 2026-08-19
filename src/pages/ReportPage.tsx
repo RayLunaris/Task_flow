@@ -3,7 +3,8 @@ import { FileText, Download, Printer, Filter, FileSpreadsheet } from 'lucide-rea
 import { useTasks } from '../hooks/useTasks';
 import { useProjects } from '../context/ProjectContext';
 import { useMilestones } from '../context/MilestoneContext';
-import { useAuth } from '../context/AuthContext';
+
+import { useWorkspace } from '../context/WorkspaceContext';
 import { Button } from '../components/ui/Button';
 import { Avatar } from '../components/ui/Avatar';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +14,7 @@ export const ReportPage: React.FC = () => {
  const { tasks } = useTasks();
  const { projects } = useProjects();
  const { milestones } = useMilestones();
- const { users } = useAuth();
+ const { workspaceUsers: users } = useWorkspace();
  const { t, i18n } = useTranslation();
  
  const [reportType, setReportType] = useState<'project_tasks' | 'member_productivity' | 'overdue'>('project_tasks');

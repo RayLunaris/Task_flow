@@ -3,13 +3,14 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Toolti
 import { BarChart2, PieChart as PieChartIcon, Activity, Users, Filter } from 'lucide-react';
 import { useTasks } from '../hooks/useTasks';
 import { useProjects } from '../context/ProjectContext';
-import { useAuth } from '../context/AuthContext';
+
+import { useWorkspace } from '../context/WorkspaceContext';
 import { useTranslation } from 'react-i18next';
 
 export const AnalyticsPage: React.FC = () => {
  const { tasks } = useTasks();
  const { projects } = useProjects();
- const { users } = useAuth();
+ const { workspaceUsers: users } = useWorkspace();
  const { t } = useTranslation();
  
  const [selectedProjectId, setSelectedProjectId] = useState<string>('all');

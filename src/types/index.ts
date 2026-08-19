@@ -240,6 +240,7 @@ export interface Client {
 
 export interface ActivityLog {
  id: string;
+ workspaceId?: string;
  userId: string;
  action: string;
  targetType: 'task' | 'project' | 'user' | 'milestone';
@@ -251,6 +252,7 @@ export interface ActivityLog {
 
 export interface AuditLog {
  id: string;
+ workspaceId?: string;
  userId: string;
  action: string;
  ip?: string;

@@ -22,6 +22,7 @@ import { Button } from '../ui/Button';
 import { Avatar } from '../ui/Avatar';
 import { useTasks } from '../../hooks/useTasks';
 import { useAuth } from '../../context/AuthContext';
+import { useWorkspace } from '../../context/WorkspaceContext';
 
 interface DepartmentDetailViewProps {
  department: Department;
@@ -38,7 +39,8 @@ export const DepartmentDetailView: React.FC<DepartmentDetailViewProps> = ({
  onEditMember,
  onOpenRoleMatrix,
 }) => {
- const { users, user: currentUser } = useAuth();
+ const { user: currentUser } = useAuth();
+ const { workspaceUsers: users } = useWorkspace();
  const { tasks } = useTasks();
 
  const [searchQuery, setSearchQuery] = useState('');

@@ -10,6 +10,7 @@ import { ActivityProvider } from './context/ActivityContext';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage } from './pages/LoginPage';
 import { FindWorkspacePage } from './pages/FindWorkspacePage';
+import { RegisterWorkspacePage } from './pages/RegisterWorkspacePage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CalendarPage } from './pages/CalendarPage';
@@ -38,6 +39,7 @@ function App() {
  <TaskProvider>
  <Routes>
  <Route path="/find-workspace" element={<FindWorkspacePage />} />
+ <Route path="/register-workspace" element={<RegisterWorkspacePage />} />
  <Route path="/login" element={<LoginPage />} />
  <Route path="/reset-password" element={<ResetPasswordPage />} />
  <Route path="/" element={<AppShell />}>

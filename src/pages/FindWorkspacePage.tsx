@@ -80,7 +80,7 @@ export const FindWorkspacePage: React.FC = () => {
           <p className="text-sm text-[#71717A]">
             Baru di TaskFlow?{' '}
             <button 
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/register-workspace')}
               className="text-[#0D9488] font-bold hover:underline"
             >
               Buat Workspace Baru

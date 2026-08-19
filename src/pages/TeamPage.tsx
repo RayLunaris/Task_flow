@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useWorkspace } from '../context/WorkspaceContext';
 import { useTranslation } from 'react-i18next';
 import { MemberCard } from '../components/team/MemberCard';
 import { TeamFormModal } from '../components/team/TeamFormModal';
@@ -25,7 +26,8 @@ import { DEFAULT_DEPARTMENTS } from '../utils/departmentData';
 import type { Department, PublicUser, UserRole, UserStatus } from '../types';
 
 export const TeamPage: React.FC = () => {
- const { users, user: currentUser } = useAuth();
+ const { user: currentUser } = useAuth();
+ const { workspaceUsers: users } = useWorkspace();
  const { t } = useTranslation();
 
  const [departments, setDepartments] = useLocalStorage<Department[]>('taskflow_departments', DEFAULT_DEPARTMENTS);
